@@ -1,8 +1,7 @@
-# pip install pygame 인스톨!
 import pygame
 pygame.init()
-win = pygame.display.set_mode((500, 500))
-pygame.display.set_caption("Dodge a Red Box")
+win = pygame.display.set_mode((1000, 500))
+pygame.display.set_caption("The Artistic Invasion")
 
 run = True
 while run:
