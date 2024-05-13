@@ -1,13 +1,8 @@
 import pygame
 
 pygame.init()
-
-# 윈도우 설정
-win = pygame.display.set_mode((1000, 500))
-pygame.display.set_caption("The Artistic Invasion")
-
-# 배경 이미지 불러오기
-background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldGrassland-J.jpg")
+win = pygame.display.set_mode((500, 500))
+pygame.display.set_caption("Dodge a Red Box")
 
 run = True
 while run:
