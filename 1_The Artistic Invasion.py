@@ -11,18 +11,17 @@ pygame.display.set_caption("The Artistic Invasion")
 background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldAtollReef -J.jpg")
 
 # 플레이어 설정
-player_size = 50
-player_color = (255, 255, 255)  # 플레이어 색상
+player_size = 30  # 크기
+player_color = (255, 255, 255)  # 색상
 player_x = win.get_width() // 2
 player_y = win.get_height() // 2
-player_speed = 5
+player_speed = 10  # 속도
 
-# 적 이미지 불러오기
+# 적 이미지 불러오기 및 크기 변경
 enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_png.png")
-enemy_size = enemy_image.get_rect().size
-enemy_width = enemy_size[0]
-enemy_height = enemy_size[1]
-enemy_speed = 10
+enemy_width, enemy_height = 60, 60  # 적 이미지 크기 설정
+enemy_image = pygame.transform.scale(enemy_image, (enemy_width, enemy_height))
+enemy_speed = 20
 
 # 적 리스트
 enemies = []
