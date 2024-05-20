@@ -21,7 +21,7 @@ player_y = win.get_height() // 2
 player_speed = 10  # 속도
 
 # 적 이미지 불러오기 및 크기 변경
-enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_png.png")
+enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me1_png.png")
 enemy_width, enemy_height = 60, 60  # 적 이미지 크기 설정
 enemy_image = pygame.transform.scale(enemy_image, (enemy_width, enemy_height))
 enemy_speed = 20
