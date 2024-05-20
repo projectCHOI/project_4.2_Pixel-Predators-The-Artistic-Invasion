@@ -7,6 +7,9 @@ pygame.init()
 win = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("The Artistic Invasion")
 
+# 타이틀 커버 이미지 불러오기
+cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700.png")
+
 # 배경 이미지 불러오기
 background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldAtollReef -J.jpg")
 
@@ -32,6 +35,12 @@ def create_enemy():
     enemy_y = -enemy_height
     enemies.append([enemy_x, enemy_y])
 
+# 폰트 설정
+font = pygame.font.Font(None, 36)
+
+# 게임 시작 여부
+game_started = False
+
 # 게임 루프
 run = True
 clock = pygame.time.Clock()
@@ -42,6 +51,18 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
+        if event.type == pygame.KEYDOWN and not game_started:
+            if event.key == pygame.K_RETURN:
+                game_started = True
+
+    if not game_started:
+        win.blit(cover_image, (0, 0))
+        text = font.render("Start the game : Enter", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() - 50))
+        win.blit(text, text_rect)
+        pygame.display.update()
+        continue
 
     # 키 입력 처리
     keys = pygame.key.get_pressed()
