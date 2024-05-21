@@ -38,8 +38,8 @@ def create_enemy():
     enemy_y = -enemy_height
     enemies.append([enemy_x, enemy_y])
 
-# 폰트 설정
-font = pygame.font.Font(None, 36)
+# 폰트 설정 (글씨 크기를 72로 키움)
+font = pygame.font.Font(None, 72)
 
 # 게임 시작 여부
 game_started = False
@@ -82,8 +82,8 @@ while run:
 
     if game_over:
         win.blit(end_image, (0, 0))
-        text = font.render("Revenge the game : Enter", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() - 50))
+        text = font.render("Revenge the game : Enter", True, (128, 0, 128))  # 자주색으로 변경
+        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() // 2))  # 위치 중앙으로 변경
         win.blit(text, text_rect)
         pygame.display.update()
         continue
