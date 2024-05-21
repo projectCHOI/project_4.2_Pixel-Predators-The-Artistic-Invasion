@@ -13,6 +13,9 @@ cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHO
 # 배경 이미지 불러오기
 background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldAtollReef -J.jpg")
 
+# 종료 시 표시될 이미지
+end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldCave-J.jpg")
+
 # 플레이어 설정
 player_size = 30  # 크기
 player_color = (255, 255, 255)  # 색상
@@ -40,6 +43,7 @@ font = pygame.font.Font(None, 36)
 
 # 게임 시작 여부
 game_started = False
+game_over = False
 
 # 게임 루프
 run = True
@@ -52,13 +56,33 @@ while run:
         if event.type == pygame.QUIT:
             run = False
 
-        if event.type == pygame.KEYDOWN and not game_started:
-            if event.key == pygame.K_RETURN:
-                game_started = True
+        if event.type == pygame.KEYDOWN:
+            if not game_started:
+                if event.key == pygame.K_RETURN:
+                    game_started = True
+                    game_over = False
+                    player_x = win.get_width() // 2
+                    player_y = win.get_height() // 2
+                    enemies.clear()
+            elif game_over:
+                if event.key == pygame.K_RETURN:
+                    game_started = True
+                    game_over = False
+                    player_x = win.get_width() // 2
+                    player_y = win.get_height() // 2
+                    enemies.clear()
 
     if not game_started:
         win.blit(cover_image, (0, 0))
         text = font.render("Start the game : Enter", True, (255, 255, 255))
+        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() - 50))
+        win.blit(text, text_rect)
+        pygame.display.update()
+        continue
+
+    if game_over:
+        win.blit(end_image, (0, 0))
+        text = font.render("Revenge the game : Enter", True, (255, 255, 255))
         text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() - 50))
         win.blit(text, text_rect)
         pygame.display.update()
@@ -99,7 +123,7 @@ while run:
     for enemy in enemies:
         enemy_rect = pygame.Rect(enemy[0], enemy[1], enemy_width, enemy_height)
         if player_rect.colliderect(enemy_rect):
-            run = False  # 충돌 시 게임 종료
+            game_over = True
 
     # 화면 그리기
     win.blit(background, (0, 0))
