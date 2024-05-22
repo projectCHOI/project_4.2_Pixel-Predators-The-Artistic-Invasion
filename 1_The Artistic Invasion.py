@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 pygame.init()
 
@@ -34,9 +35,11 @@ enemies = []
 
 # 적 생성 함수
 def create_enemy():
-    enemy_x = random.randint(0, win.get_width() - enemy_width)
-    enemy_y = -enemy_height
-    enemies.append([enemy_x, enemy_y])
+    angle = random.uniform(0, 2 * math.pi)  # 랜덤한 각도 생성
+    x = win.get_width() // 2 + 600 * math.cos(angle)  # 각도에 따른 x 위치 계산
+    y = win.get_height() // 2 + 600 * math.sin(angle)  # 각도에 따른 y 위치 계산
+    direction = math.atan2(win.get_height() // 2 - y, win.get_width() // 2 - x)  # 중앙을 향한 방향 벡터 계산
+    enemies.append([x, y, direction])
 
 # 폰트 설정 (글씨 크기를 72로 키움)
 font = pygame.font.Font(None, 72)
@@ -114,8 +117,10 @@ while run:
         create_enemy()
 
     for enemy in enemies:
-        enemy[1] += enemy_speed
-        if enemy[1] > win.get_height():
+        enemy[0] += enemy_speed * math.cos(enemy[2])  # x 방향으로 이동
+        enemy[1] += enemy_speed * math.sin(enemy[2])  # y 방향으로 이동
+        if (enemy[0] < 0 or enemy[0] > win.get_width() or 
+            enemy[1] < 0 or enemy[1] > win.get_height()):
             enemies.remove(enemy)
 
     # 충돌 검사
