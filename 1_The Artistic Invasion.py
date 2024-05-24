@@ -18,7 +18,7 @@ background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI
 end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldCave-J.jpg")
 
 # 플레이어 설정
-player_size = 1  # 크기
+player_width, player_height = 30, 30  # 크기
 player_x = win.get_width() // 2
 player_y = win.get_height() // 2
 player_speed = 10  # 속도
@@ -26,6 +26,10 @@ player_speed = 10  # 속도
 # 플레이어 이미지 불러오기
 player_image1 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me1_png.png")
 player_image2 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me2_png.png")
+
+# 플레이어 이미지 크기 조정
+player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
+player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
 # 초기 플레이어 이미지
 player_image = player_image1
@@ -116,12 +120,12 @@ while run:
     # 플레이어 경계 처리
     if player_x < 0:
         player_x = 0
-    if player_x > win.get_width() - player_size:
-        player_x = win.get_width() - player_size
+    if player_x > win.get_width() - player_width:
+        player_x = win.get_width() - player_width
     if player_y < 0:
         player_y = 0
-    if player_y > win.get_height() - player_size:
-        player_y = win.get_height() - player_size
+    if player_y > win.get_height() - player_height:
+        player_y = win.get_height() - player_height
 
     # 적 생성 및 이동
     if random.randint(1, 20) == 1:
@@ -135,7 +139,7 @@ while run:
             enemies.remove(enemy)
 
     # 충돌 검사
-    player_rect = pygame.Rect(player_x, player_y, player_size, player_size)
+    player_rect = pygame.Rect(player_x, player_y, player_width, player_height)
     for enemy in enemies:
         enemy_rect = pygame.Rect(enemy[0], enemy[1], enemy_width, enemy_height)
         if player_rect.colliderect(enemy_rect):
