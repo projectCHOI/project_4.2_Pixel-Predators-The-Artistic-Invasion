@@ -5,17 +5,17 @@ import math
 pygame.init()
 
 # 윈도우 설정
-win = pygame.display.set_mode((1200, 700))
+win = pygame.display.set_mode((1210, 718))
 pygame.display.set_caption("The Artistic Invasion")
 
 # 타이틀 커버 이미지 불러오기
-cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700.jpg")
+cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700_1.jpg")
 
 # 배경 이미지 불러오기
-background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldAtollReef -J.jpg")
+background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700_1.JPG")
 
 # 종료 시 표시될 이미지
-end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldCave-J.jpg")
+end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700_1.JPG")
 
 # 플레이어 설정
 player_width, player_height = 30, 30  # 크기
