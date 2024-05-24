@@ -9,7 +9,7 @@ win = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("The Artistic Invasion")
 
 # 타이틀 커버 이미지 불러오기
-cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700.png")
+cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1200x700.jpg")
 
 # 배경 이미지 불러오기
 background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldAtollReef -J.jpg")
@@ -18,14 +18,20 @@ background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI
 end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\WorldCave-J.jpg")
 
 # 플레이어 설정
-player_size = 30  # 크기
-player_color = (255, 255, 255)  # 색상
+player_size = 1  # 크기
 player_x = win.get_width() // 2
 player_y = win.get_height() // 2
 player_speed = 10  # 속도
 
+# 플레이어 이미지 불러오기
+player_image1 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me1_png.png")
+player_image2 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me2_png.png")
+
+# 초기 플레이어 이미지
+player_image = player_image1
+
 # 적 이미지 불러오기 및 크기 변경
-enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me1_png.png")
+enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_png.png")
 enemy_width, enemy_height = 60, 60  # 적 이미지 크기 설정
 enemy_image = pygame.transform.scale(enemy_image, (enemy_width, enemy_height))
 enemy_speed = 20
@@ -93,6 +99,11 @@ while run:
 
     # 키 입력 처리
     keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] or keys[pygame.K_DOWN]:
+        player_image = player_image2
+    if keys[pygame.K_RIGHT] or keys[pygame.K_UP]:
+        player_image = player_image1
+
     if keys[pygame.K_LEFT]:
         player_x -= player_speed
     if keys[pygame.K_RIGHT]:
@@ -132,7 +143,7 @@ while run:
 
     # 화면 그리기
     win.blit(background, (0, 0))
-    pygame.draw.rect(win, player_color, (player_x, player_y, player_size, player_size))
+    win.blit(player_image, (player_x, player_y))
     for enemy in enemies:
         win.blit(enemy_image, (enemy[0], enemy[1]))
     pygame.display.update()
