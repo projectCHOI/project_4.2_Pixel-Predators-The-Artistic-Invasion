@@ -8,9 +8,13 @@ pygame.init()
 win = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("Red Box the cookie")
 
-# Load title image
+# Load images
 title_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
 title_image = pygame.transform.scale(title_image, (500, 500))
+intro_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG")
+intro_image = pygame.transform.scale(intro_image, (500, 500))
+stage1_bg = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG")
+stage1_bg = pygame.transform.scale(stage1_bg, (500, 500))
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -39,8 +43,8 @@ max_level = 12
 run = True
 game_active = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star):
-    win.fill((0, 0, 0))
+def draw_objects(player_pos, enemies, star_pos, show_star, background):
+    win.blit(background, (0, 0))
     pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
     for enemy_pos in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
@@ -60,6 +64,12 @@ def title_screen():
     win.blit(title_image, (0, 0))
     pygame.display.update()
 
+# Intro screen
+def intro_screen():
+    win.blit(intro_image, (0, 0))
+    pygame.display.update()
+    pygame.time.delay(3000)  # Display for 3 seconds
+
 # Game loop
 while run:
     if not game_active:
@@ -69,6 +79,7 @@ while run:
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    intro_screen()
                     game_active = True
                     start_ticks = pygame.time.get_ticks()  # Start tick
     else:
@@ -115,7 +126,7 @@ while run:
                 pygame.time.delay(3000)
                 run = False
 
-            draw_objects(player_pos, enemies, star_pos, show_star)
+            draw_objects(player_pos, enemies, star_pos, show_star, stage1_bg)
             clock.tick(30)
 
 pygame.quit()
