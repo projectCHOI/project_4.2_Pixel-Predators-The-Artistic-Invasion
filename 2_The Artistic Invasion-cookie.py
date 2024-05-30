@@ -11,10 +11,20 @@ pygame.display.set_caption("Red Box the cookie")
 # Load images
 title_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
 title_image = pygame.transform.scale(title_image, (500, 500))
-intro_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG")
-intro_image = pygame.transform.scale(intro_image, (500, 500))
-stage1_bg = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG")
-stage1_bg = pygame.transform.scale(stage1_bg, (500, 500))
+
+stage_images = [
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG")
+]
+
+stage_intro_images = [pygame.image.load(img[0]) for img in stage_images]
+stage_background_images = [pygame.image.load(img[1]) for img in stage_images]
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -43,8 +53,8 @@ max_level = 12
 run = True
 game_active = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background):
-    win.blit(background, (0, 0))
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
+    win.blit(background_image, (0, 0))
     pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
     for enemy_pos in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
@@ -65,10 +75,10 @@ def title_screen():
     pygame.display.update()
 
 # Intro screen
-def intro_screen():
-    win.blit(intro_image, (0, 0))
+def intro_screen(stage):
+    win.blit(stage_intro_images[stage - 1], (0, 0))
     pygame.display.update()
-    pygame.time.delay(3000)  # Display for 3 seconds
+    pygame.time.delay(3000)
 
 # Game loop
 while run:
@@ -79,9 +89,9 @@ while run:
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    intro_screen()
                     game_active = True
                     start_ticks = pygame.time.get_ticks()  # Start tick
+                    intro_screen(level)
     else:
         enemies = [[random.randint(0, 500-enemy_size), random.randint(0, 500-enemy_size)] for _ in range(level)]
         show_star = False
@@ -115,7 +125,9 @@ while run:
                     pygame.display.update()
                     pygame.time.delay(3000)
                     run = False
-                else:
+                elif level <= len(stage_intro_images):
+                    intro_screen(level)
+                    start_ticks = pygame.time.get_ticks()  # Restart tick for new level
                     break
 
             if check_collision(player_pos, enemies):
@@ -126,7 +138,7 @@ while run:
                 pygame.time.delay(3000)
                 run = False
 
-            draw_objects(player_pos, enemies, star_pos, show_star, stage1_bg)
+            draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1])
             clock.tick(30)
 
 pygame.quit()
