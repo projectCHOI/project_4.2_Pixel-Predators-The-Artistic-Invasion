@@ -39,8 +39,9 @@ stage_images = [
      "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
 ]
 
-stage_intro_images = [pygame.image.load(img[0]) for img in stage_images]
-stage_background_images = [pygame.image.load(img[1]) for img in stage_images]
+# Scale images to fit the screen
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (500, 500)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (500, 500)) for img in stage_images]
 
 # Define colors
 WHITE = (255, 255, 255)
