@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 
 # 게임 초기화 및 설정
 pygame.init()
@@ -24,7 +23,7 @@ player_speed = 40
 # 떨어지는 물체 설정
 enemy_size = 50
 enemy_speed = 40
-#
+
 # pygame.mixer 모듈 초기화
 pygame.mixer.init()
 
@@ -47,22 +46,18 @@ def show_start_screen():
     win.blit(start_message, start_message_rect)
     pygame.display.update()
 
-#
-    
 # 게임 변수 초기화 함수
 def initialize_game():
-    global player_pos, enemy_pos, score, start_time, game_started, game_over
+    global player_pos, enemies, score, game_started, game_over
     player_pos = [width / 2, height - 2 * player_size]
-    enemy_pos = [random.randint(0, width - enemy_size), 0]
+    reset_enemies()  # 여러 물체를 관리하기 위한 초기화
     score = 0
-    start_time = 0
     game_started = False
     game_over = False
     pygame.mixer.music.stop() # 이전 게임에서 음악이 재생되고 있다면 중지
 
 # 음악 볼륨 설정 (최대 볼륨)
 pygame.mixer.music.set_volume(1.0)
-
 
 # 시계 설정
 clock = pygame.time.Clock()
@@ -86,21 +81,6 @@ def reset_enemy():
         enemy_pos = [width - enemy_size, random.randint(0, height - enemy_size)]
         enemy_direction = [-enemy_speed, 0]
 
-
-# 게임 변수 초기화 함수
-def initialize_game():
-    global player_pos, enemy_pos, score, start_time, game_started, game_over
-    player_pos = [width / 2, height - 2 * player_size]
-    enemy_pos = [random.randint(0, width - enemy_size), 0]
-    score = 0
-    start_time = 0
-    game_started = False
-    game_over = False
-    reset_enemy() # 물체의 초기 위치와 방향 설정
-
-# 게임 변수 초기화
-initialize_game()
-
 # 여러 떨어지는 물체들을 관리하기 위한 리스트 초기화
 enemies = []
 
@@ -109,30 +89,7 @@ def reset_enemies():
     global enemies
     enemies = [{'pos': [random.randint(0, width - enemy_size), 0], 'direction': [0, enemy_speed], 'size': enemy_size}]
 
-# 게임 변수 초기화 함수 수정
-def initialize_game():
-    global player_pos, enemies, score, start_time, game_started, game_over
-    player_pos = [width / 2, height - 2 * player_size]
-    reset_enemies()  # 여러 물체를 관리하기 위한 초기화
-    score = 0
-    start_time = time.time()
-    game_started = False
-    game_over = False
-
 # 새로운 물체를 추가하는 함수
-def add_enemy():
-    global enemies
-    enemy_size = random.randint(10, 50)
-    edge = random.choice(['top', 'left', 'right'])
-    if edge == 'top':
-        new_enemy = {'pos': [random.randint(0, width - enemy_size), 0], 'direction': [0, enemy_speed], 'size': enemy_size}
-    elif edge == 'left':
-        new_enemy = {'pos': [0, random.randint(0, height - enemy_size)], 'direction': [enemy_speed, 0], 'size': enemy_size}
-    else:
-        new_enemy = {'pos': [width - enemy_size, random.randint(0, height - enemy_size)], 'direction': [-enemy_speed, 0], 'size': enemy_size}
-    enemies.append(new_enemy)
-
-# 물체의 속도를 랜덤하게 만드는 함수
 def add_enemy():
     global enemies
     enemy_size = random.randint(10, 50)
@@ -146,9 +103,6 @@ def add_enemy():
         new_enemy = {'pos': [width - enemy_size, random.randint(0, height - enemy_size)], 'direction': [-enemy_speed, 0], 'size': enemy_size}
     enemies.append(new_enemy)
 
-# 시계 설정
-clock = pygame.time.Clock()
-
 # 플레이어 설정
 player_size = 30
 player_pos = [width / 2, height - 2 * player_size]
@@ -158,9 +112,6 @@ player_speed = 10
 enemy_size = 50
 enemy_pos = [random.randint(0, width - enemy_size), 0]
 enemy_speed = 10
-
-
-clock = pygame.time.Clock()
 
 # 게임 변수
 score = 0
@@ -184,7 +135,7 @@ def show_start_screen():
 def show_game_over_screen():
     win.fill(black)
     game_over_message = font.render("Game Over", True, white)
-    score_message = font.render(f"Playtime : {end_time - start_time:.2f} seconds", True, white)
+    score_message = font.render(f"Score : {score}", True, white)
 
     # 게임 오버 메시지와 점수 메시지의 중앙 정렬
     game_over_message_rect = game_over_message.get_rect(center=(width / 2, height / 2 - 40))
@@ -193,7 +144,7 @@ def show_game_over_screen():
     win.blit(game_over_message, game_over_message_rect)
     win.blit(score_message, score_message_rect)
     pygame.display.update()
-    
+
 # 게임 루프
 run = True
 while run:
@@ -210,7 +161,6 @@ while run:
     elif not game_started:
         if keys[pygame.K_SPACE]:
             game_started = True
-            start_time = time.time()
 
     else:
         # 플레이어 이동 처리 로직을 유지합니다.
@@ -224,9 +174,8 @@ while run:
             player_pos[1] += player_speed
 
         if game_started and not game_over:
-            # 시간에 따라 새로운 물체 추가
-            elapsed_time = time.time() - start_time
-            if len(enemies) < elapsed_time // 10 + 1:
+            # 적의 수를 제한하는 대신 무작위로 추가합니다.
+            if random.random() < 0.01:  # 1% 확률로 적 추가
                 add_enemy()
 
             win.fill(black)  # 화면을 먼저 지웁니다.
@@ -245,17 +194,10 @@ while run:
                 # 충돌 검사
                 if player_pos[0] < enemy['pos'][0] + enemy['size'] and player_pos[0] + player_size > enemy['pos'][0]:
                     if player_pos[1] < enemy['pos'][1] + enemy['size'] and player_pos[1] + player_size > enemy['pos'][1]:
-                        end_time = time.time()
                         game_over = True
 
             # 플레이어 그리기
             pygame.draw.rect(win, white, (player_pos[0], player_pos[1], player_size, player_size))
-
-            # 게임 진행 시간 표시
-            if not game_over:
-                elapsed_time = time.time() - start_time
-                time_text = font.render(f"Time: {elapsed_time:.2f} seconds", True, white)
-                win.blit(time_text, (10, 10))
 
     # 게임 시작 화면 또는 게임 오버 화면 표시
     if game_over:
