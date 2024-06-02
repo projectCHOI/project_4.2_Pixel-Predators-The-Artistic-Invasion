@@ -18,10 +18,6 @@ player_size = 20
 player_pos = [250, 250]
 player_speed = 10
 
-# Enemy settings
-enemy_size = 10
-enemy_speed = 5
-
 # Star settings
 star_size = 30
 star_pos = [random.randint(0, 500-star_size), random.randint(0, 500-star_size)]
@@ -38,14 +34,14 @@ game_active = False
 def draw_objects(player_pos, enemies, star_pos, show_star):
     win.fill((0, 0, 0))  # Fill the screen with black
     pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
-    for enemy_pos in enemies:
+    for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
     pygame.display.update()
 
 def check_collision(player_pos, enemies):
-    for enemy_pos in enemies:
+    for enemy_pos, enemy_size in enemies:
         if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_size or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
            (player_pos[1] < enemy_pos[1] < player_pos[1] + player_size or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
             return True
@@ -56,6 +52,93 @@ def intro_screen():
     win.fill((0, 0, 0))
     pygame.display.update()
     pygame.time.delay(3000)
+
+# Function to generate enemies based on stage settings
+def generate_enemies(level):
+    if level == 1:
+        speed = 5
+        directions = [(0, 1)]
+        sizes = [20]
+        num_enemies = random.randint(1, 2)
+    elif level == 2:
+        speed = 5
+        directions = [(0, 1)]
+        sizes = [20]
+        num_enemies = random.randint(1, 3)
+    elif level == 3:
+        speed = 5
+        directions = [(0, 1), (0, -1)]
+        sizes = [20, 30]
+        num_enemies = random.randint(1, 4)
+    elif level == 4:
+        speed = random.randint(5, 6)
+        directions = [(0, 1), (0, -1)]
+        sizes = [20, 30]
+        num_enemies = random.randint(3, 8)
+    elif level == 5:
+        speed = random.randint(5, 6)
+        directions = [(1, 0), (-1, 0)]
+        sizes = [10, 20]
+        num_enemies = random.randint(6, 16)
+    elif level == 6:
+        speed = random.randint(5, 7)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        sizes = [10, 20]
+        num_enemies = random.randint(6, 20)
+    elif level == 7:
+        speed = random.randint(5, 8)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(6, 24)
+    elif level == 8:
+        speed = random.randint(5, 9)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(6, 26)
+    elif level == 9:
+        speed = random.randint(5, 9)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(8, 30)
+    elif level == 10:
+        speed = random.randint(5, 10)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(8, 30)
+    elif level == 11:
+        speed = random.randint(5, 10)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(10, 32)
+    elif level == 12:
+        speed = random.randint(5, 10)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [10, 20, 30]
+        num_enemies = random.randint(15, 32)
+
+    enemies = []
+    for _ in range(num_enemies):
+        direction = random.choice(directions)
+        size = random.choice(sizes)
+        if direction == (0, 1):  # From top
+            pos = [random.randint(0, 500-size), 0]
+        elif direction == (0, -1):  # From bottom
+            pos = [random.randint(0, 500-size), 500-size]
+        elif direction == (1, 0):  # From left
+            pos = [0, random.randint(0, 500-size)]
+        elif direction == (-1, 0):  # From right
+            pos = [500-size, random.randint(0, 500-size)]
+        elif direction == (1, 1):  # From top-left
+            pos = [0, 0]
+        elif direction == (1, -1):  # From bottom-left
+            pos = [0, 500-size]
+        elif direction == (-1, 1):  # From top-right
+            pos = [500-size, 0]
+        elif direction == (-1, -1):  # From bottom-right
+            pos = [500-size, 500-size]
+        enemies.append((pos, size, direction, speed))
+
+    return enemies
 
 # Game loop
 while run:
@@ -69,10 +152,10 @@ while run:
                     start_ticks = pygame.time.get_ticks()  # Start tick
                     intro_screen()
     else:
-        enemies = [[random.randint(0, 500-enemy_size), random.randint(0, 500-enemy_size)] for _ in range(level)]
+        enemies = generate_enemies(level)
         show_star = False
 
-        while run and len(enemies) == level:
+        while run and len(enemies) == len(enemies):
             seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Calculate seconds
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -106,7 +189,12 @@ while run:
                     start_ticks = pygame.time.get_ticks()  # Restart tick for new level
                     break
 
-            if check_collision(player_pos, enemies):
+            for enemy in enemies:
+                pos, size, direction, speed = enemy
+                pos[0] += direction[0] * speed
+                pos[1] += direction[1] * speed
+
+            if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
                 win.fill((0, 0, 0))
                 text = font.render("Game Over", True, WHITE)
                 win.blit(text, (150, 250))
@@ -114,7 +202,7 @@ while run:
                 pygame.time.delay(3000)
                 run = False
 
-            draw_objects(player_pos, enemies, star_pos, show_star)
+            draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star)
             clock.tick(30)
 
 pygame.quit()
