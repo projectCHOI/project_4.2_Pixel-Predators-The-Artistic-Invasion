@@ -1,211 +1,120 @@
 import pygame
 import random
 
-# 게임 초기화 및 설정
+# Initialize Pygame
 pygame.init()
-width, height = 1000, 600
-win = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Dodge a Red Box")
 
-# 색상 설정
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (255, 0, 0)
+# Set up display
+win = pygame.display.set_mode((500, 500))
+pygame.display.set_caption("Red Box the cookie")
 
-# 폰트 설정
-pygame.font.init()
-font = pygame.font.SysFont("comicsans", 40)
+# Define colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 
-# 플레이어 설정
-player_size = 50
-player_speed = 40
-
-# 떨어지는 물체 설정
-enemy_size = 50
-enemy_speed = 40
-
-# pygame.mixer 모듈 초기화
-pygame.mixer.init()
-
-# 음악 파일 로드
-pygame.mixer.music.load('C:\\Users\\HOME\\Desktop\\새싹_교육\\GitHub_CHOI\\project_4_A-red-box-descends-from-the-sky\\240211_red box_music.wav')
-pygame.mixer.music.play(-1)  # -1은 음악을 무한 반복 재생
-
-# 게임 시작 화면에서 음악 재생 시작
-def show_start_screen():
-    global game_started
-    win.fill(black)
-    title = font.render("Dodge a Red Box", True, white)
-    start_message = font.render("Start : Spacebar", True, white)
-
-    # 타이틀과 시작 메시지의 중앙 정렬
-    title_rect = title.get_rect(center=(width / 2, height / 2 - 40))
-    start_message_rect = start_message.get_rect(center=(width / 2, height / 2 + 40))
-
-    win.blit(title, title_rect)
-    win.blit(start_message, start_message_rect)
-    pygame.display.update()
-
-# 게임 변수 초기화 함수
-def initialize_game():
-    global player_pos, enemies, score, game_started, game_over
-    player_pos = [width / 2, height - 2 * player_size]
-    reset_enemies()  # 여러 물체를 관리하기 위한 초기화
-    score = 0
-    game_started = False
-    game_over = False
-    pygame.mixer.music.stop() # 이전 게임에서 음악이 재생되고 있다면 중지
-
-# 음악 볼륨 설정 (최대 볼륨)
-pygame.mixer.music.set_volume(1.0)
-
-# 시계 설정
-clock = pygame.time.Clock()
-
-# 물체의 초기 위치와 방향 설정 함수
-def reset_enemy():
-    global enemy_pos, enemy_direction, enemy_size
-    enemy_size = random.randint(10, 50)  # 물체 크기를 10에서 50 사이의 랜덤한 값으로 설정
-    edge = random.choice(['top', 'bottom', 'left', 'right'])
-    
-    if edge == 'top':
-        enemy_pos = [random.randint(0, width - enemy_size), 0]
-        enemy_direction = [0, enemy_speed]
-    elif edge == 'bottom':
-        enemy_pos = [random.randint(0, width - enemy_size), height - enemy_size]
-        enemy_direction = [0, -enemy_speed]
-    elif edge == 'left':
-        enemy_pos = [0, random.randint(0, height - enemy_size)]
-        enemy_direction = [enemy_speed, 0]
-    else:  # edge == 'right'
-        enemy_pos = [width - enemy_size, random.randint(0, height - enemy_size)]
-        enemy_direction = [-enemy_speed, 0]
-
-# 여러 떨어지는 물체들을 관리하기 위한 리스트 초기화
-enemies = []
-
-# 떨어지는 물체 설정
-def reset_enemies():
-    global enemies
-    enemies = [{'pos': [random.randint(0, width - enemy_size), 0], 'direction': [0, enemy_speed], 'size': enemy_size}]
-
-# 새로운 물체를 추가하는 함수
-def add_enemy():
-    global enemies
-    enemy_size = random.randint(10, 50)
-    enemy_speed = random.randint(10, 30)  # 여기에서 랜덤한 속도를 설정
-    edge = random.choice(['top', 'left', 'right'])
-    if edge == 'top':
-        new_enemy = {'pos': [random.randint(0, width - enemy_size), 0], 'direction': [0, enemy_speed], 'size': enemy_size}
-    elif edge == 'left':
-        new_enemy = {'pos': [0, random.randint(0, height - enemy_size)], 'direction': [enemy_speed, 0], 'size': enemy_size}
-    else:  # edge == 'right'
-        new_enemy = {'pos': [width - enemy_size, random.randint(0, height - enemy_size)], 'direction': [-enemy_speed, 0], 'size': enemy_size}
-    enemies.append(new_enemy)
-
-# 플레이어 설정
-player_size = 30
-player_pos = [width / 2, height - 2 * player_size]
+# Player settings
+player_size = 20
+player_pos = [250, 250]
 player_speed = 10
 
-# 떨어지는 물체 설정
-enemy_size = 50
-enemy_pos = [random.randint(0, width - enemy_size), 0]
-enemy_speed = 10
+# Enemy settings
+enemy_size = 10
+enemy_speed = 5
 
-# 게임 변수
-score = 0
-game_started = False
+# Star settings
+star_size = 30
+star_pos = [random.randint(0, 500-star_size), random.randint(0, 500-star_size)]
+star_appear_time = 10
 
-# 시작 화면 함수
-def show_start_screen():
-    win.fill(black)
-    title = font.render("Dodge a Red Box", True, white)
-    start_message = font.render("Start : Spacebar", True, white)
-
-    # 타이틀과 시작 메시지의 중앙 정렬
-    title_rect = title.get_rect(center=(width / 2, height / 2 - 40))
-    start_message_rect = start_message.get_rect(center=(width / 2, height / 2 + 40))
-
-    win.blit(title, title_rect)
-    win.blit(start_message, start_message_rect)
-    pygame.display.update()
-
-# 게임 종료 화면 함수
-def show_game_over_screen():
-    win.fill(black)
-    game_over_message = font.render("Game Over", True, white)
-    score_message = font.render(f"Score : {score}", True, white)
-
-    # 게임 오버 메시지와 점수 메시지의 중앙 정렬
-    game_over_message_rect = game_over_message.get_rect(center=(width / 2, height / 2 - 40))
-    score_message_rect = score_message.get_rect(center=(width / 2, height / 2 + 20))
-
-    win.blit(game_over_message, game_over_message_rect)
-    win.blit(score_message, score_message_rect)
-    pygame.display.update()
-
-# 게임 루프
+# Game settings
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("comicsansms", 35)
+level = 1
+max_level = 12
 run = True
-while run:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+game_active = False
 
-    keys = pygame.key.get_pressed()
-
-    if game_over:
-        if keys[pygame.K_SPACE]:
-            initialize_game()
-
-    elif not game_started:
-        if keys[pygame.K_SPACE]:
-            game_started = True
-
-    else:
-        # 플레이어 이동 처리 로직을 유지합니다.
-        if keys[pygame.K_LEFT] and player_pos[0] > player_speed:
-            player_pos[0] -= player_speed
-        if keys[pygame.K_RIGHT] and player_pos[0] < width - player_size:
-            player_pos[0] += player_speed
-        if keys[pygame.K_UP] and player_pos[1] > player_speed:
-            player_pos[1] -= player_speed
-        if keys[pygame.K_DOWN] and player_pos[1] < height - player_size:
-            player_pos[1] += player_speed
-
-        if game_started and not game_over:
-            # 적의 수를 제한하는 대신 무작위로 추가합니다.
-            if random.random() < 0.01:  # 1% 확률로 적 추가
-                add_enemy()
-
-            win.fill(black)  # 화면을 먼저 지웁니다.
-
-            # 물체 업데이트 및 충돌 검사 및 그리기
-            for enemy in list(enemies):  # 리스트를 복사하여 반복 중 수정을 허용
-                enemy['pos'][0] += enemy['direction'][0]
-                enemy['pos'][1] += enemy['direction'][1]
-                
-                pygame.draw.rect(win, red, (enemy['pos'][0], enemy['pos'][1], enemy['size'], enemy['size']))
-
-                # 화면 밖으로 나가면 리셋
-                if enemy['pos'][0] < 0 or enemy['pos'][0] > width or enemy['pos'][1] < 0 or enemy['pos'][1] > height:
-                    enemies.remove(enemy)
-                    score += 1
-                # 충돌 검사
-                if player_pos[0] < enemy['pos'][0] + enemy['size'] and player_pos[0] + player_size > enemy['pos'][0]:
-                    if player_pos[1] < enemy['pos'][1] + enemy['size'] and player_pos[1] + player_size > enemy['pos'][1]:
-                        game_over = True
-
-            # 플레이어 그리기
-            pygame.draw.rect(win, white, (player_pos[0], player_pos[1], player_size, player_size))
-
-    # 게임 시작 화면 또는 게임 오버 화면 표시
-    if game_over:
-        show_game_over_screen()
-    elif not game_started:
-        show_start_screen()
-
+def draw_objects(player_pos, enemies, star_pos, show_star):
+    win.fill((0, 0, 0))  # Fill the screen with black
+    pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
+    for enemy_pos in enemies:
+        pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+    if show_star:
+        pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
     pygame.display.update()
-    clock.tick(30)
+
+def check_collision(player_pos, enemies):
+    for enemy_pos in enemies:
+        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_size or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
+           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_size or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
+            return True
+    return False
+
+# Intro screen
+def intro_screen():
+    win.fill((0, 0, 0))
+    pygame.display.update()
+    pygame.time.delay(3000)
+
+# Game loop
+while run:
+    if not game_active:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    game_active = True
+                    start_ticks = pygame.time.get_ticks()  # Start tick
+                    intro_screen()
+    else:
+        enemies = [[random.randint(0, 500-enemy_size), random.randint(0, 500-enemy_size)] for _ in range(level)]
+        show_star = False
+
+        while run and len(enemies) == level:
+            seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Calculate seconds
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT] and player_pos[0] > 0:
+                player_pos[0] -= player_speed
+            if keys[pygame.K_RIGHT] and player_pos[0] < 500 - player_size:
+                player_pos[0] += player_speed
+            if keys[pygame.K_UP] and player_pos[1] > 0:
+                player_pos[1] -= player_speed
+            if keys[pygame.K_DOWN] and player_pos[1] < 500 - player_size:
+                player_pos[1] += player_speed
+
+            if seconds > star_appear_time:
+                show_star = True
+
+            if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_size or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
+               (player_pos[1] < star_pos[1] < player_pos[1] + player_size or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
+                level += 1
+                if level > max_level:
+                    win.fill((0, 0, 0))
+                    text = font.render("coooool", True, WHITE)
+                    win.blit(text, (150, 250))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
+                    run = False
+                else:
+                    intro_screen()
+                    start_ticks = pygame.time.get_ticks()  # Restart tick for new level
+                    break
+
+            if check_collision(player_pos, enemies):
+                win.fill((0, 0, 0))
+                text = font.render("Game Over", True, WHITE)
+                win.blit(text, (150, 250))
+                pygame.display.update()
+                pygame.time.delay(3000)
+                run = False
+
+            draw_objects(player_pos, enemies, star_pos, show_star)
+            clock.tick(30)
 
 pygame.quit()
