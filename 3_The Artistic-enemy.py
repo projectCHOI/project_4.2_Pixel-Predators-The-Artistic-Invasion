@@ -183,7 +183,6 @@ while run:
                 pygame.time.delay(3000)
                 run = False
             else:
-                game_active = False
                 player_pos = [250, 250]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen()
                 start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
