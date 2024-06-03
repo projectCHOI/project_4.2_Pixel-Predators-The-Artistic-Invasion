@@ -6,7 +6,7 @@ pygame.init()
 
 # Set up display
 win = pygame.display.set_mode((500, 500))
-pygame.display.set_caption("Red Box the cookie")
+pygame.display.set_caption("Red Box the Cookie")
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -15,12 +15,10 @@ YELLOW = (255, 255, 0)
 
 # Player settings
 player_size = 20
-player_pos = [250, 250]
 player_speed = 10
 
 # Star settings
 star_size = 30
-star_pos = [random.randint(0, 500-star_size), random.randint(0, 500-star_size)]
 star_appear_time = 10
 
 # Game settings
@@ -149,60 +147,60 @@ while run:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_active = True
+                    player_pos = [250, 250]  # Center player
+                    enemies = generate_enemies(level)
+                    show_star = False
+                    star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
                     start_ticks = pygame.time.get_ticks()  # Start tick
                     intro_screen()
     else:
-        enemies = generate_enemies(level)
-        show_star = False
+        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Calculate seconds
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 
-        while run and len(enemies) == len(enemies):
-            seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Calculate seconds
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    run = False
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and player_pos[0] > 0:
+            player_pos[0] -= player_speed
+        if keys[pygame.K_RIGHT] and player_pos[0] < 500 - player_size:
+            player_pos[0] += player_speed
+        if keys[pygame.K_UP] and player_pos[1] > 0:
+            player_pos[1] -= player_speed
+        if keys[pygame.K_DOWN] and player_pos[1] < 500 - player_size:
+            player_pos[1] += player_speed
 
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_LEFT] and player_pos[0] > 0:
-                player_pos[0] -= player_speed
-            if keys[pygame.K_RIGHT] and player_pos[0] < 500 - player_size:
-                player_pos[0] += player_speed
-            if keys[pygame.K_UP] and player_pos[1] > 0:
-                player_pos[1] -= player_speed
-            if keys[pygame.K_DOWN] and player_pos[1] < 500 - player_size:
-                player_pos[1] += player_speed
+        if seconds > star_appear_time:
+            show_star = True
 
-            if seconds > star_appear_time:
-                show_star = True
-
-            if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_size or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-               (player_pos[1] < star_pos[1] < player_pos[1] + player_size or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
-                level += 1
-                if level > max_level:
-                    win.fill((0, 0, 0))
-                    text = font.render("coooool", True, WHITE)
-                    win.blit(text, (150, 250))
-                    pygame.display.update()
-                    pygame.time.delay(3000)
-                    run = False
-                else:
-                    intro_screen()
-                    start_ticks = pygame.time.get_ticks()  # Restart tick for new level
-                    break
-
-            for enemy in enemies:
-                pos, size, direction, speed = enemy
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
-
-            if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
+        if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_size or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_size or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
+            level += 1
+            if level > max_level:
                 win.fill((0, 0, 0))
-                text = font.render("Game Over", True, WHITE)
+                text = font.render("Cool", True, WHITE)
                 win.blit(text, (150, 250))
                 pygame.display.update()
                 pygame.time.delay(3000)
                 run = False
+            else:
+                game_active = False
+                intro_screen()
+                break
 
-            draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star)
-            clock.tick(30)
+        for enemy in enemies:
+            pos, size, direction, speed = enemy
+            pos[0] += direction[0] * speed
+            pos[1] += direction[1] * speed
+
+        if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
+            win.fill((0, 0, 0))
+            text = font.render("Game Over", True, WHITE)
+            win.blit(text, (150, 250))
+            pygame.display.update()
+            pygame.time.delay(3000)
+            run = False
+
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star)
+        clock.tick(30)
 
 pygame.quit()
