@@ -1,27 +1,27 @@
 import pygame
 import random
 
-# Initialize Pygame
+# Pygame 초기화
 pygame.init()
 
-# Set up display
+# 디스플레이 설정
 win = pygame.display.set_mode((500, 500))
 pygame.display.set_caption("Red Box the Cookie")
 
-# Define colors
+# 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
-# Player settings
+# 플레이어 설정
 player_size = 20
 player_speed = 10
 
-# Star settings
+# 별 설정
 star_size = 30
 star_appear_time = 10
 
-# Game settings
+# 게임 설정
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("comicsansms", 35)
 level = 1
@@ -30,7 +30,7 @@ run = True
 game_active = False
 
 def draw_objects(player_pos, enemies, star_pos, show_star):
-    win.fill((0, 0, 0))  # Fill the screen with black
+    win.fill((0, 0, 0))  # 화면을 검은색으로 채우기
     pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
     for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
@@ -45,13 +45,13 @@ def check_collision(player_pos, enemies):
             return True
     return False
 
-# Intro screen
+# 인트로 화면
 def intro_screen():
     win.fill((0, 0, 0))
     pygame.display.update()
     pygame.time.delay(3000)
 
-# Function to generate enemies based on stage settings
+# 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level):
     if level == 1:
         speed = 5
@@ -118,27 +118,27 @@ def generate_enemies(level):
     for _ in range(num_enemies):
         direction = random.choice(directions)
         size = random.choice(sizes)
-        if direction == (0, 1):  # From top
+        if direction == (0, 1):  # 상단에서
             pos = [random.randint(0, 500-size), 0]
-        elif direction == (0, -1):  # From bottom
+        elif direction == (0, -1):  # 하단에서
             pos = [random.randint(0, 500-size), 500-size]
-        elif direction == (1, 0):  # From left
+        elif direction == (1, 0):  # 좌측에서
             pos = [0, random.randint(0, 500-size)]
-        elif direction == (-1, 0):  # From right
+        elif direction == (-1, 0):  # 우측에서
             pos = [500-size, random.randint(0, 500-size)]
-        elif direction == (1, 1):  # From top-left
+        elif direction == (1, 1):  # 좌측 상단에서
             pos = [0, 0]
-        elif direction == (1, -1):  # From bottom-left
+        elif direction == (1, -1):  # 좌측 하단에서
             pos = [0, 500-size]
-        elif direction == (-1, 1):  # From top-right
+        elif direction == (-1, 1):  # 우측 상단에서
             pos = [500-size, 0]
-        elif direction == (-1, -1):  # From bottom-right
+        elif direction == (-1, -1):  # 우측 하단에서
             pos = [500-size, 500-size]
         enemies.append((pos, size, direction, speed))
 
     return enemies
 
-# Game loop
+# 게임 루프
 while run:
     if not game_active:
         for event in pygame.event.get():
@@ -147,14 +147,14 @@ while run:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_active = True
-                    player_pos = [250, 250]  # Center player
+                    player_pos = [250, 250]  # 플레이어를 중앙에 위치
                     enemies = generate_enemies(level)
                     show_star = False
                     star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
-                    start_ticks = pygame.time.get_ticks()  # Start tick
+                    start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen()
     else:
-        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # Calculate seconds
+        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -184,8 +184,12 @@ while run:
                 run = False
             else:
                 game_active = False
+                player_pos = [250, 250]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen()
-                break
+                start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
+                enemies = generate_enemies(level)
+                show_star = False
+                star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
 
         for enemy in enemies:
             pos, size, direction, speed = enemy
