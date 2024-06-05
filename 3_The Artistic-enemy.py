@@ -28,6 +28,7 @@ level = 1
 max_level = 12
 run = True
 game_active = False
+stage_duration = 30  # 스테이지 진행 시간 (초)
 
 def draw_objects(player_pos, enemies, star_pos, show_star):
     win.fill((0, 0, 0))  # 화면을 검은색으로 채우기
@@ -148,7 +149,7 @@ while run:
                 if event.key == pygame.K_RETURN:
                     game_active = True
                     player_pos = [250, 250]  # 플레이어를 중앙에 위치
-                    enemies = generate_enemies(level)
+                    enemies = []
                     show_star = False
                     star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
@@ -186,9 +187,14 @@ while run:
                 player_pos = [250, 250]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen()
                 start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
-                enemies = generate_enemies(level)
+                enemies = []
                 show_star = False
                 star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
+
+        if seconds < stage_duration:
+            if random.random() < 0.02:  # 2% 확률로 적 생성
+                new_enemies = generate_enemies(level)
+                enemies.extend(new_enemies)
 
         for enemy in enemies:
             pos, size, direction, speed = enemy
