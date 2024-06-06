@@ -5,151 +5,265 @@ import math
 pygame.init()
 
 # 윈도우 설정
-win = pygame.display.set_mode((1210, 718))
+win = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("The Artistic Invasion")
 
-# 타이틀 커버 이미지 불러오기
-cover_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_cover\Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
+# Load images
+title_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
+title_image = pygame.transform.scale(title_image, (1200, 700))
 
-# 배경 이미지 불러오기
-background = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\Stage1_World_A.JPG")
+stage_images = [
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
+]
 
-# 종료 시 표시될 이미지
-end_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_world\Stage13_GameOver.JPG")
+# Scale images to fit the screen
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1200, 700)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1200, 700)) for img in stage_images]
 
-# 플레이어 설정
-player_width, player_height = 30, 30  # 크기
-player_x = win.get_width() // 2
-player_y = win.get_height() // 2
-player_speed = 10  # 속도
-
-# 플레이어 이미지 불러오기
+# Load player images
+player_width, player_height = 40, 40  # 크기
 player_image1 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me1_png.png")
 player_image2 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_me2_png.png")
-
-# 플레이어 이미지 크기 조정
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
-# 초기 플레이어 이미지
+# Initial player image
 player_image = player_image1
 
-# 적 이미지 불러오기 및 크기 변경
-enemy_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_png.png")
-enemy_width, enemy_height = 60, 60  # 적 이미지 크기 설정
-enemy_image = pygame.transform.scale(enemy_image, (enemy_width, enemy_height))
-enemy_speed = 20
+# Define colors
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
 
-# 적 리스트
-enemies = []
+# Player settings
+player_speed = 10  # 속도 조정
 
-# 적 생성 함수
-def create_enemy():
-    angle = random.uniform(0, 2 * math.pi)  # 랜덤한 각도 생성
-    x = win.get_width() // 2 + 600 * math.cos(angle)  # 각도에 따른 x 위치 계산
-    y = win.get_height() // 2 + 600 * math.sin(angle)  # 각도에 따른 y 위치 계산
-    direction = math.atan2(win.get_height() // 2 - y, win.get_width() // 2 - x)  # 중앙을 향한 방향 벡터 계산
-    enemies.append([x, y, direction])
+# Star settings
+star_size = 60  # 크기를 더 크게 조정
+star_appear_time = 10
 
-# 폰트 설정 (글씨 크기를 72로 키움)
-font = pygame.font.Font(None, 72)
+# Game settings
+clock = pygame.time.Clock()
+font = pygame.font.SysFont("comicsansms", 70)  # 폰트 크기 조정
+level = 1
+max_level = 12
+run = True
+game_active = False
+stage_duration = 30  # 스테이지 진행 시간 (초)
 
-# 게임 시작 여부
-game_started = False
-game_over = False
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
+    win.blit(background_image, (0, 0))
+    win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
+    for enemy_pos, enemy_size in enemies:
+        pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+    if show_star:
+        pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
+    pygame.display.update()
+
+def check_collision(player_pos, enemies):
+    for enemy_pos, enemy_size in enemies:
+        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
+           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
+            return True
+    return False
+
+# Title screen
+def title_screen():
+    win.blit(title_image, (0, 0))
+    pygame.display.update()
+
+# Intro screen
+def intro_screen(stage):
+    win.blit(stage_intro_images[stage - 1], (0, 0))
+    pygame.display.update()
+    pygame.time.delay(3000)
+
+# 스테이지 설정에 따라 적을 생성하는 함수
+def generate_enemies(level):
+    if level == 1:
+        speed = 10
+        directions = [(0, 1)]
+        sizes = [40]
+        num_enemies = random.randint(1, 2)
+    elif level == 2:
+        speed = 10
+        directions = [(0, 1)]
+        sizes = [40]
+        num_enemies = random.randint(1, 3)
+    elif level == 3:
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
+    elif level == 4:
+        speed = random.randint(10, 12)
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(3, 8)
+    elif level == 5:
+        speed = random.randint(10, 12)
+        directions = [(1, 0), (-1, 0)]
+        sizes = [20, 40]
+        num_enemies = random.randint(6, 16)
+    elif level == 6:
+        speed = random.randint(10, 14)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        sizes = [20, 40]
+        num_enemies = random.randint(6, 20)
+    elif level == 7:
+        speed = random.randint(10, 16)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(6, 24)
+    elif level == 8:
+        speed = random.randint(10, 18)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(6, 26)
+    elif level == 9:
+        speed = random.randint(10, 18)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(8, 30)
+    elif level == 10:
+        speed = random.randint(10, 20)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(8, 30)
+    elif level == 11:
+        speed = random.randint(10, 20)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(10, 32)
+    elif level == 12:
+        speed = random.randint(10, 20)
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        sizes = [20, 40, 60]
+        num_enemies = random.randint(15, 32)
+
+    enemies = []
+    for _ in range(num_enemies):
+        direction = random.choice(directions)
+        size = random.choice(sizes)
+        if direction == (0, 1):  # 상단에서
+            pos = [random.randint(0, 1200-size), 0]
+        elif direction == (0, -1):  # 하단에서
+            pos = [random.randint(0, 1200-size), 700-size]
+        elif direction == (1, 0):  # 좌측에서
+            pos = [0, random.randint(0, 700-size)]
+        elif direction == (-1, 0):  # 우측에서
+            pos = [1200-size, random.randint(0, 700-size)]
+        elif direction == (1, 1):  # 좌측 상단에서
+            pos = [0, 0]
+        elif direction == (1, -1):  # 좌측 하단에서
+            pos = [0, 700-size]
+        elif direction == (-1, 1):  # 우측 상단에서
+            pos = [1200-size, 0]
+        elif direction == (-1, -1):  # 우측 하단에서
+            pos = [1200-size, 700-size]
+        enemies.append((pos, size, direction, speed))
+
+    return enemies
 
 # 게임 루프
-run = True
-clock = pygame.time.Clock()
-
 while run:
-    clock.tick(30)  # FPS 설정
+    if not game_active:
+        title_screen()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    game_active = True
+                    player_pos = [600, 350]  # 플레이어를 중앙에 위치
+                    enemies = []
+                    show_star = False
+                    star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+                    start_ticks = pygame.time.get_ticks()  # 시작 시간
+                    intro_screen(level)
+    else:
+        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            player_pos[0] -= player_speed
+            player_image = player_image2
+        if keys[pygame.K_RIGHT]:
+            player_pos[0] += player_speed
+            player_image = player_image1
+        if keys[pygame.K_UP]:
+            player_pos[1] -= player_speed
+            player_image = player_image1
+        if keys[pygame.K_DOWN]:
+            player_pos[1] += player_speed
+            player_image = player_image2
+
+        if seconds > star_appear_time:
+            show_star = True
+
+        if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
+            level += 1
+            if level > max_level:
+                win.fill((0, 0, 0))
+                text = font.render("Cool", True, WHITE)
+                win.blit(text, (450, 350))
+                pygame.display.update()
+                pygame.time.delay(3000)
+                run = False
+            else:
+                player_pos = [600, 350]  # 레벨 시작 시 플레이어를 중앙에 위치
+                intro_screen(level)
+                start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
+                enemies = []
+                show_star = False
+                star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+
+        if seconds < stage_duration:
+            if random.random() < 0.02:  # 2% 확률로 적 생성
+                new_enemies = generate_enemies(level)
+                enemies.extend(new_enemies)
+
+        for enemy in enemies:
+            pos, size, direction, speed = enemy
+            pos[0] += direction[0] * speed
+            pos[1] += direction[1] * speed
+
+        if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
+            win.fill((0, 0, 0))
+            text = font.render("Game Over", True, WHITE)
+            win.blit(text, (450, 350))
+            pygame.display.update()
+            pygame.time.delay(3000)
             run = False
 
-        if event.type == pygame.KEYDOWN:
-            if not game_started:
-                if event.key == pygame.K_RETURN:
-                    game_started = True
-                    game_over = False
-                    player_x = win.get_width() // 2
-                    player_y = win.get_height() // 2
-                    enemies.clear()
-            elif game_over:
-                if event.key == pygame.K_RETURN:
-                    game_started = True
-                    game_over = False
-                    player_x = win.get_width() // 2
-                    player_y = win.get_height() // 2
-                    enemies.clear()
-
-    if not game_started:
-        win.blit(cover_image, (0, 0))
-        text = font.render("Start the game : Enter", True, (255, 255, 255))
-        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() - 50))
-        win.blit(text, text_rect)
-        pygame.display.update()
-        continue
-
-    if game_over:
-        win.blit(end_image, (0, 0))
-        text = font.render("Revenge the game : Enter", True, (128, 0, 128))  # 자주색으로 변경
-        text_rect = text.get_rect(center=(win.get_width() // 2, win.get_height() // 2))  # 위치 중앙으로 변경
-        win.blit(text, text_rect)
-        pygame.display.update()
-        continue
-
-    # 키 입력 처리
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] or keys[pygame.K_DOWN]:
-        player_image = player_image2
-    if keys[pygame.K_RIGHT] or keys[pygame.K_UP]:
-        player_image = player_image1
-
-    if keys[pygame.K_LEFT]:
-        player_x -= player_speed
-    if keys[pygame.K_RIGHT]:
-        player_x += player_speed
-    if keys[pygame.K_UP]:
-        player_y -= player_speed
-    if keys[pygame.K_DOWN]:
-        player_y += player_speed
-
-    # 플레이어 경계 처리
-    if player_x < 0:
-        player_x = 0
-    if player_x > win.get_width() - player_width:
-        player_x = win.get_width() - player_width
-    if player_y < 0:
-        player_y = 0
-    if player_y > win.get_height() - player_height:
-        player_y = win.get_height() - player_height
-
-    # 적 생성 및 이동
-    if random.randint(1, 20) == 1:
-        create_enemy()
-
-    for enemy in enemies:
-        enemy[0] += enemy_speed * math.cos(enemy[2])  # x 방향으로 이동
-        enemy[1] += enemy_speed * math.sin(enemy[2])  # y 방향으로 이동
-        if (enemy[0] < 0 or enemy[0] > win.get_width() or 
-            enemy[1] < 0 or enemy[1] > win.get_height()):
-            enemies.remove(enemy)
-
-    # 충돌 검사
-    player_rect = pygame.Rect(player_x, player_y, player_width, player_height)
-    for enemy in enemies:
-        enemy_rect = pygame.Rect(enemy[0], enemy[1], enemy_width, enemy_height)
-        if player_rect.colliderect(enemy_rect):
-            game_over = True
-
-    # 화면 그리기
-    win.blit(background, (0, 0))
-    win.blit(player_image, (player_x, player_y))
-    for enemy in enemies:
-        win.blit(enemy_image, (enemy[0], enemy[1]))
-    pygame.display.update()
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1])
+        clock.tick(30)
 
 pygame.quit()
