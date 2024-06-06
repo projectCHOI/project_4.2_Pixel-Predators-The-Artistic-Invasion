@@ -10,7 +10,7 @@ pygame.display.set_caption("Red Box the Cookie")
 
 # Load images
 title_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
-title_image = pygame.transform.scale(title_image, (500, 500))
+title_image = pygame.transform.scale(title_image, (1200, 700))
 
 stage_images = [
     ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
@@ -40,8 +40,8 @@ stage_images = [
 ]
 
 # Scale images to fit the screen
-stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (500, 500)) for img in stage_images]
-stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (500, 500)) for img in stage_images]
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1200, 700)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1200, 700)) for img in stage_images]
 
 # Define colors
 WHITE = (255, 255, 255)
@@ -49,16 +49,16 @@ RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
 # Player settings
-player_size = 20
-player_speed = 10
+player_size = 40  # 크기를 더 크게 조정
+player_speed = 20  # 속도 조정
 
 # Star settings
-star_size = 30
+star_size = 60  # 크기를 더 크게 조정
 star_appear_time = 10
 
 # Game settings
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("comicsansms", 35)
+font = pygame.font.SysFont("comicsansms", 70)  # 폰트 크기 조정
 level = 1
 max_level = 12
 run = True
@@ -95,64 +95,64 @@ def intro_screen(stage):
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level):
     if level == 1:
-        speed = 5
+        speed = 10
         directions = [(0, 1)]
-        sizes = [20]
+        sizes = [40]
         num_enemies = random.randint(1, 2)
     elif level == 2:
-        speed = 5
+        speed = 10
         directions = [(0, 1)]
-        sizes = [20]
+        sizes = [40]
         num_enemies = random.randint(1, 3)
     elif level == 3:
-        speed = 5
+        speed = 10
         directions = [(0, 1), (0, -1)]
-        sizes = [20, 30]
+        sizes = [40, 60]
         num_enemies = random.randint(1, 4)
     elif level == 4:
-        speed = random.randint(5, 6)
+        speed = random.randint(10, 12)
         directions = [(0, 1), (0, -1)]
-        sizes = [20, 30]
+        sizes = [40, 60]
         num_enemies = random.randint(3, 8)
     elif level == 5:
-        speed = random.randint(5, 6)
+        speed = random.randint(10, 12)
         directions = [(1, 0), (-1, 0)]
-        sizes = [10, 20]
+        sizes = [20, 40]
         num_enemies = random.randint(6, 16)
     elif level == 6:
-        speed = random.randint(5, 7)
+        speed = random.randint(10, 14)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [10, 20]
+        sizes = [20, 40]
         num_enemies = random.randint(6, 20)
     elif level == 7:
-        speed = random.randint(5, 8)
+        speed = random.randint(10, 16)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(6, 24)
     elif level == 8:
-        speed = random.randint(5, 9)
+        speed = random.randint(10, 18)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(6, 26)
     elif level == 9:
-        speed = random.randint(5, 9)
+        speed = random.randint(10, 18)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(8, 30)
     elif level == 10:
-        speed = random.randint(5, 10)
+        speed = random.randint(10, 20)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(8, 30)
     elif level == 11:
-        speed = random.randint(5, 10)
+        speed = random.randint(10, 20)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(10, 32)
     elif level == 12:
-        speed = random.randint(5, 10)
+        speed = random.randint(10, 20)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [10, 20, 30]
+        sizes = [20, 40, 60]
         num_enemies = random.randint(15, 32)
 
     enemies = []
@@ -160,21 +160,21 @@ def generate_enemies(level):
         direction = random.choice(directions)
         size = random.choice(sizes)
         if direction == (0, 1):  # 상단에서
-            pos = [random.randint(0, 500-size), 0]
+            pos = [random.randint(0, 1200-size), 0]
         elif direction == (0, -1):  # 하단에서
-            pos = [random.randint(0, 500-size), 500-size]
+            pos = [random.randint(0, 1200-size), 700-size]
         elif direction == (1, 0):  # 좌측에서
-            pos = [0, random.randint(0, 500-size)]
+            pos = [0, random.randint(0, 700-size)]
         elif direction == (-1, 0):  # 우측에서
-            pos = [500-size, random.randint(0, 500-size)]
+            pos = [1200-size, random.randint(0, 700-size)]
         elif direction == (1, 1):  # 좌측 상단에서
             pos = [0, 0]
         elif direction == (1, -1):  # 좌측 하단에서
-            pos = [0, 500-size]
+            pos = [0, 700-size]
         elif direction == (-1, 1):  # 우측 상단에서
-            pos = [500-size, 0]
+            pos = [1200-size, 0]
         elif direction == (-1, -1):  # 우측 하단에서
-            pos = [500-size, 500-size]
+            pos = [1200-size, 700-size]
         enemies.append((pos, size, direction, speed))
 
     return enemies
@@ -189,10 +189,10 @@ while run:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_active = True
-                    player_pos = [250, 250]  # 플레이어를 중앙에 위치
+                    player_pos = [600, 350]  # 플레이어를 중앙에 위치
                     enemies = []
                     show_star = False
-                    star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
+                    star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
     else:
@@ -204,11 +204,11 @@ while run:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] and player_pos[0] > 0:
             player_pos[0] -= player_speed
-        if keys[pygame.K_RIGHT] and player_pos[0] < 500 - player_size:
+        if keys[pygame.K_RIGHT] and player_pos[0] < 1200 - player_size:
             player_pos[0] += player_speed
         if keys[pygame.K_UP] and player_pos[1] > 0:
             player_pos[1] -= player_speed
-        if keys[pygame.K_DOWN] and player_pos[1] < 500 - player_size:
+        if keys[pygame.K_DOWN] and player_pos[1] < 700 - player_size:
             player_pos[1] += player_speed
 
         if seconds > star_appear_time:
@@ -220,17 +220,17 @@ while run:
             if level > max_level:
                 win.fill((0, 0, 0))
                 text = font.render("Cool", True, WHITE)
-                win.blit(text, (150, 250))
+                win.blit(text, (450, 350))
                 pygame.display.update()
                 pygame.time.delay(3000)
                 run = False
             else:
-                player_pos = [250, 250]  # 레벨 시작 시 플레이어를 중앙에 위치
+                player_pos = [600, 350]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen(level)
                 start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
                 enemies = []
                 show_star = False
-                star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
+                star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
 
         if seconds < stage_duration:
             if random.random() < 0.02:  # 2% 확률로 적 생성
@@ -245,7 +245,7 @@ while run:
         if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
             win.fill((0, 0, 0))
             text = font.render("Game Over", True, WHITE)
-            win.blit(text, (150, 250))
+            win.blit(text, (450, 350))
             pygame.display.update()
             pygame.time.delay(3000)
             run = False
