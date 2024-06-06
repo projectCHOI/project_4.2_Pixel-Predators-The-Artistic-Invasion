@@ -1,27 +1,62 @@
 import pygame
 import random
 
-# Pygame 초기화
+# Initialize Pygame
 pygame.init()
 
-# 디스플레이 설정
-win = pygame.display.set_mode((500, 500))
+# Set up display
+win = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("Red Box the Cookie")
 
-# 색상 정의
+# Load images
+title_image = pygame.image.load("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
+title_image = pygame.transform.scale(title_image, (500, 500))
+
+stage_images = [
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_B.JPG"),
+    ("C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG", 
+     "C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
+]
+
+# Scale images to fit the screen
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (500, 500)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (500, 500)) for img in stage_images]
+
+# Define colors
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
-# 플레이어 설정
+# Player settings
 player_size = 20
 player_speed = 10
 
-# 별 설정
+# Star settings
 star_size = 30
 star_appear_time = 10
 
-# 게임 설정
+# Game settings
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("comicsansms", 35)
 level = 1
@@ -30,8 +65,8 @@ run = True
 game_active = False
 stage_duration = 30  # 스테이지 진행 시간 (초)
 
-def draw_objects(player_pos, enemies, star_pos, show_star):
-    win.fill((0, 0, 0))  # 화면을 검은색으로 채우기
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
+    win.blit(background_image, (0, 0))
     pygame.draw.rect(win, WHITE, (player_pos[0], player_pos[1], player_size, player_size))
     for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
@@ -46,9 +81,14 @@ def check_collision(player_pos, enemies):
             return True
     return False
 
-# 인트로 화면
-def intro_screen():
-    win.fill((0, 0, 0))
+# Title screen
+def title_screen():
+    win.blit(title_image, (0, 0))
+    pygame.display.update()
+
+# Intro screen
+def intro_screen(stage):
+    win.blit(stage_intro_images[stage - 1], (0, 0))
     pygame.display.update()
     pygame.time.delay(3000)
 
@@ -142,6 +182,7 @@ def generate_enemies(level):
 # 게임 루프
 while run:
     if not game_active:
+        title_screen()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -153,7 +194,7 @@ while run:
                     show_star = False
                     star_pos = [random.randint(0, 500 - star_size), random.randint(0, 500 - star_size)]
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
-                    intro_screen()
+                    intro_screen(level)
     else:
         seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
         for event in pygame.event.get():
@@ -185,7 +226,7 @@ while run:
                 run = False
             else:
                 player_pos = [250, 250]  # 레벨 시작 시 플레이어를 중앙에 위치
-                intro_screen()
+                intro_screen(level)
                 start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
                 enemies = []
                 show_star = False
@@ -209,7 +250,7 @@ while run:
             pygame.time.delay(3000)
             run = False
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star)
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1])
         clock.tick(30)
 
 pygame.quit()
