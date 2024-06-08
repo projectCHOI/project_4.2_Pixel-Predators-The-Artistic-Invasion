@@ -83,13 +83,24 @@ invincible = False
 invincible_start_time = 0
 invincible_duration = 2000  # 무적 시간 (밀리초)
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
+# Attack settings
+attacks = []
+attack_speed = 20
+
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
+    
+    # Draw attacks
+    for attack in attacks:
+        pygame.draw.line(win, RED, attack[0], attack[1], 5)
+    
+    # Draw mouse position
+    pygame.draw.circle(win, RED, mouse_pos, 5)
     
     # Draw health
     for i in range(current_health):
@@ -219,10 +230,16 @@ while run:
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
     else:
+        mouse_pos = pygame.mouse.get_pos()
         seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
+                    attack_end = mouse_pos
+                    attacks.append((attack_start, attack_end))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -284,7 +301,16 @@ while run:
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1])
+        # Update attacks
+        for attack in attacks:
+            start, end = attack
+            direction = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction[0], direction[1])
+            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
+            new_end = (start[0] + direction[0], start[1] + direction[1])
+            attack = (start, new_end)
+
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos)
         clock.tick(30)
 
 pygame.quit()
