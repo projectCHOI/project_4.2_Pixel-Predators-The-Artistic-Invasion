@@ -50,6 +50,12 @@ player_image2 = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_C
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
+# Health settings
+health_image = pygame.image.load(r"C:\Users\HOME\Desktop\새싹_교육\GitHub_CHOI\project_4.2_Pixel Predators-The Artistic Invasion\project4.2_mob\mob_png.png")
+health_image = pygame.transform.scale(health_image, (40, 40))
+max_health = 5
+current_health = 3
+
 # Initial player image
 player_image = player_image1
 
@@ -73,6 +79,9 @@ max_level = 12
 run = True
 game_active = False
 stage_duration = 30  # 스테이지 진행 시간 (초)
+invincible = False
+invincible_start_time = 0
+invincible_duration = 2000  # 무적 시간 (밀리초)
 
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
     win.blit(background_image, (0, 0))
@@ -81,6 +90,11 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image):
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
+    
+    # Draw health
+    for i in range(current_health):
+        win.blit(health_image, (10 + i * 50, 650))
+    
     pygame.display.update()
 
 def check_collision(player_pos, enemies):
@@ -255,13 +269,20 @@ while run:
             pos[0] += direction[0] * speed
             pos[1] += direction[1] * speed
 
-        if check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
-            win.fill((0, 0, 0))
-            text = font.render("Game Over", True, WHITE)
-            win.blit(text, (450, 350))
-            pygame.display.update()
-            pygame.time.delay(3000)
-            run = False
+        if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
+            current_health -= 1
+            invincible = True
+            invincible_start_time = pygame.time.get_ticks()
+            if current_health <= 0:
+                win.fill((0, 0, 0))
+                text = font.render("Game Over", True, WHITE)
+                win.blit(text, (450, 350))
+                pygame.display.update()
+                pygame.time.delay(3000)
+                run = False
+
+        if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
+            invincible = False
 
         draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1])
         clock.tick(30)
