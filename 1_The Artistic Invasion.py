@@ -108,8 +108,8 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(health_image, (10 + i * 50, 650))
     
     # Draw enemies defeated
-    text = font.render(f"Defeated: {enemies_defeated}", True, WHITE)
-    win.blit(text, (900, 10))
+    text = font.render(f"{enemies_defeated}", True, WHITE)
+    win.blit(text, (1100, 10))
     
     pygame.display.update()
 
