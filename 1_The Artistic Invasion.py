@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1200, 700))
-pygame.display.setCaption("The Artistic Invasion")
+pygame.display.set_caption("The Artistic Invasion")
 
 # Load images
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
