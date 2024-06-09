@@ -115,6 +115,17 @@ def check_collision(player_pos, enemies):
             return True
     return False
 
+def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+    ex, ey = enemy_pos
+    sx, sy = attack_start
+    ex2, ey2 = ex + enemy_size, ey + enemy_size
+
+    # 광선과 적의 충돌 체크
+    if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
+       min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
+        return True
+    return False
+
 # Title screen
 def title_screen():
     win.blit(title_image, (0, 0))
@@ -311,8 +322,22 @@ while run:
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
             new_end = (start[0] + direction[0], start[1] + direction[1])
             if 0 <= new_end[0] <= 1200 and 0 <= new_end[1] <= 700:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1])))ddd
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1])))
         attacks = new_attacks
+
+        # Check for attack collisions with enemies
+        new_enemies = []
+        for enemy in enemies:
+            enemy_pos, enemy_size, _, _ = enemy
+            hit = False
+            for attack in attacks:
+                attack_start, attack_end = attack
+                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+                    hit = True
+                    break
+            if not hit:
+                new_enemies.append(enemy)
+        enemies = new_enemies
 
         draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos)
         clock.tick(30)
