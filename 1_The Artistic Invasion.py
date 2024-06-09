@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1200, 700))
-pygame.display.set_caption("The Artistic Invasion")
+pygame.display.setCaption("The Artistic Invasion")
 
 # Load images
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -86,6 +86,7 @@ invincible_duration = 2000  # 무적 시간 (밀리초)
 # Attack settings
 attacks = []
 attack_speed = 20
+enemies_defeated = 0  # 제거된 적의 수
 
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos):
     win.blit(background_image, (0, 0))
@@ -105,6 +106,10 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     # Draw health
     for i in range(current_health):
         win.blit(health_image, (10 + i * 50, 650))
+    
+    # Draw enemies defeated
+    text = font.render(f"Defeated: {enemies_defeated}", True, WHITE)
+    win.blit(text, (900, 10))
     
     pygame.display.update()
 
@@ -334,6 +339,7 @@ while run:
                 attack_start, attack_end = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
+                    enemies_defeated += 1  # Increase defeated enemies count
                     break
             if not hit:
                 new_enemies.append(enemy)
