@@ -16,27 +16,27 @@ stage_images = [
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage2_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage5_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage6_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage7_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage8_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage9_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage10_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_B.JPG"),
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage11_World_B.JPG"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG", 
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_world/Stage12_World_B.JPG")
 ]
 
 # Scale images to fit the screen
@@ -78,7 +78,7 @@ level = 1
 max_level = 12
 run = True
 game_active = False
-stage_duration = 30  # 스테이지 진행 시간 (초)
+stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
 invincible_duration = 2000  # 무적 시간 (밀리초)
@@ -115,237 +115,4 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
 
 def check_collision(player_pos, enemies):
     for enemy_pos, enemy_size in enemies:
-        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
-           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
-            return True
-    return False
-
-def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
-    ex, ey = enemy_pos
-    sx, sy = attack_start
-    ex2, ey2 = ex + enemy_size, ey + enemy_size
-
-    # 광선과 적의 충돌 체크
-    if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
-       min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
-        return True
-    return False
-
-# Title screen
-def title_screen():
-    win.blit(title_image, (0, 0))
-    pygame.display.update()
-
-# Intro screen
-def intro_screen(stage):
-    win.blit(stage_intro_images[stage - 1], (0, 0))
-    pygame.display.update()
-    pygame.time.delay(3000)
-
-# 스테이지 설정에 따라 적을 생성하는 함수
-def generate_enemies(level):
-    if level == 1:
-        speed = 10
-        directions = [(0, 1)]
-        sizes = [40]
-        num_enemies = random.randint(1, 2)
-    elif level == 2:
-        speed = 10
-        directions = [(0, 1)]
-        sizes = [40]
-        num_enemies = random.randint(1, 3)
-    elif level == 3:
-        speed = 10
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(1, 4)
-    elif level == 4:
-        speed = random.randint(10, 12)
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(3, 8)
-    elif level == 5:
-        speed = random.randint(10, 12)
-        directions = [(1, 0), (-1, 0)]
-        sizes = [20, 40]
-        num_enemies = random.randint(6, 16)
-    elif level == 6:
-        speed = random.randint(10, 14)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40]
-        num_enemies = random.randint(6, 20)
-    elif level == 7:
-        speed = random.randint(10, 16)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 24)
-    elif level == 8:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 26)
-    elif level == 9:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
-    elif level == 10:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
-    elif level == 11:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(10, 32)
-    elif level == 12:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(15, 32)
-
-    enemies = []
-    for _ in range(num_enemies):
-        direction = random.choice(directions)
-        size = random.choice(sizes)
-        if direction == (0, 1):  # 상단에서
-            pos = [random.randint(0, 1200-size), 0]
-        elif direction == (0, -1):  # 하단에서
-            pos = [random.randint(0, 1200-size), 700-size]
-        elif direction == (1, 0):  # 좌측에서
-            pos = [0, random.randint(0, 700-size)]
-        elif direction == (-1, 0):  # 우측에서
-            pos = [1200-size, random.randint(0, 700-size)]
-        elif direction == (1, 1):  # 좌측 상단에서
-            pos = [0, 0]
-        elif direction == (1, -1):  # 좌측 하단에서
-            pos = [0, 700-size]
-        elif direction == (-1, 1):  # 우측 상단에서
-            pos = [1200-size, 0]
-        elif direction == (-1, -1):  # 우측 하단에서
-            pos = [1200-size, 700-size]
-        enemies.append((pos, size, direction, speed))
-
-    return enemies
-
-# 게임 루프
-while run:
-    if not game_active:
-        title_screen()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    game_active = True
-                    player_pos = [600, 350]  # 플레이어를 중앙에 위치
-                    enemies = []
-                    show_star = False
-                    star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
-                    start_ticks = pygame.time.get_ticks()  # 시작 시간
-                    intro_screen(level)
-    else:
-        mouse_pos = pygame.mouse.get_pos()
-        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
-                attack_end = mouse_pos
-                attacks.append((attack_start, attack_end))
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            player_pos[0] -= player_speed
-            player_image = player_image2
-        if keys[pygame.K_d]:
-            player_pos[0] += player_speed
-            player_image = player_image1
-        if keys[pygame.K_w]:
-            player_pos[1] -= player_speed
-            player_image = player_image1
-        if keys[pygame.K_s]:
-            player_pos[1] += player_speed
-            player_image = player_image2
-
-        if seconds > star_appear_time:
-            show_star = True
-
-        if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
-            level += 1
-            if level > max_level:
-                win.fill((0, 0, 0))
-                text = font.render("Cool", True, WHITE)
-                win.blit(text, (450, 350))
-                pygame.display.update()
-                pygame.time.delay(3000)
-                run = False
-            else:
-                player_pos = [600, 350]  # 레벨 시작 시 플레이어를 중앙에 위치
-                intro_screen(level)
-                start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
-                enemies = []
-                show_star = False
-                star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
-
-        if seconds < stage_duration:
-            if random.random() < 0.02:  # 2% 확률로 적 생성
-                new_enemies = generate_enemies(level)
-                enemies.extend(new_enemies)
-
-        for enemy in enemies:
-            pos, size, direction, speed = enemy
-            pos[0] += direction[0] * speed
-            pos[1] += direction[1] * speed
-
-        if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
-            current_health -= 1
-            invincible = True
-            invincible_start_time = pygame.time.get_ticks()
-            if current_health <= 0:
-                win.fill((0, 0, 0))
-                text = font.render("Game Over", True, WHITE)
-                win.blit(text, (450, 350))
-                pygame.display.update()
-                pygame.time.delay(3000)
-                run = False
-
-        if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
-            invincible = False
-
-        # Update attacks
-        new_attacks = []
-        for attack in attacks:
-            start, end = attack
-            direction = (end[0] - start[0], end[1] - start[1])
-            length = math.hypot(direction[0], direction[1])
-            if length == 0:
-                continue
-            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
-            new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= 1200 and 0 <= new_end[1] <= 700:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1])))
-        attacks = new_attacks
-
-        # Check for attack collisions with enemies
-        new_enemies = []
-        for enemy in enemies:
-            enemy_pos, enemy_size, _, _ = enemy
-            hit = False
-            for attack in attacks:
-                attack_start, attack_end = attack
-                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
-                    hit = True
-                    enemies_defeated += 1  # Increase defeated enemies count
-                    break
-            if not hit:
-                new_enemies.append(enemy)
-        enemies = new_enemies
-
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos)
-        clock.tick(30)
-
-pygame.quit()
+        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos
