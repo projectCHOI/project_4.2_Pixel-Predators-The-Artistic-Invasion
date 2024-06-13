@@ -88,6 +88,10 @@ attacks = []
 attack_speed = 20
 enemies_defeated = 0  # 제거된 적의 수
 
+# Mouse click tracking
+mouse_down_time = 0
+mouse_held = False
+
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
@@ -98,7 +102,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     
     # Draw attacks
     for attack in attacks:
-        pygame.draw.line(win, RED, attack[0], attack[1], 3)
+        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
     
     # Draw mouse position
     pygame.draw.circle(win, RED, mouse_pos, 5)
@@ -252,9 +256,15 @@ while run:
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_down_time = pygame.time.get_ticks()
+                mouse_held = True
+            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                mouse_held = False
+                hold_duration = pygame.time.get_ticks() - mouse_down_time
                 attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                 attack_end = mouse_pos
-                attacks.append((attack_start, attack_end))
+                attack_thickness = 6 if hold_duration >= 2000 else 3
+                attacks.append((attack_start, attack_end, attack_thickness))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -316,10 +326,10 @@ while run:
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
 
-        # Update attacks
+        # 마우스 클릭
         new_attacks = []
         for attack in attacks:
-            start, end = attack
+            start, end, thickness = attack
             direction = (end[0] - start[0], end[1] - start[1])
             length = math.hypot(direction[0], direction[1])
             if length == 0:
@@ -327,7 +337,7 @@ while run:
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
             new_end = (start[0] + direction[0], start[1] + direction[1])
             if 0 <= new_end[0] <= 1200 and 0 <= new_end[1] <= 700:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1])))
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
         # Check for attack collisions with enemies
@@ -336,7 +346,7 @@ while run:
             enemy_pos, enemy_size, _, _ = enemy
             hit = False
             for attack in attacks:
-                attack_start, attack_end = attack
+                attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1  # Increase defeated enemies count
