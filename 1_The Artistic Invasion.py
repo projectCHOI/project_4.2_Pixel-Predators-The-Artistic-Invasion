@@ -50,8 +50,8 @@ player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_C
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
-# Health settings
-health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
+# 여기 Health settings
+health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png")
 health_image = pygame.transform.scale(health_image, (40, 40))
 max_health = 5
 current_health = 3
