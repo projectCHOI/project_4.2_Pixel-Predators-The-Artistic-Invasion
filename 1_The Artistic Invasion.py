@@ -8,7 +8,7 @@ pygame.init()
 win = pygame.display.set_mode((1200, 700))
 pygame.display.set_caption("The Artistic Invasion")
 
-# Load images
+# 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
 title_image = pygame.transform.scale(title_image, (1200, 700))
 
@@ -39,39 +39,39 @@ stage_images = [
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
 ]
 
-# Scale images to fit the screen
+# 화면 크기에 맞게 이미지 스케일 조정
 stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1200, 700)) for img in stage_images]
 stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1200, 700)) for img in stage_images]
 
-# Load player images
+# 플레이어 이미지 로드
 player_width, player_height = 40, 40  # 크기
 player_image1 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me1_png.png")
 player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me2_png.png")
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
-# 여기 Health settings
+# Health 설정
 health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png")
 health_image = pygame.transform.scale(health_image, (40, 40))
 max_health = 5
 current_health = 3
 
-# Initial player image
+# 초기 플레이어 이미지
 player_image = player_image1
 
-# Define colors
+# 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 
-# Player settings
+# 플레이어 설정
 player_speed = 10  # 속도 조정
 
-# Star settings
+# 별 설정
 star_size = 60  # 크기를 더 크게 조정
 star_appear_time = 10
 
-# Game settings
+# 게임 설정
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("comicsansms", 70)  # 폰트 크기 조정
 level = 1
@@ -83,12 +83,12 @@ invincible = False
 invincible_start_time = 0
 invincible_duration = 2000  # 무적 시간 (밀리초)
 
-# Attack settings
+# 공격 설정
 attacks = []
 attack_speed = 20
 enemies_defeated = 0  # 제거된 적의 수
 
-# Mouse click tracking
+# 마우스 클릭 추적
 mouse_down_time = 0
 mouse_held = False
 
@@ -100,18 +100,18 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     if show_star:
         pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
     
-    # Draw attacks
+    # 공격 그리기
     for attack in attacks:
         pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
     
-    # Draw mouse position
+    # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
     
-    # Draw health
+    # 체력 그리기
     for i in range(current_health):
         win.blit(health_image, (10 + i * 50, 650))
     
-    # Draw enemies defeated
+    # 제거된 적의 수 그리기
     text = font.render(f"{enemies_defeated}", True, WHITE)
     win.blit(text, (1100, 10))
     
@@ -135,12 +135,12 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
         return True
     return False
 
-# Title screen
+# 타이틀 화면
 def title_screen():
     win.blit(title_image, (0, 0))
     pygame.display.update()
 
-# Intro screen
+# 인트로 화면
 def intro_screen(stage):
     win.blit(stage_intro_images[stage - 1], (0, 0))
     pygame.display.update()
@@ -340,7 +340,7 @@ while run:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
-        # Check for attack collisions with enemies
+        # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
             enemy_pos, enemy_size, _, _ = enemy
@@ -349,7 +349,7 @@ while run:
                 attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
-                    enemies_defeated += 1  # Increase defeated enemies count
+                    enemies_defeated += 1  # 제거된 적의 수 증가
                     break
             if not hit:
                 new_enemies.append(enemy)
