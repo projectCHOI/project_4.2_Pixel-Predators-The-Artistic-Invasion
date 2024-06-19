@@ -69,6 +69,20 @@ player_speed = 10  # 속도 조정
 
 # 별 설정
 star_size = 60  # 크기를 더 크게 조정
+star_images = [
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_1_RJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_2_OJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_3_YJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_4_GJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_5_BJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_6_IJewelry.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_7_VJewelry.png"
+]
 star_appear_time = 10
 
 # 게임 설정
@@ -92,13 +106,13 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos):
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
-        pygame.draw.rect(win, YELLOW, (star_pos[0], star_pos[1], star_size, star_size))
+        win.blit(star_image, (star_pos[0], star_pos[1]))
     
     # 공격 그리기
     for attack in attacks:
@@ -247,6 +261,7 @@ while run:
                     enemies = []
                     show_star = False
                     star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+                    star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
     else:
@@ -300,6 +315,7 @@ while run:
                 enemies = []
                 show_star = False
                 star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+                star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
 
         if seconds < stage_duration:
             if random.random() < 0.02:  # 2% 확률로 적 생성
@@ -355,7 +371,7 @@ while run:
                 new_enemies.append(enemy)
         enemies = new_enemies
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos)
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image)
         clock.tick(30)
 
 pygame.quit()
