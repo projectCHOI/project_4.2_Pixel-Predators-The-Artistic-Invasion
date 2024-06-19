@@ -63,6 +63,7 @@ player_image = player_image1
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+BLACK = (0, 0, 0)  # 색상을 검은색으로 설정
 
 # 플레이어 설정
 player_speed = 10  # 속도 조정
@@ -87,7 +88,7 @@ star_appear_time = 10
 
 # 게임 설정
 clock = pygame.time.Clock()
-font = pygame.font.SysFont("comicsansms", 70)  # 폰트 크기 조정
+font = pygame.font.SysFont("comicsansms", 50)  # 폰트 크기를 50으로 설정
 level = 1
 max_level = 12
 run = True
@@ -126,7 +127,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(health_image, (10 + i * 50, 650))
     
     # 제거된 적의 수 그리기
-    text = font.render(f"{enemies_defeated}", True, WHITE)
+    text = font.render(f"{enemies_defeated}", True, BLACK)
     win.blit(text, (1100, 10))
     
     pygame.display.update()
