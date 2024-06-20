@@ -96,7 +96,7 @@ game_active = False
 stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
-invincible_duration = 2000  # 무적 시간 (밀리초)
+invincible_duration = 3  # 무적 시간 (밀리초)
 
 # 공격 설정
 attacks = []
