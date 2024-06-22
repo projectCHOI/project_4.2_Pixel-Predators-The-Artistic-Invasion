@@ -105,7 +105,7 @@ invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
 collision_effect_start_time = 0
-collision_effect_duration = 1000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
+collision_effect_duration = 10000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
 
 # 공격 설정
 attacks = []
@@ -363,7 +363,9 @@ while run:
             invincible = False
 
         # 충돌 이미지 표시 시간 체크
-        if pygame.time.get_ticks() - collision_effect_start_time > collision_effect_duration:
+        if pygame.time.get_ticks() - collision_effect_start_time < collision_effect_duration:
+            collision_image = collision_image
+        else:
             collision_image = None
 
         # 마우스 클릭
