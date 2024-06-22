@@ -50,6 +50,13 @@ player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_C
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
+# 충돌 시 이미지 로드
+collision_images = {
+    2: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_1.png"), (player_width, player_height)),
+    1: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_2.png"), (player_width, player_height)),
+    0: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_3.png"), (player_width, player_height))
+}
+
 # Health 설정
 health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png")
 health_image = pygame.transform.scale(health_image, (40, 40))
@@ -97,6 +104,8 @@ stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
+collision_effect_start_time = 0
+collision_effect_duration = 1000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
 
 # 공격 설정
 attacks = []
@@ -107,9 +116,11 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image):
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
+    if collision_image:
+        win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy_pos, enemy_size in enemies:
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
@@ -328,20 +339,32 @@ while run:
             pos[0] += direction[0] * speed
             pos[1] += direction[1] * speed
 
+        collision_image = None
         if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
             current_health -= 1
             invincible = True
             invincible_start_time = pygame.time.get_ticks()
+            collision_effect_start_time = pygame.time.get_ticks()
             if current_health <= 0:
+                collision_image = collision_images[0]
                 win.fill((0, 0, 0))
                 text = font.render("Game Over", True, WHITE)
                 win.blit(text, (450, 350))
+                win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
-                pygame.time.delay(3000)
+                pygame.time.delay(2000)
                 run = False
+            elif current_health == 2:
+                collision_image = collision_images[2]
+            elif current_health == 1:
+                collision_image = collision_images[1]
 
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
+
+        # 충돌 이미지 표시 시간 체크
+        if pygame.time.get_ticks() - collision_effect_start_time > collision_effect_duration:
+            collision_image = None
 
         # 마우스 클릭
         new_attacks = []
@@ -372,7 +395,7 @@ while run:
                 new_enemies.append(enemy)
         enemies = new_enemies
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image)
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image)
         clock.tick(30)
 
 pygame.quit()
