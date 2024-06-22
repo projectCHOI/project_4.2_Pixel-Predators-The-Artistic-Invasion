@@ -105,7 +105,7 @@ invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
 collision_effect_start_time = 0
-collision_effect_duration = 10000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
+collision_effect_duration = 4000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
 
 # 공격 설정
 attacks = []
