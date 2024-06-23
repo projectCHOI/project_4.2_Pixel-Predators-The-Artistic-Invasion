@@ -50,11 +50,11 @@ player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_C
 player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
 player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
 
-# 충돌 시 이미지 로드
+# 충돌 시 이미지 로드(duration=시간)
 collision_images = {
-    2: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_1.png"), (player_width, player_height)),
-    1: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_2.png"), (player_width, player_height)),
-    0: pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_3.png"), (player_width, player_height))
+    3: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_1.png"), (player_width, player_height)), "duration": 5000},
+    2: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_2.png"), (player_width, player_height)), "duration": 5000},
+    1: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_3.png"), (player_width, player_height)), "duration": 5000}
 }
 
 # Health 설정
@@ -104,8 +104,11 @@ stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
+
+# 충돌 효과 설정
 collision_effect_start_time = 0
-collision_effect_duration = 4000  # 충돌 시 이미지 덧씌우기 시간 (밀리초)
+collision_image = None
+collision_effect_duration = 0
 
 # 공격 설정
 attacks = []
@@ -339,25 +342,27 @@ while run:
             pos[0] += direction[0] * speed
             pos[1] += direction[1] * speed
 
-        collision_image = None
         if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
             current_health -= 1
             invincible = True
             invincible_start_time = pygame.time.get_ticks()
             collision_effect_start_time = pygame.time.get_ticks()
             if current_health <= 0:
-                collision_image = collision_images[0]
+                collision_image = collision_images[1]["image"]
+                collision_effect_duration = collision_images[1]["duration"]
                 win.fill((0, 0, 0))
                 text = font.render("Game Over", True, WHITE)
                 win.blit(text, (450, 350))
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
-                pygame.time.delay(2000)
+                pygame.time.delay(collision_effect_duration)
                 run = False
             elif current_health == 2:
-                collision_image = collision_images[2]
+                collision_image = collision_images[3]["image"]
+                collision_effect_duration = collision_images[3]["duration"]
             elif current_health == 1:
-                collision_image = collision_images[1]
+                collision_image = collision_images[2]["image"]
+                collision_effect_duration = collision_images[2]["duration"]
 
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
