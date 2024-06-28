@@ -63,6 +63,16 @@ health_image = pygame.transform.scale(health_image, (40, 40))
 max_health = 5
 current_health = 3
 
+# 스피드 아이템 설정
+speed_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_4_Quickly.png")
+speed_item_image = pygame.transform.scale(speed_item_image, (20, 20))
+speed_item_pos = None
+speed_item_active = False
+speed_item_start_time = 0
+speed_item_duration = 20000  # 20초
+speed_increase_amount = 10  # 스피드 증가량
+speed_item_chance = 0.1  # 10% 확률
+
 # 초기 플레이어 이미지
 player_image = player_image1
 
@@ -74,6 +84,7 @@ BLACK = (0, 0, 0)  # 색상을 검은색으로 설정
 
 # 플레이어 설정
 player_speed = 10  # 속도 조정
+original_player_speed = player_speed
 
 # 별 설정
 star_size = 60  # 크기를 더 크게 조정
@@ -119,7 +130,7 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None):
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -128,6 +139,8 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         win.blit(star_image, (star_pos[0], star_pos[1]))
+    if speed_item_pos:
+        win.blit(speed_item_image, speed_item_pos)
     
     # 공격 그리기
     for attack in attacks:
@@ -397,12 +410,27 @@ while run:
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1  # 제거된 적의 수 증가
+                    # 스피드 아이템 생성
+                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
+                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
                     break
             if not hit:
                 new_enemies.append(enemy)
         enemies = new_enemies
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image)
+        # 스피드 아이템 획득 체크
+        if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
+            speed_item_active = True
+            speed_item_start_time = pygame.time.get_ticks()
+            player_speed = original_player_speed + speed_increase_amount
+            speed_item_pos = None
+
+        # 스피드 아이템 지속시간 체크
+        if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
+            speed_item_active = False
+            player_speed = original_player_speed
+
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos)
         clock.tick(30)
 
 pygame.quit()
