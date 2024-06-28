@@ -65,7 +65,7 @@ current_health = 3
 
 # 스피드 아이템 설정
 speed_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_4_Quickly.png")
-speed_item_image = pygame.transform.scale(speed_item_image, (20, 20))
+speed_item_image = pygame.transform.scale(speed_item_image, (40, 40))
 speed_item_pos = None
 speed_item_active = False
 speed_item_start_time = 0
