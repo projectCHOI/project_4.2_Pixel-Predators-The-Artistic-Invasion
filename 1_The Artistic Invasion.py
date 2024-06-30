@@ -80,6 +80,12 @@ power_item_pos = None
 power_item_active = 0  # 공격력 증가 아이템 획득 수
 power_item_chance = 0.1  # 10% 확률
 
+# 체력 회복 아이템 설정
+heal_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_3_Slowly.png")
+heal_item_image = pygame.transform.scale(heal_item_image, (60, 60))
+heal_item_pos = None
+heal_item_chance = 0.1  # 10% 확률
+
 # 초기 플레이어 이미지
 player_image = player_image1
 
@@ -138,7 +144,7 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None):
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -151,6 +157,8 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
         win.blit(power_item_image, power_item_pos)
+    if heal_item_pos:
+        win.blit(heal_item_image, heal_item_pos)
     
     # 공격 그리기
     for attack in attacks:
@@ -442,6 +450,9 @@ while run:
                     # 공격력 증가 아이템 생성
                     if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
                         power_item_pos = (enemy_pos[0], enemy_pos[1])
+                    # 체력 회복 아이템 생성
+                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
+                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
                     break
             if not hit:
                 new_enemies.append(enemy)
@@ -464,7 +475,13 @@ while run:
             power_item_active += 1
             power_item_pos = None
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos)
+        # 체력 회복 아이템 획득 체크
+        if heal_item_pos and player_pos[0] < heal_item_pos[0] < player_pos[0] + player_width and player_pos[1] < heal_item_pos[1] < player_pos[1] + player_height:
+            if current_health < max_health:
+                current_health += 1
+            heal_item_pos = None
+
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos)
         clock.tick(30)
 
 pygame.quit()
