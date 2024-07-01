@@ -144,6 +144,9 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
+# 획득한 별 이미지 추적
+collected_stars = []
+
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
@@ -174,6 +177,10 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     # 제거된 적의 수 그리기
     text = font.render(f"{enemies_defeated}", True, BLACK)
     win.blit(text, (1100, 10))
+    
+    # 획득한 별 그리기
+    for idx, collected_star in enumerate(collected_stars):
+        win.blit(collected_star, (10 + idx * (star_size + 5), 10))
     
     pygame.display.update()
 
@@ -362,6 +369,7 @@ while run:
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
            (player_pos[1] < star_pos[1] < player_pos[1] + player_height or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
+            collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
                 win.fill((0, 0, 0))
