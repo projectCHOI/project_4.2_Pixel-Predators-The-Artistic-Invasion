@@ -364,6 +364,16 @@ while run:
             player_pos[1] += player_speed
             player_image = player_image2
 
+        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정
+        if player_pos[0] < 0:
+            player_pos[0] = 0
+        if player_pos[0] > 1200 - player_width:
+            player_pos[0] = 1200 - player_width
+        if player_pos[1] < 0:
+            player_pos[1] = 0
+        if player_pos[1] > 700 - player_height:
+            player_pos[1] = 700 - player_height
+
         if seconds > star_appear_time:
             show_star = True
 
