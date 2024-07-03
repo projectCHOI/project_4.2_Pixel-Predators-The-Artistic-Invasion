@@ -81,9 +81,14 @@ power_item_active = 0  # 공격력 증가 아이템 획득 수
 power_item_chance = 0.1  # 10% 확률
 
 # 체력 회복 아이템 설정
-heal_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_3_Slowly.png")
-heal_item_image = pygame.transform.scale(heal_item_image, (60, 60))
+heal_item_images = [
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), (60, 60)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), (60, 60)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), (60, 60)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), (60, 60))
+]
 heal_item_pos = None
+current_heal_item_image = None
 heal_item_chance = 0.1  # 10% 확률
 
 # 초기 플레이어 이미지
@@ -147,7 +152,7 @@ mouse_held = False
 # 획득한 별 이미지 추적
 collected_stars = []
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None):
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -160,7 +165,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
         win.blit(power_item_image, power_item_pos)
-    if heal_item_pos:
+    if heal_item_pos and heal_item_image:
         win.blit(heal_item_image, heal_item_pos)
     
     # 공격 그리기
@@ -378,7 +383,7 @@ while run:
             show_star = True
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or star_pos[1] < player_pos[1] < star_pos[1] + star_size):
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < star_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
@@ -471,6 +476,7 @@ while run:
                     # 체력 회복 아이템 생성
                     if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
                         heal_item_pos = (enemy_pos[0], enemy_pos[1])
+                        current_heal_item_image = random.choice(heal_item_images)
                     break
             if not hit:
                 new_enemies.append(enemy)
@@ -499,7 +505,7 @@ while run:
                 current_health += 1
             heal_item_pos = None
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos)
+        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
 pygame.quit()
