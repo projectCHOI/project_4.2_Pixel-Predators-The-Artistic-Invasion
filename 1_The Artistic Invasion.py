@@ -13,7 +13,7 @@ title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHO
 title_image = pygame.transform.scale(title_image, (1200, 700))
 
 stage_images = [
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
+    (r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world\Stage1_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/world_night sky_0.jpg"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/world_night sky_0.jpg"),
@@ -98,11 +98,15 @@ player_image = player_image1
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)  # 색상을 검은색으로 설정
 
 # 플레이어 설정
 player_speed = 10  # 속도 조정
 original_player_speed = player_speed
+
+# 에너지 볼 설정
+energy_balls = []
 
 # 별 설정
 star_size = 60  # 크기를 더 크게 조정
@@ -157,8 +161,12 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
-    for enemy_pos, enemy_size in enemies:
-        pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+    for enemy in enemies:
+        enemy_pos, enemy_size, enemy_type = enemy
+        if enemy_type == "move_and_shoot":
+            pygame.draw.rect(win, YELLOW, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+        else:
+            pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
@@ -167,6 +175,11 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(power_item_image, power_item_pos)
     if heal_item_pos and heal_item_image:
         win.blit(heal_item_image, heal_item_pos)
+    
+    # 에너지 볼 그리기
+    for ball in energy_balls:
+        color = YELLOW if ball[2] == "yellow" else GREEN
+        pygame.draw.circle(win, color, (ball[0], ball[1]), 5)
     
     # 공격 그리기
     for attack in attacks:
@@ -190,9 +203,9 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     pygame.display.update()
 
 def check_collision(player_pos, enemies):
-    for enemy_pos, enemy_size in enemies:
+    for enemy_pos, enemy_size, _ in enemies:
         if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
-           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
+           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or player_pos[1] < enemy_pos[1] < player_pos[1] + enemy_size):
             return True
     return False
 
@@ -204,6 +217,13 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
     # 광선과 적의 충돌 체크
     if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
        min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
+        return True
+    return False
+
+def check_energy_ball_collision(ball_pos, player_pos):
+    bx, by = ball_pos
+    px, py = player_pos
+    if px < bx < px + player_width and py < by < py + player_height:
         return True
     return False
 
@@ -301,7 +321,13 @@ def generate_enemies(level):
             pos = [1200-size, 0]
         elif direction == (-1, -1):  # 우측 하단에서
             pos = [1200-size, 700-size]
-        enemies.append((pos, size, direction, speed))
+        if size == 40:
+            enemy_type = "move_and_disappear"
+        elif size == 60:
+            enemy_type = "move_and_shoot"
+        elif size == 20:
+            enemy_type = "approach_and_shoot"
+        enemies.append((pos, size, enemy_type, direction, speed))
 
     return enemies
 
@@ -383,7 +409,7 @@ while run:
             show_star = True
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < star_pos[1] + star_size):
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
@@ -408,9 +434,33 @@ while run:
                 enemies.extend(new_enemies)
 
         for enemy in enemies:
-            pos, size, direction, speed = enemy
-            pos[0] += direction[0] * speed
-            pos[1] += direction[1] * speed
+            pos, size, enemy_type, direction, speed = enemy
+            if enemy_type == "move_and_disappear":
+                pos[0] += direction[0] * speed
+                pos[1] += direction[1] * speed
+            elif enemy_type == "move_and_shoot":
+                target_pos = [600, 350]
+                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                length = math.hypot(direction[0], direction[1])
+                direction = [direction[0] / length, direction[1] / length]
+                pos[0] += direction[0] * speed
+                pos[1] += direction[1] * speed
+                if length < 50:
+                    energy_balls.append([pos[0], pos[1], "yellow"])
+            elif enemy_type == "approach_and_shoot":
+                if pygame.time.get_ticks() % 5000 < 2500:
+                    target_pos = [player_pos[0], player_pos[1]]
+                    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                    length = math.hypot(direction[0], direction[1])
+                    direction = [direction[0] / length, direction[1] / length]
+                    pos[0] += direction[0] * speed
+                    pos[1] += direction[1] * speed
+                    if length < 50:
+                        energy_balls.append([pos[0], pos[1], "green"])
+                else:
+                    direction = [random.choice([-1, 1]), random.choice([-1, 1])]
+                    pos[0] += direction[0] * speed
+                    pos[1] += direction[1] * speed
 
         if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
             current_health -= 1
@@ -460,7 +510,7 @@ while run:
         # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _ = enemy
+            enemy_pos, enemy_size, _, _, _ = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
@@ -505,7 +555,30 @@ while run:
                 current_health += 1
             heal_item_pos = None
 
-        draw_objects(player_pos, [(enemy[0], enemy[1]) for enemy in enemies], star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+        # 에너지 볼 이동 및 충돌 체크
+        new_energy_balls = []
+        for ball in energy_balls:
+            if ball[2] == "yellow":
+                ball[0] += 5
+                ball[1] += 5
+            elif ball[2] == "green":
+                ball[0] -= 5
+                ball[1] -= 5
+            if 0 <= ball[0] <= 1200 and 0 <= ball[1] <= 700:
+                if check_energy_ball_collision((ball[0], ball[1]), player_pos):
+                    current_health -= 1
+                    if current_health <= 0:
+                        win.fill((0, 0, 0))
+                        text = font.render("Game Over", True, WHITE)
+                        win.blit(text, (450, 350))
+                        pygame.display.update()
+                        pygame.time.delay(3000)
+                        run = False
+                else:
+                    new_energy_balls.append(ball)
+        energy_balls = new_energy_balls
+
+        draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
 pygame.quit()
