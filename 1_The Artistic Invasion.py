@@ -13,7 +13,7 @@ title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHO
 title_image = pygame.transform.scale(title_image, (1200, 700))
 
 stage_images = [
-    (r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world\Stage1_World_A.JPG", 
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/world_night sky_0.jpg"),
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/world_night sky_0.jpg"),
@@ -162,7 +162,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type = enemy
+        enemy_pos, enemy_size, enemy_type = enemy[:3]
         if enemy_type == "move_and_shoot":
             pygame.draw.rect(win, YELLOW, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
         else:
@@ -409,7 +409,7 @@ while run:
             show_star = True
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < star_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
@@ -462,7 +462,7 @@ while run:
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
 
-        if not invincible and check_collision(player_pos, [(enemy[0], enemy[1]) for enemy in enemies]):
+        if not invincible and check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies]):
             current_health -= 1
             invincible = True
             invincible_start_time = pygame.time.get_ticks()
