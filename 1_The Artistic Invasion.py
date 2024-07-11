@@ -443,14 +443,17 @@ while run:
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
             elif enemy_type == "move_and_shoot":
-                if target_pos and (pos[0], pos[1]) != tuple(target_pos):
-                    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                    length = math.hypot(direction[0], direction[1])
-                    direction = [direction[0] / length, direction[1] / length]
-                    pos[0] += direction[0] * speed
-                    pos[1] += direction[1] * speed
+                if target_pos:
+                    if (pos[0], pos[1]) != tuple(target_pos):
+                        direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                        length = math.hypot(direction[0], direction[1])
+                        direction = [direction[0] / length, direction[1] / length]
+                        pos[0] += direction[0] * speed
+                        pos[1] += direction[1] * speed
+                    else:
+                        enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
+                        direction = [0, 0]  # 위치를 고정
                 else:
-                    enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
                     if shots_fired < 5:
                         if pygame.time.get_ticks() % 1000 < 50:  # 1초마다 공격
                             attack_dir = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
@@ -465,7 +468,7 @@ while run:
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
                     if length < 50:
-                        energy_balls.append([pos[0], pos[1], "green"])
+                        energy_balls.append([pos[0], pos[1], "green", direction])
                 else:
                     direction = [random.choice([-1, 1]), random.choice([-1, 1])]
                     pos[0] += direction[0] * speed
