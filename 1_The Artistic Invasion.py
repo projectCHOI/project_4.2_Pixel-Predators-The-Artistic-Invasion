@@ -444,13 +444,12 @@ while run:
                 pos[1] += direction[1] * speed
             elif enemy_type == "move_and_shoot":
                 if target_pos:
-                    if (pos[0], pos[1]) != tuple(target_pos):
-                        direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                        length = math.hypot(direction[0], direction[1])
-                        direction = [direction[0] / length, direction[1] / length]
+                    distance_to_target = math.hypot(target_pos[0] - pos[0], target_pos[1] - pos[1])
+                    if distance_to_target > speed:
                         pos[0] += direction[0] * speed
                         pos[1] += direction[1] * speed
                     else:
+                        pos[0], pos[1] = target_pos
                         enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
                         direction = [0, 0]  # 위치를 고정
                 else:
