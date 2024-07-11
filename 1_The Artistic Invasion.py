@@ -331,7 +331,7 @@ def generate_enemies(level):
             direction = [direction[0] / length, direction[1] / length]
         elif size == 20:
             enemy_type = "approach_and_shoot"
-        enemies.append((pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0))  # target_pos 및 공격 횟수 추가
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0])  # list로 변경 및 target_pos 및 공격 횟수 추가
 
     return enemies
 
