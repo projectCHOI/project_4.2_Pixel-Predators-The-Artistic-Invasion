@@ -324,12 +324,14 @@ def generate_enemies(level):
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
-            pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
+            target_pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
             enemy_type = "move_and_shoot"
-            direction = (random.choice([-1, 1]), random.choice([-1, 1]))  # 랜덤한 방향으로 공격
+            direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+            length = math.hypot(direction[0], direction[1])
+            direction = [direction[0] / length, direction[1] / length]
         elif size == 20:
             enemy_type = "approach_and_shoot"
-        enemies.append((pos, size, enemy_type, direction, speed))
+        enemies.append((pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0))  # target_pos 및 공격 횟수 추가
 
     return enemies
 
@@ -436,19 +438,24 @@ while run:
                 enemies.extend(new_enemies)
 
         for enemy in enemies:
-            pos, size, enemy_type, direction, speed = enemy
+            pos, size, enemy_type, direction, speed, target_pos, shots_fired = enemy
             if enemy_type == "move_and_disappear":
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
             elif enemy_type == "move_and_shoot":
-                target_pos = [random.randint(0, 1200), random.randint(0, 700)]  # 랜덤한 위치
-                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                length = math.hypot(direction[0], direction[1])
-                direction = [direction[0] / length, direction[1] / length]
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
-                if length < 50:
-                    energy_balls.append([pos[0], pos[1], "yellow"])
+                if target_pos and (pos[0], pos[1]) != tuple(target_pos):
+                    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                    length = math.hypot(direction[0], direction[1])
+                    direction = [direction[0] / length, direction[1] / length]
+                    pos[0] += direction[0] * speed
+                    pos[1] += direction[1] * speed
+                else:
+                    enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
+                    if shots_fired < 5:
+                        if pygame.time.get_ticks() % 1000 < 50:  # 1초마다 공격
+                            attack_dir = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
+                            energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
+                            enemy[6] += 1  # 공격 횟수 증가
             elif enemy_type == "approach_and_shoot":
                 if pygame.time.get_ticks() % 5000 < 2500:
                     target_pos = [player_pos[0], player_pos[1]]
@@ -512,7 +519,7 @@ while run:
         # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _ = enemy
+            enemy_pos, enemy_size, _, _, _, _, _ = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
@@ -561,11 +568,11 @@ while run:
         new_energy_balls = []
         for ball in energy_balls:
             if ball[2] == "yellow":
-                ball[0] += 5
-                ball[1] += 5
+                ball[0] += ball[3][0] * 5
+                ball[1] += ball[3][1] * 5
             elif ball[2] == "green":
-                ball[0] -= 5
-                ball[1] -= 5
+                ball[0] += ball[3][0] * 5
+                ball[1] += ball[3][1] * 5
             if 0 <= ball[0] <= 1200 and 0 <= ball[1] <= 700:
                 if check_energy_ball_collision((ball[0], ball[1]), player_pos):
                     current_health -= 1
