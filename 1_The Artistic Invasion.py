@@ -324,7 +324,9 @@ def generate_enemies(level):
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
+            pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
             enemy_type = "move_and_shoot"
+            direction = (random.choice([-1, 1]), random.choice([-1, 1]))  # 랜덤한 방향으로 공격
         elif size == 20:
             enemy_type = "approach_and_shoot"
         enemies.append((pos, size, enemy_type, direction, speed))
@@ -439,7 +441,7 @@ while run:
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
             elif enemy_type == "move_and_shoot":
-                target_pos = [600, 350]
+                target_pos = [random.randint(0, 1200), random.randint(0, 700)]  # 랜덤한 위치
                 direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
                 length = math.hypot(direction[0], direction[1])
                 direction = [direction[0] / length, direction[1] / length]
