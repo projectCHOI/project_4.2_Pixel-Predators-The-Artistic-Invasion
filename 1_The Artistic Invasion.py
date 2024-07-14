@@ -174,7 +174,11 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
-        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))  # 적 이미지를 화면에 그리기
+        if enemy_size == 40:  # 크기가 40인 적만 이미지로 그림
+            win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+        else:
+            color = RED if enemy_type == "move_and_disappear" else YELLOW
+            pygame.draw.rect(win, color, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
     if show_star:
         win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
@@ -315,16 +319,16 @@ def generate_enemies(level):
         size = random.choice(sizes)
         if direction == (0, 1):  # 상단에서
             pos = [random.randint(0, 1200-size), 0]
-            image = enemy_images["up"]
+            image = enemy_images["up"] if size == 40 else None
         elif direction == (0, -1):  # 하단에서
             pos = [random.randint(0, 1200-size), 700-size]
-            image = enemy_images["down"]
+            image = enemy_images["down"] if size == 40 else None
         elif direction == (1, 0):  # 좌측에서
             pos = [0, random.randint(0, 700-size)]
-            image = enemy_images["left"]
+            image = enemy_images["left"] if size == 40 else None
         elif direction == (-1, 0):  # 우측에서
             pos = [1200-size, random.randint(0, 700-size)]
-            image = enemy_images["right"]
+            image = enemy_images["right"] if size == 40 else None
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
