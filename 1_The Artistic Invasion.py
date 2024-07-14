@@ -94,6 +94,17 @@ heal_item_chance = 0.1  # 10% 확률
 # 초기 플레이어 이미지
 player_image = player_image1
 
+# 적 이미지 로드 및 크기 조정
+enemy_images = {
+    "up": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_1.png"),
+    "down": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_2.png"),
+    "left": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_3.png"),
+    "right": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_4.png")
+}
+
+# 크기 조정
+enemy_images = {key: pygame.transform.scale(image, (40, 40)) for key, image in enemy_images.items()}
+
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -162,11 +173,8 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type = enemy[:3]
-        if enemy_type == "move_and_shoot":
-            pygame.draw.rect(win, YELLOW, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
-        else:
-            pygame.draw.rect(win, RED, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
+        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))  # 적 이미지를 화면에 그리기
     if show_star:
         win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
@@ -307,20 +315,16 @@ def generate_enemies(level):
         size = random.choice(sizes)
         if direction == (0, 1):  # 상단에서
             pos = [random.randint(0, 1200-size), 0]
+            image = enemy_images["up"]
         elif direction == (0, -1):  # 하단에서
             pos = [random.randint(0, 1200-size), 700-size]
+            image = enemy_images["down"]
         elif direction == (1, 0):  # 좌측에서
             pos = [0, random.randint(0, 700-size)]
+            image = enemy_images["left"]
         elif direction == (-1, 0):  # 우측에서
             pos = [1200-size, random.randint(0, 700-size)]
-        elif direction == (1, 1):  # 좌측 상단에서
-            pos = [0, 0]
-        elif direction == (1, -1):  # 좌측 하단에서
-            pos = [0, 700-size]
-        elif direction == (-1, 1):  # 우측 상단에서
-            pos = [1200-size, 0]
-        elif direction == (-1, -1):  # 우측 하단에서
-            pos = [1200-size, 700-size]
+            image = enemy_images["right"]
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
@@ -331,7 +335,7 @@ def generate_enemies(level):
             direction = [direction[0] / length, direction[1] / length]
         elif size == 20:
             enemy_type = "approach_and_shoot"
-        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0])  # list로 변경 및 target_pos 및 공격 횟수 추가
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image])  # 이미지 추가
 
     return enemies
 
@@ -438,7 +442,7 @@ while run:
                 enemies.extend(new_enemies)
 
         for enemy in enemies:
-            pos, size, enemy_type, direction, speed, target_pos, shots_fired = enemy
+            pos, size, enemy_type, direction, speed, target_pos, shots_fired = enemy[:7]
             if enemy_type == "move_and_disappear":
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
@@ -521,7 +525,7 @@ while run:
         # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, _ = enemy
+            enemy_pos, enemy_size, _, _, _, _, _, enemy_image = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
