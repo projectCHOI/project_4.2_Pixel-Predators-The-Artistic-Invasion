@@ -221,19 +221,6 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
-    
-    # 체력 그리기
-    for i in range(current_health):
-        win.blit(health_image, (10 + i * 50, 650))
-    
-    # 제거된 적의 수 그리기
-    text = font.render(f"{enemies_defeated}", True, BLACK)
-    win.blit(text, (1100, 10))
-    
-    # 획득한 별 그리기
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (10 + idx * (star_size + 5), 10))
-    
     pygame.display.update()
 
 def check_collision(player_pos, enemies):
@@ -434,8 +421,8 @@ while run:
             player_pos[0] = 0
         if player_pos[0] > 1200 - player_width:
             player_pos[0] = 1200 - player_width
-        if player_pos[1] < 0:
-            player_pos[1] = 0
+        if player_pos[1] < 60:
+            player_pos[1] = 60  # 대시보드 영역을 피하기 위해 60으로 변경
         if player_pos[1] > 700 - player_height:
             player_pos[1] = 700 - player_height
 
