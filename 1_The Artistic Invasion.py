@@ -167,8 +167,30 @@ mouse_held = False
 # 획득한 별 이미지 추적
 collected_stars = []
 
+# 대시보드 그리기 함수
+def draw_dashboard():
+    # 대시보드 배경 그리기
+    pygame.draw.rect(win, BLACK, (0, 0, 1200, 60))
+    
+    # 플레이 시간 표시
+    remaining_time = stage_duration - seconds
+    time_text = font.render(f"Time: {remaining_time}", True, WHITE)
+    win.blit(time_text, (550, 10))
+    
+    # 체력 표시
+    for i in range(current_health):
+        win.blit(health_image, (10 + i * 50, 10))
+    
+    # 제거된 적의 수 표시
+    enemies_defeated_text = font.render(f"Enemies: {enemies_defeated}", True, WHITE)
+    win.blit(enemies_defeated_text, (900, 10))
+    
+    # 획득한 별 표시
+    for idx, collected_star in enumerate(collected_stars):
+        win.blit(collected_star, (1100 + idx * (star_size // 2), 10))
+
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
-    win.blit(background_image, (0, 0))
+    win.blit(background_image, (0, 60))  # 배경을 대시보드 아래에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
@@ -421,7 +443,7 @@ while run:
             show_star = True
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < star_pos[1] + star_size):
+           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
@@ -597,6 +619,7 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
+        draw_dashboard()  # 대시보드 그리기
         draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
