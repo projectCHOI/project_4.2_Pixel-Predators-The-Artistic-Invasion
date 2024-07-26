@@ -350,7 +350,7 @@ def draw_dashboard():
     
     # 획득한 별 표시
     for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (1100 + idx * (star_size // 2), 10))
+        win.blit(collected_star, (10 + idx * (star_size // 2), 650))
 
 # 게임 루프
 while run:
@@ -565,7 +565,7 @@ while run:
             speed_item_active = True
             speed_item_start_time = pygame.time.get_ticks()
             player_speed = original_player_speed + speed_increase_amount
-            speed_item_pos = None
+            stage_images = None
 
         # 스피드 아이템 지속시간 체크
         if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
