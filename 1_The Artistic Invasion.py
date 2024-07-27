@@ -341,7 +341,7 @@ def generate_enemies(level):
 def draw_dashboard():
     # 플레이 시간 표시
     remaining_time = stage_duration - seconds
-    time_text = font.render(f"Time: {remaining_time}", True, WHITE)
+    time_text = font.render(f"{remaining_time}", True, WHITE)
     win.blit(time_text, (550, 10))
     
     # 체력 표시
@@ -349,7 +349,7 @@ def draw_dashboard():
         win.blit(health_image, (10 + i * 50, 10))
     
     # 제거된 적의 수 표시
-    enemies_defeated_text = font.render(f"Enemies: {enemies_defeated}", True, WHITE)
+    enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (900, 10))
     
     # 획득한 별 표시
