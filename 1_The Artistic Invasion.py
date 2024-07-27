@@ -45,6 +45,7 @@ stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (12
 
 # 이미지 크기 설정
 image_size = (40, 40)
+player_width, player_height = image_size
 
 # 플레이어 이미지 로드
 player_image1 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
