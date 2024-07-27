@@ -43,29 +43,31 @@ stage_images = [
 stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1200, 700)) for img in stage_images]
 stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1200, 700)) for img in stage_images]
 
+# 이미지 크기 설정
+image_size = (40, 40)
+
 # 플레이어 이미지 로드
-player_width, player_height = 40, 40  # 크기
 player_image1 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
 player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
-player_image1 = pygame.transform.scale(player_image1, (player_width, player_height))
-player_image2 = pygame.transform.scale(player_image2, (player_width, player_height))
+player_image1 = pygame.transform.scale(player_image1, image_size)
+player_image2 = pygame.transform.scale(player_image2, image_size)
 
 # 충돌 시 이미지 로드(duration=시간)
 collision_images = {
-    3: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (player_width, player_height)), "duration": 5000},
-    2: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (player_width, player_height)), "duration": 5000},
-    1: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (player_width, player_height)), "duration": 5000}
+    3: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size), "duration": 5000},
+    2: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size), "duration": 5000},
+    1: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size), "duration": 5000}
 }
 
 # Health 설정
 health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
-health_image = pygame.transform.scale(health_image, (40, 40))
+health_image = pygame.transform.scale(health_image, image_size)
 max_health = 5
 current_health = 3
 
 # 스피드 아이템 설정
 speed_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
-speed_item_image = pygame.transform.scale(speed_item_image, (40, 40))
+speed_item_image = pygame.transform.scale(speed_item_image, image_size)
 speed_item_pos = None
 speed_item_active = False
 speed_item_start_time = 0
@@ -75,17 +77,17 @@ speed_item_chance = 0.1  # 10% 확률
 
 # 공격력 증가 아이템 설정
 power_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png")
-power_item_image = pygame.transform.scale(power_item_image, (30, 30))
+power_item_image = pygame.transform.scale(power_item_image, image_size)
 power_item_pos = None
 power_item_active = 0  # 공격력 증가 아이템 획득 수
 power_item_chance = 0.1  # 10% 확률
 
 # 체력 회복 아이템 설정
 heal_item_images = [
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (60, 60)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (60, 60)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (60, 60)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), (60, 60))
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png"), image_size)
 ]
 heal_item_pos = None
 current_heal_item_image = None
@@ -103,7 +105,7 @@ enemy_images = {
 }
 
 # 크기 조정
-enemy_images = {key: pygame.transform.scale(image, (40, 40)) for key, image in enemy_images.items()}
+enemy_images = {key: pygame.transform.scale(image, image_size) for key, image in enemy_images.items()}
 
 # 색상 정의
 WHITE = (255, 255, 255)
@@ -120,7 +122,7 @@ original_player_speed = player_speed
 energy_balls = []
 
 # 별 설정
-star_size = 60  # 크기를 더 크게 조정
+star_size = 40  # 크기를 40으로 조정
 star_images = [
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_png.png",
