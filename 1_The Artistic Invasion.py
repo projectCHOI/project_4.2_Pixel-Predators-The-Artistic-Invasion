@@ -144,7 +144,8 @@ star_appear_time = 10
 # 게임 설정
 clock = pygame.time.Clock()
 font_path = r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/서평원 꺾깎체/OTF/SLEIGothicOTF.otf"
-font = pygame.font.Font(font_path, 50)  # 지정된 글씨체로 폰트 설정
+font_size = 30  # 폰트 크기
+font = pygame.font.Font(font_path, font_size) #폰트 설정
 level = 1
 max_level = 12
 run = True
