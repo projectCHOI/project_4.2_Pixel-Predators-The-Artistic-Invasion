@@ -343,7 +343,7 @@ def draw_dashboard():
     # 플레이 시간 표시
     remaining_time = stage_duration - seconds
     time_text = font.render(f"{remaining_time}", True, WHITE)
-    win.blit(time_text, (550, 10))
+    win.blit(time_text, (640 - time_text.get_width() // 2, 10))  # 화면 중앙에 맞춤
     
     # 체력 표시
     for i in range(current_health):
@@ -351,7 +351,7 @@ def draw_dashboard():
     
     # 제거된 적의 수 표시
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
-    win.blit(enemies_defeated_text, (900, 10))
+    win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
     
     # 획득한 별 표시
     for idx, collected_star in enumerate(collected_stars):
@@ -367,10 +367,10 @@ while run:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
                     game_active = True
-                    player_pos = [600, 350]  # 플레이어를 중앙에 위치
+                    player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
                     show_star = False
-                    star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+                    star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
                     star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
@@ -424,12 +424,12 @@ while run:
         # 플레이어가 화면 밖으로 나가지 않도록 위치 조정
         if player_pos[0] < 0:
             player_pos[0] = 0
-        if player_pos[0] > 1200 - player_width:
-            player_pos[0] = 1200 - player_width
+        if player_pos[0] > 1240:
+            player_pos[0] = 1240
         if player_pos[1] < 0:
             player_pos[1] = 0
-        if player_pos[1] > 700 - player_height:
-            player_pos[1] = 700 - player_height
+        if player_pos[1] > 680:
+            player_pos[1] = 680
 
         if seconds > star_appear_time:
             show_star = True
@@ -439,19 +439,19 @@ while run:
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
-                win.fill((0, 0, 0))
+                win.fill(BLACK)
                 text = font.render("Cool", True, WHITE)
-                win.blit(text, (450, 350))
+                win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                 pygame.display.update()
                 pygame.time.delay(3000)
                 run = False
             else:
-                player_pos = [600, 350]  # 레벨 시작 시 플레이어를 중앙에 위치
+                player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen(level)
                 start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
                 enemies = []
                 show_star = False
-                star_pos = [random.randint(0, 1200 - star_size), random.randint(0, 700 - star_size)]
+                star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
                 star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
 
         if seconds < stage_duration:
@@ -505,7 +505,7 @@ while run:
                 collision_effect_duration = collision_images[1]["duration"]
                 win.fill((0, 0, 0))
                 text = font.render("Game Over", True, WHITE)
-                win.blit(text, (450, 350))
+                win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
                 pygame.time.delay(collision_effect_duration)
@@ -536,7 +536,7 @@ while run:
                 continue
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
             new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= 1200 and 0 <= new_end[1] <= 700:
+            if 0 <= new_end[0] <= 1280 and 0 <= new_end[1] <= 720:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
@@ -597,13 +597,13 @@ while run:
             elif ball[2] == "green":
                 ball[0] += ball[3][0] * 5
                 ball[1] += ball[3][1] * 5
-            if 0 <= ball[0] <= 1200 and 0 <= ball[1] <= 700:
+            if 0 <= ball[0] <= 1280 and 0 <= ball[1] <= 720:
                 if check_energy_ball_collision((ball[0], ball[1]), player_pos):
                     current_health -= 1
                     if current_health <= 0:
                         win.fill((0, 0, 0))
                         text = font.render("Game Over", True, WHITE)
-                        win.blit(text, (450, 350))
+                        win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                         pygame.display.update()
                         pygame.time.delay(3000)
                         run = False
