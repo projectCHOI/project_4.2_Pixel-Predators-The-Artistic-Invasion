@@ -5,12 +5,12 @@ import math
 pygame.init()
 
 # 윈도우 설정
-win = pygame.display.set_mode((1200, 700))
+win = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
-title_image = pygame.transform.scale(title_image, (1200, 700))
+title_image = pygame.transform.scale(title_image, (1280, 720))
 
 stage_images = [
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
@@ -40,8 +40,8 @@ stage_images = [
 ]
 
 # 화면 크기에 맞게 이미지 스케일 조정
-stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1200, 700)) for img in stage_images]
-stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1200, 700)) for img in stage_images]
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1280, 720)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1280, 720)) for img in stage_images]
 
 # 이미지 크기 설정
 image_size = (40, 40)
