@@ -86,9 +86,9 @@ power_item_chance = 0.1  # 10% 확률
 # 체력 회복 아이템 설정
 heal_item_images = [
     pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
 ]
 heal_item_pos = None
 current_heal_item_image = None
@@ -507,15 +507,12 @@ while run:
                 collision_image = collision_images[1]["image"]
                 collision_effect_duration = collision_images[1]["duration"]
                 win.fill((0, 0, 0))
-                text = font.render("Game Over", True, WHITE)
+                text = font.render("continue: enter", True, WHITE)
                 win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
+                win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
                 pygame.display.update()
                 pygame.time.delay(collision_effect_duration)
-                # 게임 오버 이미지 표시
-                win.blit(game_over_image, (0, 0))
-                pygame.display.update()
-                pygame.time.delay(5000)  # 게임 오버 이미지 5초 동안 표시
                 run = False
             elif current_health == 2:
                 collision_image = collision_images[3]["image"]
@@ -609,14 +606,11 @@ while run:
                     current_health -= 1
                     if current_health <= 0:
                         win.fill((0, 0, 0))
-                        text = font.render("Game Over", True, WHITE)
+                        text = font.render("continue: enter", True, WHITE)
                         win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
+                        win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
                         pygame.display.update()
                         pygame.time.delay(3000)
-                        # 게임 오버 이미지 표시
-                        win.blit(game_over_image, (0, 0))
-                        pygame.display.update()
-                        pygame.time.delay(10000)  # 게임 오버 이미지 10초 동안 표시
                         run = False
                 else:
                     new_energy_balls.append(ball)
