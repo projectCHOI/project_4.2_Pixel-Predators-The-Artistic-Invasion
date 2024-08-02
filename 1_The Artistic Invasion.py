@@ -356,6 +356,10 @@ def draw_dashboard():
     for idx, collected_star in enumerate(collected_stars):
         win.blit(collected_star, (10 + idx * (star_size // 2), 650))
 
+# 게임 오버 이미지 로드
+game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
+game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
+
 # 게임 루프
 while run:
     if not game_active:
@@ -508,6 +512,10 @@ while run:
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
                 pygame.time.delay(collision_effect_duration)
+                # 게임 오버 이미지 표시
+                win.blit(game_over_image, (0, 0))
+                pygame.display.update()
+                pygame.time.delay(5000)  # 게임 오버 이미지 5초 동안 표시
                 run = False
             elif current_health == 2:
                 collision_image = collision_images[3]["image"]
@@ -605,6 +613,10 @@ while run:
                         win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                         pygame.display.update()
                         pygame.time.delay(3000)
+                        # 게임 오버 이미지 표시
+                        win.blit(game_over_image, (0, 0))
+                        pygame.display.update()
+                        pygame.time.delay(10000)  # 게임 오버 이미지 10초 동안 표시
                         run = False
                 else:
                     new_energy_balls.append(ball)
