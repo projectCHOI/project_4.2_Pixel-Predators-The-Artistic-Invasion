@@ -86,9 +86,9 @@ power_item_chance = 0.1  # 10% 확률
 # 체력 회복 아이템 설정
 heal_item_images = [
     pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
 ]
 heal_item_pos = None
 current_heal_item_image = None
