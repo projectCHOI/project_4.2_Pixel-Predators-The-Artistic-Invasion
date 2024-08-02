@@ -128,10 +128,10 @@ star_images = [
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_2.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_3.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_5.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_6.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_8.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_9.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_10.png",
@@ -170,6 +170,9 @@ mouse_held = False
 
 # 획득한 별 이미지 추적
 collected_stars = []
+
+# 게임 오버 상태
+game_over = False
 
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
@@ -363,12 +366,28 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 # 게임 루프
 while run:
     if not game_active:
-        title_screen()
+        if not game_over:
+            title_screen()
+        else:
+            win.blit(game_over_image, (0, 0))
+            text = font.render("continue: enter", True, WHITE)
+            win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
+            pygame.display.update()
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    if game_over:
+                        # 게임 초기화
+                        level = 1
+                        current_health = 3
+                        collected_stars = []
+                        enemies_defeated = 0
+                        player_speed = original_player_speed
+                        power_item_active = 0
+                        game_over = False
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -512,8 +531,8 @@ while run:
                 win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
-                pygame.time.delay(collision_effect_duration)
-                run = False
+                game_active = False
+                game_over = True
             elif current_health == 2:
                 collision_image = collision_images[3]["image"]
                 collision_effect_duration = collision_images[3]["duration"]
@@ -607,11 +626,11 @@ while run:
                     if current_health <= 0:
                         win.fill((0, 0, 0))
                         win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
-                        text = font.render("continue: enter", True, WHITE)
+                        text = font.render("continue : enter", True, WHITE)
                         win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                         pygame.display.update()
-                        pygame.time.delay(3000)
-                        run = False
+                        game_active = False
+                        game_over = True
                 else:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
