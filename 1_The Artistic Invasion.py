@@ -128,10 +128,10 @@ star_images = [
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_2.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_3.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_5.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_6.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_8.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_9.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_10.png",
@@ -356,8 +356,9 @@ def draw_dashboard():
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
     
     # 획득한 별 표시
+    star_spacing = 60  # 이미지 간격 60 픽셀
     for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (10 + idx * (star_size // 2), 650))
+        win.blit(collected_star, (10 + idx * star_spacing, 650))
 
 # 게임 오버 이미지 로드
 game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
