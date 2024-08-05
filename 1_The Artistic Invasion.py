@@ -168,9 +168,6 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-# 획득한 별 이미지 추적
-collected_stars = []
-
 # 게임 오버 상태
 game_over = False
 
@@ -354,11 +351,6 @@ def draw_dashboard():
     # 제거된 적의 수 표시
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
-    
-    # 획득한 별 표시
-    star_spacing = 60  # 이미지 간격 60 픽셀
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (10 + idx * star_spacing, 650))
 
 # 게임 오버 이미지 로드
 game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
@@ -369,12 +361,6 @@ def draw_game_over_screen():
     win.blit(game_over_image, (0, 0))
     text = font.render("continue : enter", True, WHITE)
     win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-    
-    # 획득한 별 표시
-    star_spacing = 60  # 이미지 간격 60 픽셀
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
-    
     pygame.display.update()
 
 # 게임 루프
@@ -394,7 +380,6 @@ while run:
                         # 게임 초기화
                         level = 1
                         current_health = 3
-                        collected_stars = []
                         enemies_defeated = 0
                         player_speed = original_player_speed
                         power_item_active = 0
@@ -469,7 +454,6 @@ while run:
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
            (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
-            collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
                 win.fill(BLACK)
