@@ -168,8 +168,22 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-# 게임 오버 상태
+# 획득한 별 이미지 추적
+collected_stars = []
+
+# 게임 오버 상태 및 이유
 game_over = False
+game_over_reason = None  # "victory", "game_over", "time_over"
+
+# 게임 종료 상태 이미지 로드
+victory_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage14_Victory.JPG")
+victory_image = pygame.transform.scale(victory_image, (1280, 720))
+
+game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
+game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
+
+time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
+time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
@@ -352,15 +366,24 @@ def draw_dashboard():
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
 
-# 게임 오버 이미지 로드
-game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
-game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
+# 게임 종료 화면 그리기 함수
+def draw_end_screen():
+    if game_over_reason == "victory":
+        image = victory_image
+    elif game_over_reason == "game_over":
+        image = game_over_image
+    elif game_over_reason == "time_over":
+        image = time_over_image
 
-# 게임 오버 화면 그리기 함수
-def draw_game_over_screen():
-    win.blit(game_over_image, (0, 0))
+    win.blit(image, (0, 0))
     text = font.render("continue : enter", True, WHITE)
     win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
+    
+    # 획득한 별 표시
+    star_spacing = 60  # 이미지 간격 60 픽셀
+    for idx, collected_star in enumerate(collected_stars):
+        win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
+    
     pygame.display.update()
 
 # 게임 루프
@@ -369,7 +392,7 @@ while run:
         if not game_over:
             title_screen()
         else:
-            draw_game_over_screen()
+            draw_end_screen()
             
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -380,10 +403,12 @@ while run:
                         # 게임 초기화
                         level = 1
                         current_health = 3
+                        collected_stars = []
                         enemies_defeated = 0
                         player_speed = original_player_speed
                         power_item_active = 0
                         game_over = False
+                        game_over_reason = None
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -439,7 +464,7 @@ while run:
             player_pos[1] += player_speed
             player_image = player_image2
 
-        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정
+        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정 
         if player_pos[0] < 0:
             player_pos[0] = 0
         if player_pos[0] > 1240:
@@ -454,14 +479,12 @@ while run:
 
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
            (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
+            collected_stars.append(star_image)  # 획득한 별 이미지 추가
             level += 1
             if level > max_level:
-                win.fill(BLACK)
-                text = font.render("Cool", True, WHITE)
-                win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-                pygame.display.update()
-                pygame.time.delay(3000)
-                run = False
+                game_active = False
+                game_over = True
+                game_over_reason = "victory"
             else:
                 player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 레벨 시작 시 플레이어를 중앙에 위치
                 intro_screen(level)
@@ -471,10 +494,14 @@ while run:
                 star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
                 star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
 
-        if seconds < stage_duration:
-            if random.random() < 0.02:  # 2% 확률로 적 생성
-                new_enemies = generate_enemies(level)
-                enemies.extend(new_enemies)
+        if seconds >= stage_duration:
+            game_active = False
+            game_over = True
+            game_over_reason = "time_over"
+
+        if random.random() < 0.02:  # 2% 확률로 적 생성
+            new_enemies = generate_enemies(level)
+            enemies.extend(new_enemies)
 
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired = enemy[:7]
@@ -520,14 +547,9 @@ while run:
             if current_health <= 0:
                 collision_image = collision_images[1]["image"]
                 collision_effect_duration = collision_images[1]["duration"]
-                win.fill((0, 0, 0))
-                win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
-                text = font.render("continue : enter", True, WHITE)
-                win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-                win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
-                pygame.display.update()
                 game_active = False
                 game_over = True
+                game_over_reason = "game_over"
             elif current_health == 2:
                 collision_image = collision_images[3]["image"]
                 collision_effect_duration = collision_images[3]["duration"]
@@ -619,13 +641,9 @@ while run:
                 if check_energy_ball_collision((ball[0], ball[1]), player_pos):
                     current_health -= 1
                     if current_health <= 0:
-                        win.fill((0, 0, 0))
-                        win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
-                        text = font.render("continue : enter", True, WHITE)
-                        win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-                        pygame.display.update()
                         game_active = False
                         game_over = True
+                        game_over_reason = "game_over"
                 else:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
