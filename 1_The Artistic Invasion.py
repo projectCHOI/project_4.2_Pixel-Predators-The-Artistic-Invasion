@@ -364,16 +364,26 @@ def draw_dashboard():
 game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
 game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 
+# 게임 오버 화면 그리기 함수
+def draw_game_over_screen():
+    win.blit(game_over_image, (0, 0))
+    text = font.render("continue : enter", True, WHITE)
+    win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
+    
+    # 획득한 별 표시
+    star_spacing = 60  # 이미지 간격 60 픽셀
+    for idx, collected_star in enumerate(collected_stars):
+        win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
+    
+    pygame.display.update()
+
 # 게임 루프
 while run:
     if not game_active:
         if not game_over:
             title_screen()
         else:
-            win.blit(game_over_image, (0, 0))
-            text = font.render("continue: enter", True, WHITE)
-            win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-            pygame.display.update()
+            draw_game_over_screen()
             
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -528,7 +538,7 @@ while run:
                 collision_effect_duration = collision_images[1]["duration"]
                 win.fill((0, 0, 0))
                 win.blit(game_over_image, (0, 0))  # 게임 오버 이미지 그리기
-                text = font.render("continue: enter", True, WHITE)
+                text = font.render("continue : enter", True, WHITE)
                 win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
                 win.blit(collision_image, (player_pos[0], player_pos[1]))  # 충돌 이미지 그리기
                 pygame.display.update()
