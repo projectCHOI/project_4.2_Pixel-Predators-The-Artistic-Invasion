@@ -111,9 +111,19 @@ enemy_images = {key: pygame.transform.scale(image, image_size) for key, image in
 sentinel_shooter_right = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Sentinel Shooter_right.png")
 sentinel_shooter_left = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Sentinel Shooter_left.png")
 
-# 크기 조정
 sentinel_shooter_right = pygame.transform.scale(sentinel_shooter_right, image_size)
 sentinel_shooter_left = pygame.transform.scale(sentinel_shooter_left, image_size)
+
+# 새로운 적 이미지 로드 및 크기 조정
+ambush_striker_up = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_1.png")
+ambush_striker_down = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_2.png")
+ambush_striker_left = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_3.png")
+ambush_striker_right = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_4.png")
+
+ambush_striker_up = pygame.transform.scale(ambush_striker_up, image_size)
+ambush_striker_down = pygame.transform.scale(ambush_striker_down, image_size)
+ambush_striker_left = pygame.transform.scale(ambush_striker_left, image_size)
+ambush_striker_right = pygame.transform.scale(ambush_striker_right, image_size)
 
 # 색상 정의
 WHITE = (255, 255, 255)
@@ -199,11 +209,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
-        if enemy_size == 40 or enemy_size == 60:  # 크기가 40 또는 60인 적만 이미지로 그림
-            win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
-        else:
-            color = RED if enemy_type == "move_and_disappear" else YELLOW
-            pygame.draw.rect(win, color, (enemy_pos[0], enemy_pos[1], enemy_size, enemy_size))
+        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if show_star:
         win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
@@ -334,16 +340,16 @@ def generate_enemies(level):
         size = random.choice(sizes)
         if direction == (0, 1):  # 상단에서
             pos = [random.randint(0, 1200-size), 0]
-            image = enemy_images["up"] if size == 40 else sentinel_shooter_left if size == 60 else None
+            image = enemy_images["up"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_up
         elif direction == (0, -1):  # 하단에서
             pos = [random.randint(0, 1200-size), 700-size]
-            image = enemy_images["down"] if size == 40 else sentinel_shooter_left if size == 60 else None
+            image = enemy_images["down"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_down
         elif direction == (1, 0):  # 좌측에서
             pos = [0, random.randint(0, 700-size)]
-            image = enemy_images["left"] if size == 40 else sentinel_shooter_right if size == 60 else None
+            image = enemy_images["left"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_left
         elif direction == (-1, 0):  # 우측에서
             pos = [1200-size, random.randint(0, 700-size)]
-            image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else None
+            image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_right
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
