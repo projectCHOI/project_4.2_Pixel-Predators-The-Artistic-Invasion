@@ -73,7 +73,6 @@ speed_item_pos = None
 speed_item_active = False
 speed_item_start_time = 0
 speed_item_duration = 20000  # 20초
-speed_increase_amount = 15  # 스피드 증가량
 speed_item_chance = 0.1  # 10% 확률
 
 # 공격력 증가 아이템 설정
@@ -127,16 +126,16 @@ star_size = 40  # 크기를 40으로 조정
 star_images = [
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png",
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_2.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_3.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_5.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_6.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_8.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_9.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_10.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_11.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_12.png"
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_3.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_5.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_6.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_8.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_9.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_10.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_11.png",
+    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_12.png"
 ]
 star_appear_time = 10
 
@@ -184,6 +183,9 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 
 time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
 time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
+
+# 적들의 원래 속도를 저장하기 위한 리스트
+original_enemy_speeds = []
 
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
@@ -609,13 +611,19 @@ while run:
         if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
             speed_item_active = True
             speed_item_start_time = pygame.time.get_ticks()
-            player_speed = original_player_speed + speed_increase_amount
-            stage_images = None
+            # 현재 적들의 속도를 저장
+            original_enemy_speeds = [enemy[4] for enemy in enemies]
+            # 적들의 속도를 7로 변경
+            for enemy in enemies:
+                enemy[4] = 7
+            speed_item_pos = None
 
         # 스피드 아이템 지속시간 체크
         if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
             speed_item_active = False
-            player_speed = original_player_speed
+            # 적들의 속도를 원래 속도로 복원
+            for i, enemy in enumerate(enemies):
+                enemy[4] = original_enemy_speeds[i]
 
         # 공격력 증가 아이템 획득 체크
         if power_item_pos and player_pos[0] < power_item_pos[0] < player_pos[0] + player_width and player_pos[1] < power_item_pos[1] < player_pos[1] + player_height:
