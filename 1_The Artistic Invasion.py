@@ -125,6 +125,10 @@ ambush_striker_down = pygame.transform.scale(ambush_striker_down, image_size)
 ambush_striker_left = pygame.transform.scale(ambush_striker_left, image_size)
 ambush_striker_right = pygame.transform.scale(ambush_striker_right, image_size)
 
+# 새로운 적 이미지 로드 및 크기 조정
+enemy_bomb_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png")
+enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
+
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -156,6 +160,12 @@ star_images = [
     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_12.png"
 ]
 star_appear_time = 10
+
+# bomb 적 등장 설정
+bomb_stages = [2, 3, 5, 7, 11]
+bomb_appear_interval = 10000  # 10초 간격으로 등장
+bomb_last_appear_time = 0
+bomb_directions = ["left", "right", "up", "down"]
 
 # 게임 설정
 clock = pygame.time.Clock()
@@ -235,10 +245,33 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     draw_dashboard()  # 대시보드 그리기
     pygame.display.update()
 
+# 적 이미지 로드 및 크기 조정
+enemy_bomb_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png")
+enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
+
+# bomb 적 추가 함수
+def add_bomb_enemy():
+    direction = random.choice(bomb_directions)
+    size = 40
+    pos = None
+    if direction == "left":
+        pos = [0, random.randint(0, 680)]
+    elif direction == "right":
+        pos = [1240, random.randint(0, 680)]
+    elif direction == "up":
+        pos = [random.randint(0, 1240), 0]
+    elif direction == "down":
+        pos = [random.randint(0, 1240), 680]
+    enemies.append([pos, size, "bomb", [0, 0], 0, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+
+# 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
-    for enemy_pos, enemy_size, _ in enemies:
+    for enemy in enemies:
+        enemy_pos, enemy_size, enemy_type = enemy[:3]
         if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
            (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or player_pos[1] < enemy_pos[1] < player_pos[1] + enemy_size):
+            if enemy_type == "bomb":
+                return "bomb"  # bomb 충돌 시
             return True
     return False
 
@@ -516,6 +549,11 @@ while run:
             new_enemies = generate_enemies(level)
             enemies.extend(new_enemies)
 
+        # bomb 적 생성
+        if level in bomb_stages and pygame.time.get_ticks() - bomb_last_appear_time > bomb_appear_interval:
+            add_bomb_enemy()
+            bomb_last_appear_time = pygame.time.get_ticks()
+
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed = enemy
             if enemy_type == "move_and_disappear":
@@ -552,23 +590,33 @@ while run:
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
 
-        if not invincible and check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies]):
-            current_health -= 1
-            invincible = True
-            invincible_start_time = pygame.time.get_ticks()
-            collision_effect_start_time = pygame.time.get_ticks()
-            if current_health <= 0:
-                collision_image = collision_images[1]["image"]
-                collision_effect_duration = collision_images[1]["duration"]
-                game_active = False
-                game_over = True
-                game_over_reason = "game_over"
-            elif current_health == 2:
-                collision_image = collision_images[3]["image"]
-                collision_effect_duration = collision_images[3]["duration"]
-            elif current_health == 1:
-                collision_image = collision_images[2]["image"]
-                collision_effect_duration = collision_images[2]["duration"]
+        if not invincible:
+            collision = check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies])
+            if collision:
+                if collision == "bomb":  # bomb 충돌 시 즉시 사망
+                    current_health = 0
+                    collision_image = collision_images[1]["image"]
+                    collision_effect_duration = collision_images[1]["duration"]
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+                else:
+                    current_health -= 1
+                    invincible = True
+                    invincible_start_time = pygame.time.get_ticks()
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    if current_health <= 0:
+                        collision_image = collision_images[1]["image"]
+                        collision_effect_duration = collision_images[1]["duration"]
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                    elif current_health == 2:
+                        collision_image = collision_images[3]["image"]
+                        collision_effect_duration = collision_images[3]["duration"]
+                    elif current_health == 1:
+                        collision_image = collision_images[2]["image"]
+                        collision_effect_duration = collision_images[2]["duration"]
 
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
