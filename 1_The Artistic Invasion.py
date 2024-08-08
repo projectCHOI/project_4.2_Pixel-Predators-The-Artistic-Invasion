@@ -262,7 +262,11 @@ def add_bomb_enemy():
         pos = [random.randint(0, 1240), 0]
     elif direction == "down":
         pos = [random.randint(0, 1240), 680]
-    enemies.append([pos, size, "bomb", [0, 0], 0, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+    target_pos = [640, 360]  # 중심을 향하도록 설정
+    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+    length = math.hypot(direction[0], direction[1])
+    direction = [direction[0] / length, direction[1] / length]
+    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
@@ -589,6 +593,13 @@ while run:
                     direction = [random.choice([-1, 1]), random.choice([-1, 1])]
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
+            elif enemy_type == "bomb":
+                target_pos = [player_pos[0], player_pos[1]]
+                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                length = math.hypot(direction[0], direction[1])
+                direction = [direction[0] / length, direction[1] / length]
+                pos[0] += direction[0] * speed
+                pos[1] += direction[1] * speed
 
         if not invincible:
             collision = check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies])
