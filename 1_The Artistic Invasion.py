@@ -467,6 +467,11 @@ while run:
                     star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
+
+                    # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
+                    attacks = []
+                    energy_balls = []
+
     else:
         mouse_pos = pygame.mouse.get_pos()
         seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
@@ -543,6 +548,10 @@ while run:
                 show_star = False
                 star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
                 star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
+
+                # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
+                attacks = []
+                energy_balls = []
 
         if seconds >= stage_duration:
             game_active = False
