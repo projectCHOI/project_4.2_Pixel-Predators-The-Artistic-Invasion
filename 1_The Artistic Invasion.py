@@ -733,6 +733,7 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
+        # 공격이 아이템에 충돌하는지 확인 (아이템은 사라지지 않도록 예외 처리)
         draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
