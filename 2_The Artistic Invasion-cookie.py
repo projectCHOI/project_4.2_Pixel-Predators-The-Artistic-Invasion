@@ -1,3 +1,4 @@
+#240814-기준
 import pygame
 import random
 import math
