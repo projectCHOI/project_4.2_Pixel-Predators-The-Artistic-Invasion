@@ -293,7 +293,7 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
 def check_energy_ball_collision(ball_pos, player_pos):
     bx, by = ball_pos
     px, py = player_pos
-    if px < bx < px + player_width and py < by < py + player_height:
+    if px < bx < px + player_width and py < by < player_height:
         return True
     return False
 
@@ -479,14 +479,9 @@ while run:
             if event.type == pygame.QUIT:
                 run = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                mouse_down_time = pygame.time.get_ticks()
-                mouse_held = True
-            if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                mouse_held = False
-                hold_duration = pygame.time.get_ticks() - mouse_down_time
                 attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                 attack_end = mouse_pos
-                attack_thickness = 6 if hold_duration >= 2000 else 3
+                attack_thickness = 3
                 if power_item_active == 0:
                     attacks.append((attack_start, attack_end, attack_thickness))
                 elif power_item_active == 1:
