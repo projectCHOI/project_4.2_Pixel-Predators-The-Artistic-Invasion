@@ -404,8 +404,8 @@ def generate_enemies(level):
 # 대시보드 그리기 함수
 def draw_dashboard():
     # 플레이 시간 표시
-    remaining_time = stage_duration - seconds
-    time_text = font.render(f"{remaining_time}", True, WHITE)
+    elapsed_time = seconds
+    time_text = font.render(f"{elapsed_time}", True, WHITE)
     win.blit(time_text, (640 - time_text.get_width() // 2, 10))  # 화면 중앙에 맞춤
     
     # 체력 표시
