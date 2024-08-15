@@ -548,7 +548,7 @@ while run:
                 attacks = []
                 energy_balls = []
 
-        if seconds >= stage_duration:
+        if seconds >= 60:
             game_active = False
             game_over = True
             game_over_reason = "time_over"
