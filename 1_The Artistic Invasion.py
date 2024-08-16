@@ -423,6 +423,13 @@ stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 �
 def record_stage_clear_time(stage, time_taken):
     stage_clear_times[stage - 1] = time_taken
 
+# 총 플레이 시간을 계산하는 함수
+def calculate_total_play_time():
+    total_seconds = sum(time for time in stage_clear_times if time is not None)
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    return minutes, seconds
+
 # 게임 종료 화면 그리기 함수 수정
 def draw_end_screen():
     if game_over_reason == "victory":
@@ -441,13 +448,10 @@ def draw_end_screen():
     for idx, collected_star in enumerate(collected_stars):
         win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
 
-    # 스테이지 클리어 시간 표시
-    for i, clear_time in enumerate(stage_clear_times):
-        if clear_time is not None:
-            stage_time_text = font.render(f"Stage{i+1} : {clear_time}s", True, WHITE)
-        else:
-            stage_time_text = font.render(f"Stage{i+1} : --'s", True, WHITE)
-        win.blit(stage_time_text, (10, 50 + i * 30))  # 좌측에 맞춰서 스테이지 클리어 시간을 표시
+    # 총 플레이 시간 계산 및 표시
+    minutes, seconds = calculate_total_play_time()
+    total_time_text = font.render(f"Total play time : {minutes}m' {seconds}s", True, WHITE)
+    win.blit(total_time_text, (640 - total_time_text.get_width() // 2, 680))  # 화면 하단 중앙에 맞춤
     
     pygame.display.update()
 
