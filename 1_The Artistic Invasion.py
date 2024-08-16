@@ -416,7 +416,14 @@ def draw_dashboard():
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
 
-# 게임 종료 화면 그리기 함수
+# 각 스테이지 클리어 시간을 저장하는 리스트
+stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
+
+# 스테이지를 클리어할 때마다 클리어 시간을 기록하는 함수
+def record_stage_clear_time(stage, time_taken):
+    stage_clear_times[stage - 1] = time_taken
+
+# 게임 종료 화면 그리기 함수 수정
 def draw_end_screen():
     if game_over_reason == "victory":
         image = victory_image
@@ -433,10 +440,18 @@ def draw_end_screen():
     star_spacing = 60  # 이미지 간격 60 픽셀
     for idx, collected_star in enumerate(collected_stars):
         win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
+
+    # 스테이지 클리어 시간 표시
+    for i, clear_time in enumerate(stage_clear_times):
+        if clear_time is not None:
+            stage_time_text = font.render(f"Stage{i+1} : {clear_time}s", True, WHITE)
+        else:
+            stage_time_text = font.render(f"Stage{i+1} : --'s", True, WHITE)
+        win.blit(stage_time_text, (10, 50 + i * 30))  # 좌측에 맞춰서 스테이지 클리어 시간을 표시
     
     pygame.display.update()
 
-# 게임 루프
+# 게임 루프에서 스테이지 클리어 시간 기록 추가
 while run:
     if not game_active:
         if not game_over:
@@ -459,6 +474,7 @@ while run:
                         power_item_active = 0
                         game_over = False
                         game_over_reason = None
+                        stage_clear_times = [None] * 12  # 클리어 시간 초기화
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -530,6 +546,8 @@ while run:
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
            (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
+            # 스테이지 클리어 시간 기록
+            record_stage_clear_time(level, seconds)
             level += 1
             if level > max_level:
                 game_active = False
