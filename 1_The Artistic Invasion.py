@@ -613,7 +613,7 @@ while run:
                     direction = [direction[0] / length, direction[1] / length]
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
-                    if length < 50:
+                    if length < 100: # 플레이어에게 접근
                         energy_balls.append([pos[0], pos[1], "green", direction])
                 else:
                     direction = [random.choice([-1, 1]), random.choice([-1, 1])]
