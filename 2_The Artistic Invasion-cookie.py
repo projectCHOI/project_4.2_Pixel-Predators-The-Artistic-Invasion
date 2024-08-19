@@ -1,4 +1,3 @@
-#240814-기준
 import pygame
 import random
 import math
@@ -213,6 +212,28 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
 time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
+# 보스 이미지 로드 및 크기 조정
+boss_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A.png")
+boss_image = pygame.transform.scale(boss_image, (120, 120))
+
+# 보스 상태 초기화
+boss_active = False
+boss_health = 100
+boss_pos = [640 - 60, 50]  # 초기 위치 (화면 상단 중앙)
+boss_direction = 1  # 1: 오른쪽, -1: 왼쪽
+boss_speed = 10
+boss_attack_interval = 2000  # 보스 공격 간격 (2초)
+last_boss_attack_time = 0
+
+# 보스 공격 이미지 로드 및 크기 조정
+boss_attack_images = [
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"), image_size)
+]
+boss_attacks = []
+
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
@@ -239,35 +260,18 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     for attack in attacks:
         pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
     
+    # 보스 그리기
+    if boss_active:
+        win.blit(boss_image, boss_pos)  # 보스 그리기
+        for attack in boss_attacks:
+            win.blit(attack[1], attack[0])  # 보스 공격 그리기
+    
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
     
     # 대시보드 그리기 함수 호출
     draw_dashboard()  # 대시보드 그리기
     pygame.display.update()
-
-# 적 이미지 로드 및 크기 조정
-enemy_bomb_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png")
-enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
-
-# bomb 적 추가 함수
-def add_bomb_enemy():
-    direction = random.choice(bomb_directions)
-    size = 40
-    pos = None
-    if direction == "left":
-        pos = [0, random.randint(0, 680)]
-    elif direction == "right":
-        pos = [1240, random.randint(0, 680)]
-    elif direction == "up":
-        pos = [random.randint(0, 1240), 0]
-    elif direction == "down":
-        pos = [random.randint(0, 1240), 680]
-    target_pos = [640, 360]  # 중심을 향하도록 설정
-    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-    length = math.hypot(direction[0], direction[1])
-    direction = [direction[0] / length, direction[1] / length]
-    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
@@ -405,8 +409,8 @@ def generate_enemies(level):
 # 대시보드 그리기 함수
 def draw_dashboard():
     # 플레이 시간 표시
-    remaining_time = stage_duration - seconds
-    time_text = font.render(f"{remaining_time}", True, WHITE)
+    elapsed_time = seconds
+    time_text = font.render(f"{elapsed_time}", True, WHITE)
     win.blit(time_text, (640 - time_text.get_width() // 2, 10))  # 화면 중앙에 맞춤
     
     # 체력 표시
@@ -417,7 +421,21 @@ def draw_dashboard():
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
 
-# 게임 종료 화면 그리기 함수
+# 각 스테이지 클리어 시간을 저장하는 리스트
+stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
+
+# 스테이지를 클리어할 때마다 클리어 시간을 기록하는 함수
+def record_stage_clear_time(stage, time_taken):
+    stage_clear_times[stage - 1] = time_taken
+
+# 총 플레이 시간을 계산하는 함수
+def calculate_total_play_time():
+    total_seconds = sum(time for time in stage_clear_times if time is not None)
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    return minutes, seconds
+
+# 게임 종료 화면 그리기 함수 수정
 def draw_end_screen():
     if game_over_reason == "victory":
         image = victory_image
@@ -434,10 +452,15 @@ def draw_end_screen():
     star_spacing = 60  # 이미지 간격 60 픽셀
     for idx, collected_star in enumerate(collected_stars):
         win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
+
+    # 총 플레이 시간 계산 및 표시
+    minutes, seconds = calculate_total_play_time()
+    total_time_text = font.render(f"Total play time : {minutes}m' {seconds}s", True, WHITE)
+    win.blit(total_time_text, (640 - total_time_text.get_width() // 2, 680))  # 화면 하단 중앙에 맞춤
     
     pygame.display.update()
 
-# 게임 루프
+# 게임 루프에서 스테이지 클리어 시간 기록 추가
 while run:
     if not game_active:
         if not game_over:
@@ -460,6 +483,7 @@ while run:
                         power_item_active = 0
                         game_over = False
                         game_over_reason = None
+                        stage_clear_times = [None] * 12  # 클리어 시간 초기화
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -531,6 +555,8 @@ while run:
         if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
            (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
             collected_stars.append(star_image)  # 획득한 별 이미지 추가
+            # 스테이지 클리어 시간 기록
+            record_stage_clear_time(level, seconds)
             level += 1
             if level > max_level:
                 game_active = False
@@ -549,7 +575,10 @@ while run:
                 attacks = []
                 energy_balls = []
 
-        if seconds >= stage_duration:
+        if seconds >= stage_duration:  # 60초 이후 보스 등장
+            boss_active = True
+
+        if seconds >= 300:
             game_active = False
             game_over = True
             game_over_reason = "time_over"
@@ -592,7 +621,7 @@ while run:
                     direction = [direction[0] / length, direction[1] / length]
                     pos[0] += direction[0] * speed
                     pos[1] += direction[1] * speed
-                    if length < 50:
+                    if length < 100: # 플레이어에게 접근
                         energy_balls.append([pos[0], pos[1], "green", direction])
                 else:
                     direction = [random.choice([-1, 1]), random.choice([-1, 1])]
@@ -605,6 +634,69 @@ while run:
                 direction = [direction[0] / length, direction[1] / length]
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
+
+        if boss_active:
+            # 보스 좌우 이동
+            boss_pos[0] += boss_speed * boss_direction
+            if boss_pos[0] <= 0 or boss_pos[0] >= 1280 - 120:  # 좌우 끝에 닿으면 방향 전환
+                boss_direction *= -1
+            
+            # 보스 공격
+            if pygame.time.get_ticks() - last_boss_attack_time > boss_attack_interval:
+                attack_image = random.choice(boss_attack_images)
+                attack_pos = [boss_pos[0] + 60 - 20, boss_pos[1] + 120]  # 보스 중심에서 시작
+                boss_attacks.append((attack_pos, attack_image))
+                last_boss_attack_time = pygame.time.get_ticks()
+
+            # 보스 공격 이동
+            for attack in boss_attacks:
+                attack[0][1] += 10  # 공격이 아래로 떨어짐
+
+            # 보스 공격 화면 밖으로 나가면 제거
+            boss_attacks = [attack for attack in boss_attacks if attack[0][1] <= 720]
+
+            # 보스와 플레이어의 충돌 체크
+            for attack in boss_attacks:
+                if check_energy_ball_collision(attack[0], player_pos):
+                    current_health -= 1
+                    boss_attacks.remove(attack)
+                    if current_health <= 0:
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                        break
+
+            # 플레이어의 공격이 보스에 맞았는지 체크
+            new_attacks = []
+            for attack in attacks:
+                if check_attack_collision(attack[0], attack[1], boss_pos, 120):
+                    boss_health -= 1
+                    if boss_health <= 0:
+                        boss_active = False
+                        collected_stars.append(star_image)  # 보석 획득
+                        record_stage_clear_time(level, seconds)
+                        level += 1
+                        if level > max_level:
+                            game_active = False
+                            game_over = True
+                            game_over_reason = "victory"
+                        else:
+                            player_pos = [640 - player_width // 2, 360 - player_height // 2]
+                            intro_screen(level)
+                            start_ticks = pygame.time.get_ticks()
+                            enemies = []
+                            show_star = False
+                            star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
+                            star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
+
+                            # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
+                            attacks = []
+                            energy_balls = []
+                    else:
+                        new_attacks.append(attack)
+                else:
+                    new_attacks.append(attack)
+            attacks = new_attacks
 
         if not invincible:
             collision = check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies])
