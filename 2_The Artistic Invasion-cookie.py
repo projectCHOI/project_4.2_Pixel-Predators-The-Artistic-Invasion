@@ -277,6 +277,25 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     draw_dashboard()  # 대시보드 그리기
     pygame.display.update()
 
+# bomb 적 추가 함수
+def add_bomb_enemy():
+    direction = random.choice(bomb_directions)
+    size = 40
+    pos = None
+    if direction == "left":
+        pos = [0, random.randint(0, 680)]
+    elif direction == "right":
+        pos = [1240, random.randint(0, 680)]
+    elif direction == "up":
+        pos = [random.randint(0, 1240), 0]
+    elif direction == "down":
+        pos = [random.randint(0, 1240), 680]
+    target_pos = [640, 360]  # 중심을 향하도록 설정
+    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+    length = math.hypot(direction[0], direction[1])
+    direction = [direction[0] / length, direction[1] / length]
+    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
     for enemy in enemies:
