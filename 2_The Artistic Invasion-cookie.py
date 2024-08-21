@@ -1,6 +1,3 @@
-# boss test
-# boss test
-# boss test
 import pygame
 import random
 import math
@@ -848,3 +845,7 @@ while run:
         clock.tick(30)
 
 pygame.quit()
+
+# boss test
+# boss test
+# boss test
