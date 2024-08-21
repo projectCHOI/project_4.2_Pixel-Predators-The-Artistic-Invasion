@@ -143,24 +143,6 @@ original_player_speed = player_speed
 # 에너지 볼 설정
 energy_balls = []
 
-# 별 설정
-star_size = 40  # 크기를 40으로 조정
-star_images = [
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_2.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_3.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_4.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_5.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_6.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_7.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_8.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_9.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_10.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_11.png",
-    r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_12.png"
-]
-star_appear_time = 10
-
 # bomb 적 등장 설정
 bomb_stages = [2, 3, 5, 7, 11]
 bomb_appear_interval = 10000  # 10초 간격으로 등장
@@ -195,9 +177,6 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-# 획득한 별 이미지 추적
-collected_stars = []
-
 # 게임 오버 상태 및 이유
 game_over = False
 game_over_reason = None  # "victory", "game_over", "time_over"
@@ -212,7 +191,7 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
 time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
+def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -220,8 +199,6 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
-    if show_star:
-        win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
@@ -442,11 +419,6 @@ def draw_end_screen():
     win.blit(image, (0, 0))
     text = font.render("continue : enter", True, WHITE)
     win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-    
-    # 획득한 별 표시
-    star_spacing = 60  # 이미지 간격 60 픽셀
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
 
     # 총 플레이 시간 계산 및 표시
     minutes, seconds = calculate_total_play_time()
@@ -472,7 +444,6 @@ while run:
                         # 게임 초기화
                         level = 1
                         current_health = 3
-                        collected_stars = []
                         enemies_defeated = 0
                         player_speed = original_player_speed
                         power_item_active = 0
@@ -482,9 +453,6 @@ while run:
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
-                    show_star = False
-                    star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
-                    star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
                     start_ticks = pygame.time.get_ticks()  # 시작 시간
                     intro_screen(level)
 
@@ -543,32 +511,6 @@ while run:
             player_pos[1] = 0
         if player_pos[1] > 680:
             player_pos[1] = 680
-
-        if seconds > star_appear_time:
-            show_star = True
-
-        if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
-            collected_stars.append(star_image)  # 획득한 별 이미지 추가
-            # 스테이지 클리어 시간 기록
-            record_stage_clear_time(level, seconds)
-            level += 1
-            if level > max_level:
-                game_active = False
-                game_over = True
-                game_over_reason = "victory"
-            else:
-                player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 레벨 시작 시 플레이어를 중앙에 위치
-                intro_screen(level)
-                start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
-                enemies = []
-                show_star = False
-                star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
-                star_image = pygame.transform.scale(pygame.image.load(star_images[level - 1]), (star_size, star_size))
-
-                # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
-                attacks = []
-                energy_balls = []
 
         if seconds >= 300:
             game_active = False
@@ -751,7 +693,7 @@ while run:
         energy_balls = new_energy_balls
 
         # 공격이 아이템에 충돌하는지 확인 (아이템은 사라지지 않도록 예외 처리)
-        draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+        draw_objects(player_pos, enemies, stage_background_images[level - 1], mouse_pos, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
 pygame.quit()
