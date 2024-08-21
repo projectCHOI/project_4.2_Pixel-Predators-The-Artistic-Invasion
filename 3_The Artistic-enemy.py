@@ -129,6 +129,33 @@ ambush_striker_right = pygame.transform.scale(ambush_striker_right, image_size)
 enemy_bomb_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png")
 enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
 
+# 보스 이미지 및 설정
+boss_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A.png")
+boss_image = pygame.transform.scale(boss_image, (120, 120))
+boss_appear_time = 30  # 보스 등장 시간 (초)
+boss_hp = 100
+boss_speed = 10
+boss_pos = [640 - 60, 0]  # 초기 보스 위치
+boss_direction = 1  # 좌우 이동 방향 (1: 오른쪽, -1: 왼쪽)
+boss_active = False
+
+# 보스 공격 이미지 로드
+boss_attack_images = [
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png"), (40, 40)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png"), (40, 40)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png"), (40, 40)),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"), (40, 40))
+]
+boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
+boss_last_attack_time = 0
+boss_attacks = []
+
+# 보석 이미지
+gem_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png")
+gem_image = pygame.transform.scale(gem_image, (40, 40))
+gem_pos = None  # 보석 위치
+gem_active = False
+
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -192,7 +219,7 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
 time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
-def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
+def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None, boss_pos=None, boss_attacks=None, gem_pos=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -200,12 +227,19 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _, enemy_hp = enemy[:10]  # 이미지와 HP 추가
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+    if boss_pos:
+        win.blit(boss_image, boss_pos)
+    if boss_attacks:
+        for attack in boss_attacks:
+            win.blit(boss_attack_images[attack[2]], (attack[0], attack[1]))
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
         win.blit(power_item_image, power_item_pos)
     if heal_item_pos and heal_item_image:
         win.blit(heal_item_image, heal_item_pos)
+    if gem_pos:
+        win.blit(gem_image, gem_pos)
     
     # 에너지 볼 그리기
     for ball in energy_balls:
@@ -455,6 +489,10 @@ while run:
                         game_over = False
                         game_over_reason = None
                         stage_clear_times = [None] * 12  # 클리어 시간 초기화
+                        boss_active = False
+                        boss_hp = 100
+                        boss_attacks = []
+                        gem_active = False
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -530,6 +568,32 @@ while run:
         if level in bomb_stages and pygame.time.get_ticks() - bomb_last_appear_time > bomb_appear_interval:
             add_bomb_enemy()
             bomb_last_appear_time = pygame.time.get_ticks()
+
+        if not boss_active and level == 1 and seconds >= boss_appear_time:
+            boss_active = True
+            boss_pos = [640 - 60, 0]
+
+        if boss_active:
+            boss_pos[0] += boss_speed * boss_direction
+            if boss_pos[0] <= 0 or boss_pos[0] >= 1280 - 120:
+                boss_direction *= -1  # 방향 전환
+
+            if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
+                boss_last_attack_time = pygame.time.get_ticks()
+                attack_image_index = random.randint(0, 3)
+                boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, attack_image_index])
+
+        for attack in boss_attacks:
+            attack[1] += 10
+            if attack[1] > 720:
+                boss_attacks.remove(attack)
+            elif check_energy_ball_collision((attack[0], attack[1]), player_pos):
+                current_health -= 1
+                if current_health <= 0:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+                boss_attacks.remove(attack)
 
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed, enemy_hp = enemy
@@ -625,7 +689,7 @@ while run:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
-        # 공격이 적에게 충돌하는지 확인
+        # 공격이 적이나 보스에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
             enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _, enemy_hp = enemy
@@ -651,6 +715,38 @@ while run:
             if not hit:
                 new_enemies.append(enemy)
         enemies = new_enemies
+
+        if boss_active:
+            for attack in attacks:
+                attack_start, attack_end, thickness = attack
+                if check_attack_collision(attack_start, attack_end, boss_pos, 120):
+                    boss_hp -= attack_power
+                    if boss_hp <= 0:
+                        boss_active = False
+                        gem_pos = [boss_pos[0] + 40, boss_pos[1] + 40]
+                        gem_active = True
+
+        if gem_active and gem_pos:
+            if player_pos[0] < gem_pos[0] < player_pos[0] + player_width and player_pos[1] < gem_pos[1] < player_pos[1] + player_height:
+                gem_active = False
+                # 스테이지 클리어
+                record_stage_clear_time(level, seconds)
+                level += 1
+                if level > max_level:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "victory"
+                else:
+                    player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 레벨 시작 시 플레이어를 중앙에 위치
+                    intro_screen(level)
+                    start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
+                    enemies = []
+                    attacks = []
+                    energy_balls = []
+                    boss_active = False
+                    boss_hp = 100
+                    boss_attacks = []
+                    gem_active = False
 
         # 스피드 아이템 획득 체크
         if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
@@ -699,7 +795,7 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
-        draw_objects(player_pos, enemies, stage_background_images[level - 1], mouse_pos, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+        draw_objects(player_pos, enemies, stage_background_images[level - 1], mouse_pos, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image, boss_pos if boss_active else None, boss_attacks, gem_pos)
         clock.tick(30)
 
 pygame.quit()
