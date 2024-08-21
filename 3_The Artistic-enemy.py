@@ -171,6 +171,7 @@ collision_effect_duration = 0
 # 공격 설정
 attacks = []
 attack_speed = 20
+attack_power = 1  # 플레이어의 공격력
 enemies_defeated = 0  # 제거된 적의 수
 
 # 마우스 클릭 추적
@@ -197,7 +198,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
+        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _, enemy_hp = enemy[:10]  # 이미지와 HP 추가
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
@@ -243,7 +244,7 @@ def add_bomb_enemy():
     direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
     length = math.hypot(direction[0], direction[1])
     direction = [direction[0] / length, direction[1] / length]
-    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9, 1])  # enemy_bomb 체력 1 추가
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
@@ -364,17 +365,21 @@ def generate_enemies(level):
         elif direction == (-1, 0):  # 우측에서
             pos = [1200-size, random.randint(0, 700-size)]
             image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_right
+        
         if size == 40:
             enemy_type = "move_and_disappear"
+            hp = 1  # 체력 1
         elif size == 60:
             target_pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
             enemy_type = "move_and_shoot"
             direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
             length = math.hypot(direction[0], direction[1])
             direction = [direction[0] / length, direction[1] / length]
+            hp = 2  # 체력 2
         elif size == 20:
             enemy_type = "approach_and_shoot"
-        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed])  # 이미지 및 원래 속도 추가
+            hp = 1  # 체력 1
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])  # 이미지, 원래 속도 및 HP 추가
 
     return enemies
 
@@ -527,7 +532,7 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         for enemy in enemies:
-            pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed = enemy
+            pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed, enemy_hp = enemy
             if enemy_type == "move_and_disappear":
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
@@ -623,23 +628,25 @@ while run:
         # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
+            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _, enemy_hp = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
-                    hit = True
-                    enemies_defeated += 1  # 제거된 적의 수 증가
-                    # 스피드 아이템 생성
-                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
-                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 공격력 증가 아이템 생성
-                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
-                        power_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 체력 회복 아이템 생성
-                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
-                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
-                        current_heal_item_image = random.choice(heal_item_images)
+                    enemy_hp -= attack_power  # 공격력 적용
+                    if enemy_hp <= 0:
+                        hit = True
+                        enemies_defeated += 1  # 제거된 적의 수 증가
+                        # 스피드 아이템 생성
+                        if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
+                            speed_item_pos = (enemy_pos[0], enemy_pos[1])
+                        # 공격력 증가 아이템 생성
+                        if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
+                            power_item_pos = (enemy_pos[0], enemy_pos[1])
+                        # 체력 회복 아이템 생성
+                        if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
+                            heal_item_pos = (enemy_pos[0], enemy_pos[1])
+                            current_heal_item_image = random.choice(heal_item_images)
                     break
             if not hit:
                 new_enemies.append(enemy)
@@ -692,7 +699,6 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
-        # 공격이 아이템에 충돌하는지 확인 (아이템은 사라지지 않도록 예외 처리)
         draw_objects(player_pos, enemies, stage_background_images[level - 1], mouse_pos, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
