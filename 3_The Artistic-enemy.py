@@ -432,6 +432,22 @@ def draw_dashboard():
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
 
+def draw_boss_health_bar(boss_hp, max_boss_hp, bar_color=YELLOW):
+    # 체력바의 위치와 크기 설정
+    bar_x = 150
+    bar_y = 680
+    bar_width = 10
+    bar_height = 10
+    bars = boss_hp // 2
+
+    # "BOSS LIFE" 텍스트 표시
+    boss_life_text = font.render("BOSS LIFE:", True, WHITE)
+    win.blit(boss_life_text, (10, 675))
+
+    # 체력바 그리기
+    for i in range(bars):
+        pygame.draw.rect(win, bar_color, (bar_x + i * (bar_width + 2), bar_y, bar_width, bar_height))
+
 # 각 스테이지 클리어 시간을 저장하는 리스트
 stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
 
@@ -717,6 +733,7 @@ while run:
         enemies = new_enemies
 
         if boss_active:
+            draw_boss_health_bar(boss_hp, 100)  # 보스 체력바 그리기
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, boss_pos, 120):
