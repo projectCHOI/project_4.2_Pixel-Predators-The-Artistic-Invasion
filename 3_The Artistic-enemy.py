@@ -431,6 +431,10 @@ def draw_dashboard():
     # 제거된 적의 수 표시
     enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
+    
+    # 보스 체력바 표시
+    if boss_active:
+        draw_boss_health_bar(boss_hp, 100)  # 보스 체력바 그리기
 
 def draw_boss_health_bar(boss_hp, max_boss_hp, bar_color=YELLOW):
     # 체력바의 위치와 크기 설정
