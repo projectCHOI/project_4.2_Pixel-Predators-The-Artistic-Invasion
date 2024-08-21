@@ -592,6 +592,7 @@ while run:
         if not boss_active and level == 1 and seconds >= boss_appear_time:
             boss_active = True
             boss_pos = [640 - 60, 0]
+            boss_hp = 100  # 보스 체력 초기화
 
         if boss_active:
             boss_pos[0] += boss_speed * boss_direction
@@ -744,8 +745,10 @@ while run:
                     boss_hp -= attack_power
                     if boss_hp <= 0:
                         boss_active = False
+                        boss_hp = 0  # 보스 체력을 0으로 유지
                         gem_pos = [boss_pos[0] + 40, boss_pos[1] + 40]
                         gem_active = True
+                        break  # 보스가 사라지면 공격을 멈춥니다
 
         if gem_active and gem_pos:
             if player_pos[0] < gem_pos[0] < player_pos[0] + player_width and player_pos[1] < gem_pos[1] < player_pos[1] + player_height:
