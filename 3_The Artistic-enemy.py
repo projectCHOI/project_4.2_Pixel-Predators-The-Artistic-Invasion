@@ -138,6 +138,7 @@ boss_speed = 10
 boss_pos = [640 - 60, 0]  # 초기 보스 위치
 boss_direction = 1  # 좌우 이동 방향 (1: 오른쪽, -1: 왼쪽)
 boss_active = False
+boss_defeated = False  # 보스가 제거되었는지 여부를 추적
 
 # 보스 공격 이미지 로드
 boss_attack_images = [
@@ -513,6 +514,7 @@ while run:
                         boss_hp = 100
                         boss_attacks = []
                         gem_active = False
+                        boss_defeated = False  # 보스 초기화
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -589,7 +591,8 @@ while run:
             add_bomb_enemy()
             bomb_last_appear_time = pygame.time.get_ticks()
 
-        if not boss_active and level == 1 and seconds >= boss_appear_time:
+        # 보스 등장 조건 체크
+        if not boss_active and level == 1 and seconds >= boss_appear_time and not boss_defeated:
             boss_active = True
             boss_pos = [640 - 60, 0]
             boss_hp = 100  # 보스 체력 초기화
@@ -748,6 +751,7 @@ while run:
                         boss_hp = 0  # 보스 체력을 0으로 유지
                         gem_pos = [boss_pos[0] + 40, boss_pos[1] + 40]
                         gem_active = True
+                        boss_defeated = True  # 보스가 제거된 것으로 표시
                         break  # 보스가 사라지면 공격을 멈춥니다
 
         if gem_active and gem_pos:
