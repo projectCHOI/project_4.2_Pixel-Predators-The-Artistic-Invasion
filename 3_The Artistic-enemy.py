@@ -220,6 +220,9 @@ game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
 time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
+# 획득한 보석들을 저장할 리스트
+collected_gems = []
+
 def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None, boss_pos=None, boss_attacks=None, gem_pos=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
@@ -467,6 +470,13 @@ def calculate_total_play_time():
     seconds = total_seconds % 60
     return minutes, seconds
 
+# 획득한 보석을 화면에 시각화하는 함수
+def draw_collected_gems():
+    x_offset = 640 - (len(collected_gems) * 25)
+    y_offset = 420
+    for i, gem in enumerate(collected_gems):
+        win.blit(gem_image, (x_offset + i * 50, y_offset))
+
 # 게임 종료 화면 그리기 함수 수정
 def draw_end_screen():
     if game_over_reason == "victory":
@@ -479,6 +489,9 @@ def draw_end_screen():
     win.blit(image, (0, 0))
     text = font.render("continue : enter", True, WHITE)
     win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
+
+    # 획득한 보석 시각화
+    draw_collected_gems()
 
     # 총 플레이 시간 계산 및 표시
     minutes, seconds = calculate_total_play_time()
@@ -515,6 +528,7 @@ while run:
                         boss_attacks = []
                         gem_active = False
                         boss_defeated = False  # 보스 초기화
+                        collected_gems = []  # 보석 초기화
                     game_active = True
                     player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
@@ -757,6 +771,7 @@ while run:
         if gem_active and gem_pos:
             if player_pos[0] < gem_pos[0] < player_pos[0] + player_width and player_pos[1] < gem_pos[1] < player_pos[1] + player_height:
                 gem_active = False
+                collected_gems.append(gem_pos)  # 획득한 보석을 리스트에 추가
                 # 스테이지 클리어
                 record_stage_clear_time(level, seconds)
                 level += 1
