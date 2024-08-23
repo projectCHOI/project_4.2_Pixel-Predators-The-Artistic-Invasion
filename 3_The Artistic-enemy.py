@@ -775,6 +775,7 @@ while run:
                     boss_hp = 100
                     boss_attacks = []
                     gem_active = False
+                    gem_pos = None  # 보석 위치 초기화
 
         # 스피드 아이템 획득 체크
         if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
