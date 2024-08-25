@@ -134,11 +134,13 @@ boss_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI
 boss_image = pygame.transform.scale(boss_image, (120, 120))
 boss_appear_time = 30  # 보스 등장 시간 (초)
 boss_hp = 100
-boss_speed = 10
+boss_speed = 5
 boss_pos = [640 - 60, 0]  # 초기 보스 위치
-boss_direction = 1  # 좌우 이동 방향 (1: 오른쪽, -1: 왼쪽)
+boss_direction_x = 1  # 좌우 이동 방향 (1: 오른쪽, -1: 왼쪽)
+boss_direction_y = 1  # 위아래 이동 방향 (1: 아래, -1: 위)
 boss_active = False
 boss_defeated = False  # 보스가 제거되었는지 여부를 추적
+boss_move_phase = 1  # 1: 중앙 이동, 2: 좌우 이동, 3: 좌우+위아래 이동
 
 # 보스 공격 이미지 로드
 boss_attack_images = {
@@ -608,10 +610,36 @@ while run:
             boss_hp = 100  # 보스 체력 초기화
 
         if boss_active:
-            boss_pos[0] += boss_speed * boss_direction
-            if boss_pos[0] <= 0 or boss_pos[0] >= 1280 - 120:
-                boss_direction *= -1  # 방향 전환
+            # 보스 이동 패턴
+            if boss_move_phase == 1:  # 중앙으로 이동
+                target_pos = [640 - 60, 360 - 60]
+                direction = [target_pos[0] - boss_pos[0], target_pos[1] - boss_pos[1]]
+                length = math.hypot(direction[0], direction[1])
+                if length > boss_speed:
+                    direction = [direction[0] / length, direction[1] / length]
+                    boss_pos[0] += direction[0] * boss_speed
+                    boss_pos[1] += direction[1] * boss_speed
+                else:
+                    boss_pos = target_pos
+                    boss_move_phase = 2
 
+            elif boss_move_phase == 2:  # 좌우 이동
+                if boss_hp > 50:
+                    boss_pos[0] += boss_speed * boss_direction_x
+                    if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
+                        boss_direction_x *= -1  # 방향 전환
+                else:
+                    boss_move_phase = 3
+
+            elif boss_move_phase == 3:  # 좌우+위아래 이동
+                boss_pos[0] += boss_speed * boss_direction_x
+                boss_pos[1] += boss_speed * boss_direction_y
+                if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
+                    boss_direction_x *= -1  # 좌우 방향 전환
+                if boss_pos[1] <= 60 or boss_pos[1] >= 720 - 180:
+                    boss_direction_y *= -1  # 위아래 방향 전환
+
+            # 보스 공격
             if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
                 boss_last_attack_time = pygame.time.get_ticks()
 
