@@ -500,6 +500,32 @@ def draw_end_screen():
     
     pygame.display.update()
 
+# 보스 공격 함수
+def boss_attack():
+    attack_type = random.choice([1, 2, 3, 4])
+
+    if attack_type == 1:  # 직선 발사 공격
+        attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
+        length = math.hypot(attack_direction[0], attack_direction[1])
+        attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
+        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 0, attack_direction, "straight"])
+
+    elif attack_type == 2:  # 방사형 발사
+        for angle in range(0, 360, 45):
+            rad = math.radians(angle)
+            direction = [math.cos(rad), math.sin(rad)]
+            boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 1, direction, "radial"])
+
+    elif attack_type == 3:  # 유도 미사일
+        attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
+        length = math.hypot(attack_direction[0], attack_direction[1])
+        attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
+        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 2, attack_direction, "homing"])
+
+    elif attack_type == 4:  # 레이저 공격
+        # 레이저는 한 방향으로 일정 시간 동안 지속되며 이동하지 않습니다.
+        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 3, [0, 1], "laser"])
+
 # 게임 루프에서 스테이지 클리어 시간 기록 추가
 while run:
     if not game_active:
@@ -618,8 +644,7 @@ while run:
 
             if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
                 boss_last_attack_time = pygame.time.get_ticks()
-                attack_image_index = random.randint(0, 3)
-                boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, attack_image_index])
+                boss_attack()
 
         for attack in boss_attacks:
             attack[1] += 10
