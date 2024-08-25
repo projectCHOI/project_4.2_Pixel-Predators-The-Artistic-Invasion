@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption("The Artistic Invasion")
+pygame.display.setCaption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -141,12 +141,12 @@ boss_active = False
 boss_defeated = False  # 보스가 제거되었는지 여부를 추적
 
 # 보스 공격 이미지 로드
-boss_attack_images = [
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png"), (40, 40)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png"), (40, 40)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png"), (40, 40)),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"), (40, 40))
-]
+boss_attack_images = {
+    "down": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png"), (40, 40)),
+    "up": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png"), (40, 40)),
+    "right": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png"), (40, 40)),
+    "left": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"), (40, 40))
+}
 boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
 boss_last_attack_time = 0
 boss_attacks = []
@@ -260,10 +260,6 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     # 대시보드 그리기 함수 호출
     draw_dashboard()  # 대시보드 그리기
     pygame.display.update()
-
-# 적 이미지 로드 및 크기 조정
-enemy_bomb_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png")
-enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
 
 # bomb 적 추가 함수
 def add_bomb_enemy():
@@ -500,32 +496,6 @@ def draw_end_screen():
     
     pygame.display.update()
 
-# 보스 공격 함수
-def boss_attack():
-    global boss_attacks
-
-    if boss_hp >= 80:  # 체력 100%~80%: 직선 발사 공격
-        attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
-        length = math.hypot(attack_direction[0], attack_direction[1])
-        attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
-        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 0, attack_direction, "straight"])
-
-    if 80 > boss_hp >= 40:  # 체력 80%~40%: 방사형 발사 공격
-        for angle in range(0, 360, 45):
-            rad = math.radians(angle)
-            direction = [math.cos(rad), math.sin(rad)]
-            boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 1, direction, "radial"])
-
-    if 40 > boss_hp >= 10:  # 체력 40%~10%: 유도 미사일 공격
-        attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
-        length = math.hypot(attack_direction[0], attack_direction[1])
-        attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
-        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 2, attack_direction, "homing"])
-
-    if boss_hp <= 10:  # 체력 10% 이하: 레이저 공격
-        # 레이저는 한 방향으로 일정 시간 동안 지속되며 이동하지 않습니다.
-        boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 3, [0, 1], "laser"])
-
 # 게임 루프에서 스테이지 클리어 시간 기록 추가
 while run:
     if not game_active:
@@ -644,19 +614,42 @@ while run:
 
             if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
                 boss_last_attack_time = pygame.time.get_ticks()
-                boss_attack()
+                attack_direction = random.choice(["down", "up", "right", "left"])
+                
+                if attack_direction == "down":
+                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1] + 120]
+                elif attack_direction == "up":
+                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1]]
+                elif attack_direction == "right":
+                    attack_start_pos = [boss_pos[0] + 120, boss_pos[1] + 60]
+                elif attack_direction == "left":
+                    attack_start_pos = [boss_pos[0], boss_pos[1] + 60]
+                
+                boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
 
+        # 보스 공격 이동 및 충돌 처리
+        new_boss_attacks = []
         for attack in boss_attacks:
-            attack[1] += 10
-            if attack[1] > 720:
-                boss_attacks.remove(attack)
-            elif check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                current_health -= 1
-                if current_health <= 0:
-                    game_active = False
-                    game_over = True
-                    game_over_reason = "game_over"
-                boss_attacks.remove(attack)
+            if attack[2] == "down":
+                attack[1] += 10
+            elif attack[2] == "up":
+                attack[1] -= 10
+            elif attack[2] == "right":
+                attack[0] += 10
+            elif attack[2] == "left":
+                attack[0] -= 10
+
+            if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
+                if check_energy_ball_collision((attack[0], attack[1]), player_pos):
+                    current_health -= 1
+                    if current_health <= 0:
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                else:
+                    new_boss_attacks.append(attack)
+
+        boss_attacks = new_boss_attacks
 
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed, enemy_hp = enemy
