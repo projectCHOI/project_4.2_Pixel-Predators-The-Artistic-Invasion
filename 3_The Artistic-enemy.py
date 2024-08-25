@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
-pygame.display.setCaption("The Artistic Invasion")
+pygame.display.set_caption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -614,18 +614,33 @@ while run:
 
             if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
                 boss_last_attack_time = pygame.time.get_ticks()
-                attack_direction = random.choice(["down", "up", "right", "left"])
-                
-                if attack_direction == "down":
-                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1] + 120]
-                elif attack_direction == "up":
-                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1]]
-                elif attack_direction == "right":
-                    attack_start_pos = [boss_pos[0] + 120, boss_pos[1] + 60]
-                elif attack_direction == "left":
-                    attack_start_pos = [boss_pos[0], boss_pos[1] + 60]
-                
-                boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
+
+                possible_directions = []
+
+                # 보스의 체력에 따른 공격 방향 설정
+                if boss_hp <= 100 and boss_hp > 80:
+                    possible_directions = ["down"]
+                elif boss_hp <= 80 and boss_hp > 60:
+                    possible_directions = ["down", "up"]
+                elif boss_hp <= 60 and boss_hp > 40:
+                    possible_directions = ["down", "up", "right"]
+                elif boss_hp <= 40 and boss_hp > 0:
+                    possible_directions = ["down", "up", "right", "left"]
+
+                # 가능한 방향 중에서 랜덤으로 선택
+                if possible_directions:
+                    attack_direction = random.choice(possible_directions)
+
+                    if attack_direction == "down":
+                        attack_start_pos = [boss_pos[0] + 60, boss_pos[1] + 120]
+                    elif attack_direction == "up":
+                        attack_start_pos = [boss_pos[0] + 60, boss_pos[1]]
+                    elif attack_direction == "right":
+                        attack_start_pos = [boss_pos[0] + 120, boss_pos[1] + 60]
+                    elif attack_direction == "left":
+                        attack_start_pos = [boss_pos[0], boss_pos[1] + 60]
+
+                    boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
 
         # 보스 공격 이동 및 충돌 처리
         new_boss_attacks = []
