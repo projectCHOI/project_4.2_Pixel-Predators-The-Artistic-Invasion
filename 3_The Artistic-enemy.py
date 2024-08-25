@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
-pygame.display.set_caption("The Artistic Invasion")
+pygame.display.setCaption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -502,27 +502,27 @@ def draw_end_screen():
 
 # 보스 공격 함수
 def boss_attack():
-    attack_type = random.choice([1, 2, 3, 4])
+    global boss_attacks
 
-    if attack_type == 1:  # 직선 발사 공격
+    if boss_hp >= 80:  # 체력 100%~80%: 직선 발사 공격
         attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
         length = math.hypot(attack_direction[0], attack_direction[1])
         attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
         boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 0, attack_direction, "straight"])
 
-    elif attack_type == 2:  # 방사형 발사
+    if 80 > boss_hp >= 40:  # 체력 80%~40%: 방사형 발사 공격
         for angle in range(0, 360, 45):
             rad = math.radians(angle)
             direction = [math.cos(rad), math.sin(rad)]
             boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 1, direction, "radial"])
 
-    elif attack_type == 3:  # 유도 미사일
+    if 40 > boss_hp >= 10:  # 체력 40%~10%: 유도 미사일 공격
         attack_direction = [player_pos[0] - boss_pos[0], player_pos[1] - boss_pos[1]]
         length = math.hypot(attack_direction[0], attack_direction[1])
         attack_direction = [attack_direction[0] / length, attack_direction[1] / length]
         boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 2, attack_direction, "homing"])
 
-    elif attack_type == 4:  # 레이저 공격
+    if boss_hp <= 10:  # 체력 10% 이하: 레이저 공격
         # 레이저는 한 방향으로 일정 시간 동안 지속되며 이동하지 않습니다.
         boss_attacks.append([boss_pos[0] + 60, boss_pos[1] + 120, 3, [0, 1], "laser"])
 
