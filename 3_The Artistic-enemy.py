@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
-pygame.display.setCaption("The Artistic Invasion")
+pygame.display.set_caption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -243,7 +243,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _, enemy_hp = enemy[:10]  # 이미지와 HP 추가
+        enemy_pos, enemy_size, _, _, _, _, enemy_image, _, enemy_hp, *_ = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if boss_pos:
         win.blit(boss_image, boss_pos)
