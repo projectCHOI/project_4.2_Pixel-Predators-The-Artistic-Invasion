@@ -427,7 +427,9 @@ def generate_enemies(level):
         elif size == 20:
             enemy_type = "approach_and_shoot"
             hp = 1  # 체력 1
-        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])  # 이미지, 원래 속도 및 HP 추가
+
+        # 중요한 부분: 'image'가 올바르게 설정되어야 합니다.
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])
 
     return enemies
 
