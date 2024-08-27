@@ -307,7 +307,7 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
 def check_energy_ball_collision(ball_pos, player_pos):
     bx, by = ball_pos
     px, py = player_pos
-    if px < bx < px + player_width and py < by < player_height:
+    if px < bx < px + player_width and py < by < py + player_height:
         return True
     return False
 
@@ -684,7 +684,7 @@ while run:
 
             if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
                 if check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                    current_health -= 1
+                    current_health -= 2  # 보스 공격에 맞으면 2의 데미지를 입음
                     if current_health <= 0:
                         game_active = False
                         game_over = True
