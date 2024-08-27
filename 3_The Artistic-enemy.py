@@ -13,29 +13,29 @@ title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHO
 title_image = pygame.transform.scale(title_image, (1280, 720))
 
 stage_images = [
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_B.JPG"),
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG",
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG", 
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
 ]
 
@@ -192,10 +192,6 @@ stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
-player_blinking = False  # 깜빡임 효과를 위한 변수 추가
-player_blink_start_time = 0  # 깜빡임 효과 시작 시간
-blink_duration = 1500  # 깜빡임 지속 시간
-blink_interval = 100  # 깜빡임 간격
 
 # 충돌 효과 설정
 collision_effect_start_time = 0
@@ -231,19 +227,11 @@ collected_gems = []
 
 def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None, boss_pos=None, boss_attacks=None, gem_pos=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
-    
-    # 플레이어 깜빡임 처리
-    if player_blinking:
-        current_time = pygame.time.get_ticks()
-        if (current_time - player_blink_start_time) // blink_interval % 2 == 0:
-            win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
-    else:
-        win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
-    
+    win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, _, _, _, _, enemy_image, _, enemy_hp, *_ = enemy
+        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _, enemy_hp = enemy[:10]  # 이미지와 HP 추가
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if boss_pos:
         win.blit(boss_image, boss_pos)
@@ -297,7 +285,7 @@ def add_bomb_enemy():
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type = enemy[:3]  # 필수 요소만 사용
+        enemy_pos, enemy_size, enemy_type = enemy[:3]
         if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
            (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or player_pos[1] < enemy_pos[1] < player_pos[1] + enemy_size):
             if enemy_type == "bomb":
@@ -427,9 +415,7 @@ def generate_enemies(level):
         elif size == 20:
             enemy_type = "approach_and_shoot"
             hp = 1  # 체력 1
-
-        # 중요한 부분: 'image'가 올바르게 설정되어야 합니다.
-        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])  # 이미지, 원래 속도 및 HP 추가
 
     return enemies
 
@@ -779,17 +765,8 @@ while run:
                         collision_image = collision_images[2]["image"]
                         collision_effect_duration = collision_images[2]["duration"]
 
-                    # 체력이 4 이상일 때 깜빡임 효과 추가
-                    if current_health >= 4:
-                        player_blinking = True
-                        player_blink_start_time = pygame.time.get_ticks()
-
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
             invincible = False
-
-        # 플레이어 깜빡임 지속 시간 체크
-        if player_blinking and pygame.time.get_ticks() - player_blink_start_time > blink_duration:
-            player_blinking = False
 
         # 충돌 이미지 표시 시간 체크
         if pygame.time.get_ticks() - collision_effect_start_time < collision_effect_duration:
@@ -811,13 +788,10 @@ while run:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
-        # 적의 정보를 다루는 코드
+        # 공격이 적이나 보스에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            # 모든 정보를 언팩
-            enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp, *extra_data = enemy
-            
-            # 적의 행동 및 상태에 따른 처리
+            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _, enemy_hp = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
@@ -826,11 +800,13 @@ while run:
                     if enemy_hp <= 0:
                         hit = True
                         enemies_defeated += 1  # 제거된 적의 수 증가
-                        # 추가 조건에 따른 아이템 생성
+                        # 스피드 아이템 생성
                         if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                             speed_item_pos = (enemy_pos[0], enemy_pos[1])
+                        # 공격력 증가 아이템 생성
                         if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
                             power_item_pos = (enemy_pos[0], enemy_pos[1])
+                        # 체력 회복 아이템 생성
                         if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
                             heal_item_pos = (enemy_pos[0], enemy_pos[1])
                             current_heal_item_image = random.choice(heal_item_images)
