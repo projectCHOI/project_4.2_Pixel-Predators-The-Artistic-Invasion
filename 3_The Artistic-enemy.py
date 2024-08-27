@@ -63,8 +63,8 @@ collision_images = {
 # Health 설정
 health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png")
 health_image = pygame.transform.scale(health_image, image_size)
-max_health = 5
-current_health = 3
+max_health = 7
+current_health = 4
 
 # 스피드 아이템 설정
 speed_item_image = pygame.image.load(r"C:/Users/HOME\Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_Quickly.png")
