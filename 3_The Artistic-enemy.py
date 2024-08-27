@@ -297,7 +297,7 @@ def add_bomb_enemy():
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type = enemy[:3]
+        enemy_pos, enemy_size, enemy_type = enemy[:3]  # 필수 요소만 사용
         if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
            (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or player_pos[1] < enemy_pos[1] < player_pos[1] + enemy_size):
             if enemy_type == "bomb":
@@ -809,10 +809,13 @@ while run:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
-        # 공격이 적이나 보스에게 충돌하는지 확인
+        # 적의 정보를 다루는 코드
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, enemy_image, _, enemy_hp = enemy
+            # 모든 정보를 언팩
+            enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp, *extra_data = enemy
+            
+            # 적의 행동 및 상태에 따른 처리
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
@@ -821,13 +824,11 @@ while run:
                     if enemy_hp <= 0:
                         hit = True
                         enemies_defeated += 1  # 제거된 적의 수 증가
-                        # 스피드 아이템 생성
+                        # 추가 조건에 따른 아이템 생성
                         if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                             speed_item_pos = (enemy_pos[0], enemy_pos[1])
-                        # 공격력 증가 아이템 생성
                         if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
                             power_item_pos = (enemy_pos[0], enemy_pos[1])
-                        # 체력 회복 아이템 생성
                         if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
                             heal_item_pos = (enemy_pos[0], enemy_pos[1])
                             current_heal_item_image = random.choice(heal_item_images)
