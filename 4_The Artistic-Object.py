@@ -92,6 +92,31 @@ class Player(GameObject):
             self.attacks.append((attack_start, (target_pos[0] + offset, target_pos[1] + offset), 3))
             self.attacks.append((attack_start, (target_pos[0] - offset, target_pos[1] - offset), 3))
 
+    def update_attacks(self):
+        new_attacks = []
+        for attack in self.attacks:
+            start, end, thickness = attack
+            direction = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction[0], direction[1])
+            if length == 0:
+                continue
+            direction = (direction[0] / length * 20, direction[1] / length * 20)  # 공격 속도 20
+            new_end = (start[0] + direction[0], start[1] + direction[1])
+            if 0 <= new_end[0] <= 1280 and 0 <= new_end[1] <= 720:
+                new_attacks.append((new_end, new_end, thickness))
+        self.attacks = new_attacks
+
+    def draw(self):
+        if self.blinking:
+            if (pygame.time.get_ticks() - self.blink_start_time) // self.blink_interval % 2 == 0:
+                win.blit(self.image, self.pos)
+        else:
+            win.blit(self.image, self.pos)
+
+        # 공격 그리기
+        for attack in self.attacks:
+            pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
+
     def check_collision(self, enemies):
         for enemy in enemies:
             if (self.pos[0] < enemy.pos[0] < self.pos[0] + self.size[0] or
@@ -119,12 +144,6 @@ class Player(GameObject):
         if self.blinking and current_time - self.blink_start_time > self.blink_duration:
             self.blinking = False
 
-    def draw(self):
-        if self.blinking:
-            if (pygame.time.get_ticks() - self.blink_start_time) // self.blink_interval % 2 == 0:
-                win.blit(self.image, self.pos)
-        else:
-            win.blit(self.image, self.pos)
 
 class Enemy(GameObject):
     def __init__(self, pos, size, image, speed, direction, hp):
@@ -145,6 +164,7 @@ class Enemy(GameObject):
            min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
             return True
         return False
+
 
 class Boss(GameObject):
     def __init__(self, pos, hp):
@@ -219,6 +239,7 @@ class Boss(GameObject):
         for i in range(bars):
             pygame.draw.rect(win, YELLOW, (bar_x + i * (bar_width + 2), bar_y, bar_width, bar_height))
 
+
 class Game:
     def __init__(self):
         self.level = 1
@@ -288,19 +309,8 @@ class Game:
                 pos = [1200-size, random.randint(0, 700-size)]
                 image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_right
 
-            if size == 40:
-                enemy_type = "move_and_disappear"
-                hp = 1
-            elif size == 60:
-                target_pos = [random.randint(100, 1100), random.randint(100, 600)]
-                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                length = math.hypot(direction[0], direction[1])
-                direction = [direction[0] / length, direction[1] / length]
-                hp = 2
-            elif size == 20:
-                enemy_type = "approach_and_shoot"
-                hp = 1
-            new_enemies.append(Enemy(pos, size, image, speed, direction, hp))
+            direction_vector = [direction[0], direction[1]]
+            new_enemies.append(Enemy(pos, size, image, speed, direction_vector, 1 if size == 40 else 2))
         return new_enemies
 
     def handle_events(self):
@@ -326,6 +336,7 @@ class Game:
         self.intro_screen(self.level)
         self.player.attacks = []
         self.enemies = []
+        self.enemies = self.generate_enemies()  # 적 생성 추가
         self.boss = None
 
     def reset_game(self):
@@ -337,7 +348,7 @@ class Game:
         self.start_ticks = pygame.time.get_ticks()
         self.stage_clear_times = [None] * 12
         self.player.attacks = []
-        self.enemies = []
+        self.enemies = self.generate_enemies()  # 적 생성 추가
         self.boss = None
         self.intro_screen(self.level)
 
@@ -354,6 +365,7 @@ class Game:
             self.player.move("down")
 
         self.player.update_invincibility()
+        self.player.update_attacks()  # 공격 업데이트 추가
 
         if self.seconds >= 300:
             self.end_game("time_over")
@@ -378,7 +390,6 @@ class Game:
                 self.boss.hp -= 1
                 if self.boss.hp <= 0:
                     self.boss = None
-                    gem_pos = [self.boss.pos[0] + 40, self.boss.pos[1] + 40]
                     self.end_game("victory")
 
             self.boss.move()
