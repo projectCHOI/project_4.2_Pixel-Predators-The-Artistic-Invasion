@@ -278,39 +278,39 @@ class Game:
 
     def generate_enemies(self):
         level_config = [
-            (10, [(0, 1)], [40], random.randint(1, 2)),
-            (10, [(0, 1)], [40], random.randint(1, 3)),
-            (10, [(0, 1), (0, -1)], [40, 60], random.randint(1, 4)),
-            (random.randint(10, 12), [(0, 1), (0, -1)], [40, 60], random.randint(3, 8)),
-            (random.randint(10, 12), [(1, 0), (-1, 0)], [20, 40], random.randint(6, 16)),
-            (random.randint(10, 14), [(0, 1), (0, -1), (1, 0), (-1, 0)], [20, 40], random.randint(6, 20)),
-            (random.randint(10, 16), [(0, 1), (0, -1), (1, 0), (-1, 0)], [20, 40, 60], random.randint(6, 24)),
-            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [20, 40, 60], random.randint(6, 26)),
-            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [20, 40, 60], random.randint(8, 30)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [20, 40, 60], random.randint(8, 30)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [20, 40, 60], random.randint(10, 32)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [20, 40, 60], random.randint(15, 32))
+            (10, [(0, 1)], [(40, 40)], random.randint(1, 2)),
+            (10, [(0, 1)], [(40, 40)], random.randint(1, 3)),
+            (10, [(0, 1), (0, -1)], [(40, 40), (60, 60)], random.randint(1, 4)),
+            (random.randint(10, 12), [(0, 1), (0, -1)], [(40, 40), (60, 60)], random.randint(3, 8)),
+            (random.randint(10, 12), [(1, 0), (-1, 0)], [(20, 20), (40, 40)], random.randint(6, 16)),
+            (random.randint(10, 14), [(0, 1), (0, -1), (1, 0), (-1, 0)], [(20, 20), (40, 40)], random.randint(6, 20)),
+            (random.randint(10, 16), [(0, 1), (0, -1), (1, 0), (-1, 0)], [(20, 20), (40, 40), (60, 60)], random.randint(6, 24)),
+            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(6, 26)),
+            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(8, 30)),
+            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(8, 30)),
+            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(10, 32)),
+            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(15, 32))
         ]
         speed, directions, sizes, num_enemies = level_config[self.level - 1]
         new_enemies = []
         for _ in range(num_enemies):
             direction = random.choice(directions)
-            size = random.choice(sizes)
+            size = random.choice(sizes)  # size는 (width, height) 튜플로 설정
             if direction == (0, 1):
-                pos = [random.randint(0, 1200-size), 0]
-                image = enemy_images["up"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_up
+                pos = [random.randint(0, 1200-size[0]), 0]
+                image = enemy_images["up"] if size[0] == 40 else sentinel_shooter_left if size[0] == 60 else ambush_striker_up
             elif direction == (0, -1):
-                pos = [random.randint(0, 1200-size), 700-size]
-                image = enemy_images["down"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_down
+                pos = [random.randint(0, 1200-size[0]), 700-size[1]]
+                image = enemy_images["down"] if size[0] == 40 else sentinel_shooter_left if size[0] == 60 else ambush_striker_down
             elif direction == (1, 0):
-                pos = [0, random.randint(0, 700-size)]
-                image = enemy_images["left"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_left
+                pos = [0, random.randint(0, 700-size[1])]
+                image = enemy_images["left"] if size[0] == 40 else sentinel_shooter_right if size[0] == 60 else ambush_striker_left
             elif direction == (-1, 0):
-                pos = [1200-size, random.randint(0, 700-size)]
-                image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_right
+                pos = [1200-size[0], random.randint(0, 700-size[1])]
+                image = enemy_images["right"] if size[0] == 40 else sentinel_shooter_right if size[0] == 60 else ambush_striker_right
 
             direction_vector = [direction[0], direction[1]]
-            new_enemies.append(Enemy(pos, size, image, speed, direction_vector, 1 if size == 40 else 2))
+            new_enemies.append(Enemy(pos, size, image, speed, direction_vector, 1 if size[0] == 40 else 2))
         return new_enemies
 
     def handle_events(self):
