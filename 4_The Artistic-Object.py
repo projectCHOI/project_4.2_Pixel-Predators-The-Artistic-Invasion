@@ -1,3 +1,4 @@
+# 코드 간소화 / 깜밖임 효과
 import pygame
 import random
 import math
