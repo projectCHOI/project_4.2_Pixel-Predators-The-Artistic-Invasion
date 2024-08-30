@@ -6,7 +6,7 @@ pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
-pygame.display.setCaption("The Artistic Invasion")
+pygame.display.set_caption("The Artistic Invasion")
 
 # 이미지 로드
 title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
@@ -243,7 +243,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
     for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _, enemy_hp = enemy[:10]  # 이미지와 HP 추가
+        enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if boss_pos:
         win.blit(boss_image, boss_pos)
@@ -706,48 +706,49 @@ while run:
 
         boss_attacks = new_boss_attacks
 
+        # 적 이동 및 충돌 처리
         for enemy in enemies:
-            pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed, enemy_hp = enemy
+            enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp = enemy
             if enemy_type == "move_and_disappear":
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
+                enemy_pos[0] += direction[0] * speed
+                enemy_pos[1] += direction[1] * speed
             elif enemy_type == "move_and_shoot":
                 if target_pos:
-                    distance_to_target = math.hypot(target_pos[0] - pos[0], target_pos[1] - pos[1])
+                    distance_to_target = math.hypot(target_pos[0] - enemy_pos[0], target_pos[1] - enemy_pos[1])
                     if distance_to_target > speed:
-                        pos[0] += direction[0] * speed
-                        pos[1] += direction[1] * speed
+                        enemy_pos[0] += direction[0] * speed
+                        enemy_pos[1] += direction[1] * speed
                     else:
-                        pos[0], pos[1] = target_pos
+                        enemy_pos[0], enemy_pos[1] = target_pos
                         enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
                         direction = [0, 0]  # 위치를 고정
                 else:
                     if shots_fired < 5:
                         if pygame.time.get_ticks() % 1000 < 50:  # 1초마다 공격
                             attack_dir = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
-                            energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
+                            energy_balls.append([enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2, "yellow", attack_dir])
                             enemy[6] += 1  # 공격 횟수 증가
             elif enemy_type == "approach_and_shoot":
                 if pygame.time.get_ticks() % 5000 < 2500:
                     target_pos = [player_pos[0], player_pos[1]]
-                    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                    direction = [target_pos[0] - enemy_pos[0], target_pos[1] - enemy_pos[1]]
                     length = math.hypot(direction[0], direction[1])
                     direction = [direction[0] / length, direction[1] / length]
-                    pos[0] += direction[0] * speed
-                    pos[1] += direction[1] * speed
+                    enemy_pos[0] += direction[0] * speed
+                    enemy_pos[1] += direction[1] * speed
                     if length < 100: # 플레이어에게 접근
-                        energy_balls.append([pos[0], pos[1], "green", direction])
+                        energy_balls.append([enemy_pos[0], enemy_pos[1], "green", direction])
                 else:
                     direction = [random.choice([-1, 1]), random.choice([-1, 1])]
-                    pos[0] += direction[0] * speed
-                    pos[1] += direction[1] * speed
+                    enemy_pos[0] += direction[0] * speed
+                    enemy_pos[1] += direction[1] * speed
             elif enemy_type == "bomb":
                 target_pos = [player_pos[0], player_pos[1]]
-                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                direction = [target_pos[0] - enemy_pos[0], target_pos[1] - enemy_pos[1]]
                 length = math.hypot(direction[0], direction[1])
                 direction = [direction[0] / length, direction[1] / length]
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
+                enemy_pos[0] += direction[0] * speed
+                enemy_pos[1] += direction[1] * speed
 
         if not invincible:
             collision = check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies])
@@ -812,7 +813,7 @@ while run:
         # 공격이 적이나 보스에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, enemy_image, _, enemy_hp = enemy
+            enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp = enemy
             hit = False
             for attack in attacks:
                 attack_start, attack_end, thickness = attack
