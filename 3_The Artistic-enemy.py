@@ -141,6 +141,9 @@ boss_direction_y = 1  # 위아래 이동 방향 (1: 아래, -1: 위)
 boss_active = False
 boss_defeated = False  # 보스가 제거되었는지 여부를 추적
 boss_move_phase = 1  # 1: 중앙 이동, 2: 좌우 이동, 3: 좌우+위아래 이동
+boss_hit = False  # 보스가 타격을 받았는지 여부
+boss_hit_start_time = 0  # 보스가 타격을 받은 시작 시간
+boss_hit_duration = 500  # 보스가 점멸할 시간 (밀리초)
 
 # 보스 공격 이미지 로드
 boss_attack_images = {
@@ -246,7 +249,13 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
         enemy_pos, enemy_size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed, enemy_hp = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
     if boss_pos:
-        win.blit(boss_image, boss_pos)
+        if boss_hit:
+            # 보스가 공격을 받았을 때 점멸 효과
+            current_time = pygame.time.get_ticks()
+            if (current_time - boss_hit_start_time) // 100 % 2 == 0:
+                win.blit(boss_image, boss_pos)
+        else:
+            win.blit(boss_image, boss_pos)
     if boss_attacks:
         for attack in boss_attacks:
             win.blit(boss_attack_images[attack[2]], (attack[0], attack[1]))
@@ -843,6 +852,8 @@ while run:
                 attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, boss_pos, 120):
                     boss_hp -= attack_power
+                    boss_hit = True  # 보스가 공격을 받았음을 표시
+                    boss_hit_start_time = pygame.time.get_ticks()  # 점멸 시작 시간 기록
                     if boss_hp <= 0:
                         boss_active = False
                         boss_hp = 0  # 보스 체력을 0으로 유지
@@ -850,6 +861,10 @@ while run:
                         gem_active = True
                         boss_defeated = True  # 보스가 제거된 것으로 표시
                         break  # 보스가 사라지면 공격을 멈춥니다
+
+            # 보스 점멸 지속 시간 체크
+            if boss_hit and pygame.time.get_ticks() - boss_hit_start_time > boss_hit_duration:
+                boss_hit = False  # 점멸 효과 해제
 
         if gem_active and gem_pos:
             if player_pos[0] < gem_pos[0] < player_pos[0] + player_width and player_pos[1] < gem_pos[1] < player_pos[1] + player_height:
