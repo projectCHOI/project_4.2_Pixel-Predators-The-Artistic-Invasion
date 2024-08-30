@@ -1,4 +1,7 @@
-# 코드 간소화 / 깜밖임 효과
+# 더미 코드
+# 더미 코드
+# 더미 코드
+
 import pygame
 import random
 import math
