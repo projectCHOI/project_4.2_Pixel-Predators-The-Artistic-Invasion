@@ -1,486 +1,545 @@
-# 더미 코드
-# 더미 코드
-# 더미 코드
-
 import pygame
 import random
 import math
 
-# 기본 설정
+# Pygame 초기화
 pygame.init()
 
 # 윈도우 설정
 win = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("The Artistic Invasion")
-clock = pygame.time.Clock()
+
+# 이미지 로드
+title_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG")
+title_image = pygame.transform.scale(title_image, (1280, 720))
+
+stage_images = [
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
+    # 나머지 스테이지 이미지 경로 추가
+]
+
+# 화면 크기에 맞게 이미지 스케일 조정
+stage_intro_images = [pygame.transform.scale(pygame.image.load(img[0]), (1280, 720)) for img in stage_images]
+stage_background_images = [pygame.transform.scale(pygame.image.load(img[1]), (1280, 720)) for img in stage_images]
+
+# 이미지 크기 설정
+image_size = (40, 40)
+player_width, player_height = image_size
+
+# 플레이어 이미지 로드
+player_image1 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me1_png.png")
+player_image2 = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me2_png.png")
+player_image1 = pygame.transform.scale(player_image1, image_size)
+player_image2 = pygame.transform.scale(player_image2, image_size)
+
+# 충돌 시 이미지 로드(duration=시간)
+collision_images = {
+    3: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_1.png"), image_size), "duration": 5000},
+    2: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_2.png"), image_size), "duration": 5000},
+    1: {"image": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_3.png"), image_size), "duration": 5000}
+}
+
+# Health 설정
+health_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png")
+health_image = pygame.transform.scale(health_image, image_size)
+max_health = 7
+current_health = 4
+
+# 스피드 아이템 설정
+speed_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_Quickly.png")
+speed_item_image = pygame.transform.scale(speed_item_image, image_size)
+speed_item_pos = None
+speed_item_active = False
+speed_item_start_time = 0
+speed_item_duration = 20000  # 20초
+speed_item_chance = 0.1  # 10% 확률
+
+# 공격력 증가 아이템 설정
+power_item_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_Defense_2.PNG")
+power_item_image = pygame.transform.scale(power_item_image, image_size)
+power_item_pos = None
+power_item_active = 0  # 공격력 증가 아이템 획득 수
+power_item_chance = 0.1  # 10% 확률
+
+# 체력 회복 아이템 설정
+heal_item_images = [
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
+]
+heal_item_pos = None
+current_heal_item_image = None
+heal_item_chance = 0.1  # 10% 확률
+
+# 초기 플레이어 이미지
+player_image = player_image1
+
+# 적 이미지 로드 및 크기 조정
+enemy_images = {
+    "up": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_1.png"),
+    "down": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_2.png"),
+    "left": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_3.png"),
+    "right": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_4.png")
+}
+
+# 크기 조정
+enemy_images = {key: pygame.transform.scale(image, image_size) for key, image in enemy_images.items()}
+
+# 보석 이미지
+gem_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Jewelry_1.png")
+gem_image = pygame.transform.scale(gem_image, (40, 40))
+gem_pos = None  # 보석 위치
+gem_active = False
 
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
-BLACK = (0, 0, 0)
+BLACK = (0, 0, 0)  # 색상을 검은색으로 설정
 
-# 상수 정의
-PLAYER_SPEED = 10
-MAX_HEALTH = 7
-STAGE_DURATION = 60  # 스테이지 진행 시간 (초)
-INVINCIBLE_DURATION = 3000  # 무적 시간 (밀리초)
-BLINK_DURATION = 1500  # 깜빡임 지속 시간
-BLINK_INTERVAL = 100  # 깜빡임 간격
-BOSS_APPEAR_TIME = 30  # 보스 등장 시간 (초)
-BOSS_HP = 100
-BOSS_SPEED = 5
+# 플레이어 설정
+player_speed = 10  # 속도 조정
+original_player_speed = player_speed
 
-# 경로 설정
+# 에너지 볼 설정
+energy_balls = []
+
+# bomb 적 등장 설정
+bomb_stages = [2, 3, 5, 7, 11]
+bomb_appear_interval = 10000  # 10초 간격으로 등장
+bomb_last_appear_time = 0
+bomb_directions = ["left", "right", "up", "down"]
+
+# 게임 설정
+clock = pygame.time.Clock()
 font_path = r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/서평원 꺾깎체/OTF/SLEIGothicOTF.otf"
 font_size = 30  # 폰트 크기
+font = pygame.font.Font(font_path, font_size) #폰트 설정
+level = 1
+max_level = 12
+run = True
+game_active = False
+stage_duration = 60  # 스테이지 진행 시간 (초)
+invincible = False
+invincible_start_time = 0
+invincible_duration = 3000  # 무적 시간 (밀리초)
+player_blinking = False  # 깜빡임 효과를 위한 변수 추가
+player_blink_start_time = 0  # 깜빡임 효과 시작 시간
+blink_duration = 1500  # 깜빡임 지속 시간
+blink_interval = 100  # 깜빡임 간격
 
-# 이미지 로드 함수
-def load_and_scale_image(path, size):
-    image = pygame.image.load(path)
-    return pygame.transform.scale(image, size)
+# 충돌 효과 설정
+collision_effect_start_time = 0
+collision_image = None
+collision_effect_duration = 0
 
-# 텍스트 렌더링 함수
-def render_text(text, position, color=WHITE):
-    font = pygame.font.Font(font_path, font_size)
-    text_surface = font.render(text, True, color)
-    win.blit(text_surface, position)
+# 공격 설정
+attacks = []
+attack_speed = 20
+attack_power = 1  # 플레이어의 공격력
+enemies_defeated = 0  # 제거된 적의 수
 
-# 대시보드 그리기 함수
-def draw_dashboard(health, enemies_defeated, seconds):
-    render_text(f"{seconds}", (640, 10))
-    for i in range(health):
-        win.blit(health_image, (10 + i * 50, 10))
-    render_text(f"제거: {enemies_defeated}", (1280 - 100, 10))
+# 마우스 클릭 추적
+mouse_down_time = 0
+mouse_held = False
 
-class GameObject:
-    def __init__(self, pos, size, image):
-        self.pos = pos
-        self.size = size
-        self.image = image
+# 게임 오버 상태 및 이유
+game_over = False
+game_over_reason = None  # "victory", "game_over", "time_over"
 
-    def draw(self):
-        win.blit(self.image, self.pos)
+# 게임 종료 상태 이미지 로드
+victory_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage14_Victory.JPG")
+victory_image = pygame.transform.scale(victory_image, (1280, 720))
 
-class Player(GameObject):
-    def __init__(self, pos):
-        super().__init__(pos, (40, 40), player_image1)
-        self.speed = PLAYER_SPEED
-        self.health = MAX_HEALTH
-        self.blinking = False
-        self.invincible = False
-        self.blink_start_time = 0
-        self.invincible_start_time = 0
-        self.blink_duration = BLINK_DURATION
-        self.blink_interval = BLINK_INTERVAL
-        self.attacks = []
+game_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG")
+game_over_image = pygame.transform.scale(game_over_image, (1280, 720))
 
-    def move(self, direction):
-        if direction == "left":
-            self.pos[0] -= self.speed
-        elif direction == "right":
-            self.pos[0] += self.speed
-        elif direction == "up":
-            self.pos[1] -= self.speed
-        elif direction == "down":
-            self.pos[1] += self.speed
-        self.pos[0] = max(0, min(self.pos[0], 1240))
-        self.pos[1] = max(0, min(self.pos[1], 680))
+time_over_image = pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG")
+time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 
-    def shoot(self, target_pos, power_level):
-        attack_start = (self.pos[0] + self.size[0] // 2, self.pos[1] + self.size[1] // 2)
-        offset = power_level * 5
-        self.attacks.append((attack_start, target_pos, 3))
-        if power_level > 0:
-            self.attacks.append((attack_start, (target_pos[0] + offset, target_pos[1] + offset), 3))
-            self.attacks.append((attack_start, (target_pos[0] - offset, target_pos[1] - offset), 3))
+# 획득한 보석들을 저장할 리스트
+collected_gems = []
 
-    def update_attacks(self):
-        new_attacks = []
-        for attack in self.attacks:
-            start, end, thickness = attack
-            direction = (end[0] - start[0], end[1] - start[1])
-            length = math.hypot(direction[0], direction[1])
-            if length == 0:
-                continue
-            direction = (direction[0] / length * 20, direction[1] / length * 20)  # 공격 속도 20
-            new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= 1280 and 0 <= new_end[1] <= 720:
-                new_attacks.append((new_end, new_end, thickness))
-        self.attacks = new_attacks
-
-    def draw(self):
-        if self.blinking:
-            if (pygame.time.get_ticks() - self.blink_start_time) // self.blink_interval % 2 == 0:
-                win.blit(self.image, self.pos)
-        else:
-            win.blit(self.image, self.pos)
-
-        # 공격 그리기
-        for attack in self.attacks:
-            pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
-
-    def check_collision(self, enemies):
-        for enemy in enemies:
-            if (self.pos[0] < enemy.pos[0] < self.pos[0] + self.size[0] or
-                enemy.pos[0] < self.pos[0] < enemy.pos[0] + enemy.size[0]) and \
-                (self.pos[1] < enemy.pos[1] < self.pos[1] + self.size[1] or
-                 self.pos[1] < enemy.pos[1] < self.pos[1] + self.size[1]):
-                return True
-        return False
-
-    def take_damage(self, damage):
-        if not self.invincible:
-            self.health -= damage
-            if self.health <= 0:
-                return False
-            self.invincible = True
-            self.invincible_start_time = pygame.time.get_ticks()
-            self.blinking = True
-            self.blink_start_time = pygame.time.get_ticks()
-        return True
-
-    def update_invincibility(self):
-        current_time = pygame.time.get_ticks()
-        if self.invincible and current_time - self.invincible_start_time > INVINCIBLE_DURATION:
-            self.invincible = False
-        if self.blinking and current_time - self.blink_start_time > self.blink_duration:
-            self.blinking = False
-
-
-class Enemy(GameObject):
-    def __init__(self, pos, size, image, speed, direction, hp):
-        super().__init__(pos, size, image)
+# 보스 클래스 정의
+class Boss:
+    def __init__(self, stage, image_paths, attack_image_paths, appear_time, max_hp, speed):
+        self.stage = stage
+        self.images = {key: pygame.transform.scale(pygame.image.load(path), (120, 120)) for key, path in image_paths.items()}
+        self.attack_images = {key: pygame.transform.scale(pygame.image.load(path), (40, 40)) for key, path in attack_image_paths.items()}
+        self.appear_time = appear_time
+        self.max_hp = max_hp
+        self.current_hp = max_hp
         self.speed = speed
-        self.direction = direction
-        self.hp = hp
-
-    def move(self):
-        self.pos[0] += self.direction[0] * self.speed
-        self.pos[1] += self.direction[1] * self.speed
-
-    def check_collision_with_attack(self, attack_start, attack_end):
-        ex, ey = self.pos
-        sx, sy = attack_start
-        ex2, ey2 = ex + self.size[0], ey + self.size[1]
-        if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
-           min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
-            return True
-        return False
-
-
-class Boss(GameObject):
-    def __init__(self, pos, hp):
-        super().__init__(pos, (120, 120), boss_image)
-        self.hp = hp
-        self.speed = BOSS_SPEED
-        self.move_phase = 1
+        self.position = [640 - 60, 0]  # 초기 위치
         self.direction_x = 1
         self.direction_y = 1
+        self.active = False
+        self.defeated = False
+        self.move_phase = 1
+        self.hit = False
+        self.hit_start_time = 0
+        self.hit_duration = 500  # 밀리초
+        self.attack_cooldown = 1000  # 밀리초
+        self.last_attack_time = 0
         self.attacks = []
 
-    def move(self):
-        if self.move_phase == 1:  # 중앙으로 이동
-            target_pos = [640 - 60, 360 - 60]
-            direction = [target_pos[0] - self.pos[0], target_pos[1] - self.pos[1]]
-            length = math.hypot(direction[0], direction[1])
-            if length > self.speed:
-                direction = [direction[0] / length, direction[1] / length]
-                self.pos[0] += direction[0] * self.speed
-                self.pos[1] += direction[1] * self.speed
-            else:
-                self.pos = target_pos
-                self.move_phase = 2
-        elif self.move_phase == 2:  # 좌우 이동
-            self.pos[0] += self.speed * self.direction_x
-            if self.pos[0] <= 60 or self.pos[0] >= 1280 - 180:
-                self.direction_x *= -1
-            if self.hp <= 50:
-                self.move_phase = 3
-        elif self.move_phase == 3:  # 좌우+위아래 이동
-            self.pos[0] += self.speed * self.direction_x
-            self.pos[1] += self.speed * self.direction_y
-            if self.pos[0] <= 60 or self.pos[0] >= 1280 - 180:
-                self.direction_x *= -1
-            if self.pos[1] <= 60 or self.pos[1] >= 720 - 180:
-                self.direction_y *= -1
+# 보스 관리
+## 스테이지 1 보스
+stage_1_boss = Boss(
+    stage=1,
+    image_paths={
+        "default": r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A.png"
+    },
+    attack_image_paths={
+        "down": r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png",
+        "up": r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png",
+        "right": r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png",
+        "left": r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"
+    },
+    appear_time=30,  # 초
+    max_hp=100,
+    speed=5
+)
 
-    def attack(self):
+## 스테이지 2 보스
+# stage_2_boss = Boss(
+#     stage=2,
+#     image_paths={
+#         "default": r"C:/path/to/boss_stage2.png"
+#     },
+#     attack_image_paths={
+#         "down": r"C:/path/to/boss_stage2_attack_down.png",
+#         "up": r"C:/path/to/boss_stage2_attack_up.png",
+#         "right": r"C:/path/to/boss_stage2_attack_right.png",
+#         "left": r"C:/path/to/boss_stage2_attack_left.png"
+#     },
+#     appear_time=45,  # 초
+#     max_hp=150,
+#     speed=6
+# )
+
+## 스테이지 3 보스
+# 추가 예정
+
+## 스테이지 4 보스
+# 추가 예정
+
+## 스테이지 5 보스
+# 추가 예정
+
+## 스테이지 6 보스
+# 추가 예정
+
+## 스테이지 7 보스
+# 추가 예정
+
+## 스테이지 8 보스
+# 추가 예정
+
+## 스테이지 9 보스
+# 추가 예정
+
+## 스테이지 10 보스
+# 추가 예정
+
+## 스테이지 11 보스
+# 추가 예정
+
+## 스테이지 12 보스
+# 추가 예정
+
+# 모든 보스를 관리하는 딕셔너리
+bosses = {
+    1: stage_1_boss,
+    # 2: stage_2_boss,
+    # 3: stage_3_boss,
+    # ...
+}
+
+# 함수 정의
+def check_boss_appearance(current_stage, elapsed_time):
+    boss = bosses.get(current_stage)
+    if boss and not boss.active and not boss.defeated and elapsed_time >= boss.appear_time:
+        boss.active = True
+        boss.position = [640 - 60, 0]  # 보스 초기 위치 재설정
+        boss.current_hp = boss.max_hp  # 보스 체력 초기화
+
+def move_boss(boss):
+    if boss.move_phase == 1:  # 중앙으로 이동
+        target_pos = [640 - 60, 360 - 60]
+        direction = [target_pos[0] - boss.position[0], target_pos[1] - boss.position[1]]
+        length = math.hypot(direction[0], direction[1])
+        if length > boss.speed:
+            direction = [direction[0] / length, direction[1] / length]
+            boss.position[0] += direction[0] * boss.speed
+            boss.position[1] += direction[1] * boss.speed
+        else:
+            boss.position = target_pos
+            boss.move_phase = 2
+
+    elif boss.move_phase == 2:  # 좌우 이동
+        if boss.current_hp > boss.max_hp * 0.5:
+            boss.position[0] += boss.speed * boss.direction_x
+            if boss.position[0] <= 60 or boss.position[0] >= 1280 - 180:
+                boss.direction_x *= -1  # 방향 전환
+        else:
+            boss.move_phase = 3
+
+    elif boss.move_phase == 3:  # 좌우 + 위아래 이동
+        boss.position[0] += boss.speed * boss.direction_x
+        boss.position[1] += boss.speed * boss.direction_y
+        if boss.position[0] <= 60 or boss.position[0] >= 1280 - 180:
+            boss.direction_x *= -1  # 좌우 방향 전환
+        if boss.position[1] <= 60 or boss.position[1] >= 720 - 180:
+            boss.direction_y *= -1  # 위아래 방향 전환
+
+def boss_attack(boss, current_time):
+    if current_time - boss.last_attack_time > boss.attack_cooldown:
+        boss.last_attack_time = current_time
+
         possible_directions = []
-        if self.hp <= 100 and self.hp > 80:
+
+        # 보스의 체력에 따른 공격 방향 설정
+        hp_ratio = boss.current_hp / boss.max_hp
+        if hp_ratio > 0.8:
             possible_directions = ["down"]
-        elif self.hp <= 80 and self.hp > 60:
+        elif 0.6 < hp_ratio <= 0.8:
             possible_directions = ["down", "up"]
-        elif self.hp <= 60 and self.hp > 40:
+        elif 0.4 < hp_ratio <= 0.6:
             possible_directions = ["down", "up", "right"]
-        elif self.hp <= 40 and self.hp > 0:
+        else:
             possible_directions = ["down", "up", "right", "left"]
 
-        if possible_directions:
-            attack_direction = random.choice(possible_directions)
-            if attack_direction == "down":
-                attack_start_pos = [self.pos[0] + 60, self.pos[1] + 120]
-            elif attack_direction == "up":
-                attack_start_pos = [self.pos[0] + 60, self.pos[1]]
-            elif attack_direction == "right":
-                attack_start_pos = [self.pos[0] + 120, self.pos[1] + 60]
-            elif attack_direction == "left":
-                attack_start_pos = [self.pos[0], self.pos[1] + 60]
+        attack_direction = random.choice(possible_directions)
+        if attack_direction == "down":
+            attack_start_pos = [boss.position[0] + 60, boss.position[1] + 120]
+        elif attack_direction == "up":
+            attack_start_pos = [boss.position[0] + 60, boss.position[1]]
+        elif attack_direction == "right":
+            attack_start_pos = [boss.position[0] + 120, boss.position[1] + 60]
+        elif attack_direction == "left":
+            attack_start_pos = [boss.position[0], boss.position[1] + 60]
 
-            self.attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
+        boss.attacks.append({
+            "position": attack_start_pos,
+            "direction": attack_direction
+        })
 
-    def check_collision_with_attack(self, attack_start, attack_end):
-        return check_attack_collision(attack_start, attack_end, self.pos, 120)
+def update_boss_attacks(boss, player_pos):
+    new_attacks = []
+    for attack in boss.attacks:
+        pos = attack["position"]
+        direction = attack["direction"]
 
-    def draw_health_bar(self):
-        bar_x = 150
-        bar_y = 680
-        bar_width = 10
-        bar_height = 10
-        bars = self.hp // 2
-        render_text("BOSS LIFE:", (10, 675))
-        for i in range(bars):
-            pygame.draw.rect(win, YELLOW, (bar_x + i * (bar_width + 2), bar_y, bar_width, bar_height))
+        if direction == "down":
+            pos[1] += 10
+        elif direction == "up":
+            pos[1] -= 10
+        elif direction == "right":
+            pos[0] += 10
+        elif direction == "left":
+            pos[0] -= 10
 
+        if 0 <= pos[0] <= 1280 and 0 <= pos[1] <= 720:
+            if check_energy_ball_collision(pos, player_pos):
+                global current_health
+                current_health -= 2  # 보스 공격에 맞으면 2의 데미지를 입음
+                if current_health <= 0:
+                    global game_active, game_over, game_over_reason
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+            else:
+                new_attacks.append(attack)
+    boss.attacks = new_attacks
 
-class Game:
-    def __init__(self):
-        self.level = 1
-        self.max_level = 12
-        self.player = Player([640 - 20, 360 - 20])
-        self.enemies = []
-        self.boss = None
-        self.seconds = 0
-        self.start_ticks = pygame.time.get_ticks()
-        self.game_active = False
-        self.game_over = False
-        self.game_over_reason = None
-        self.stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
-        self.enemies_defeated = 0
-        self.power_item_active = 0  # 여기서 power_item_active를 초기화
+def draw_boss_health_bar(boss):
+    bar_x = 150
+    bar_y = 680
+    bar_width = 10
+    bar_height = 10
+    total_bars = boss.max_hp // 2
+    current_bars = boss.current_hp // 2
 
-    def intro_screen(self, stage):
-        win.blit(stage_intro_images[stage - 1], (0, 0))
-        pygame.display.update()
-        pygame.time.delay(3000)
+    boss_life_text = font.render("BOSS LIFE:", True, WHITE)
+    win.blit(boss_life_text, (10, 675))
 
-    def title_screen(self):
-        win.blit(title_image, (0, 0))
-        pygame.display.update()
+    for i in range(current_bars):
+        pygame.draw.rect(win, YELLOW, (bar_x + i * (bar_width + 2), bar_y, bar_width, bar_height))
 
-    def draw_objects(self):
-        win.blit(stage_background_images[self.level - 1], (0, 0))
-        self.player.draw()
-        for enemy in self.enemies:
-            enemy.draw()
-        if self.boss:
-            self.boss.draw()
-            self.boss.draw_health_bar()
-        draw_dashboard(self.player.health, self.enemies_defeated, self.seconds)
-        pygame.display.update()
+def draw_boss(boss):
+    if boss.hit:
+        current_time = pygame.time.get_ticks()
+        if (current_time - boss.hit_start_time) // 100 % 2 == 0:
+            win.blit(boss.images["default"], boss.position)
+    else:
+        win.blit(boss.images["default"], boss.position)
 
-    def generate_enemies(self):
-        level_config = [
-            (10, [(0, 1)], [(40, 40)], random.randint(1, 2)),
-            (10, [(0, 1)], [(40, 40)], random.randint(1, 3)),
-            (10, [(0, 1), (0, -1)], [(40, 40), (60, 60)], random.randint(1, 4)),
-            (random.randint(10, 12), [(0, 1), (0, -1)], [(40, 40), (60, 60)], random.randint(3, 8)),
-            (random.randint(10, 12), [(1, 0), (-1, 0)], [(20, 20), (40, 40)], random.randint(6, 16)),
-            (random.randint(10, 14), [(0, 1), (0, -1), (1, 0), (-1, 0)], [(20, 20), (40, 40)], random.randint(6, 20)),
-            (random.randint(10, 16), [(0, 1), (0, -1), (1, 0), (-1, 0)], [(20, 20), (40, 40), (60, 60)], random.randint(6, 24)),
-            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(6, 26)),
-            (random.randint(10, 18), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(8, 30)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(8, 30)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(10, 32)),
-            (random.randint(10, 20), [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)], [(20, 20), (40, 40), (60, 60)], random.randint(15, 32))
-        ]
-        speed, directions, sizes, num_enemies = level_config[self.level - 1]
-        new_enemies = []
-        for _ in range(num_enemies):
-            direction = random.choice(directions)
-            size = random.choice(sizes)  # size는 (width, height) 튜플로 설정
-            if direction == (0, 1):
-                pos = [random.randint(0, 1200-size[0]), 0]
-                image = enemy_images["up"] if size[0] == 40 else sentinel_shooter_left if size[0] == 60 else ambush_striker_up
-            elif direction == (0, -1):
-                pos = [random.randint(0, 1200-size[0]), 700-size[1]]
-                image = enemy_images["down"] if size[0] == 40 else sentinel_shooter_left if size[0] == 60 else ambush_striker_down
-            elif direction == (1, 0):
-                pos = [0, random.randint(0, 700-size[1])]
-                image = enemy_images["left"] if size[0] == 40 else sentinel_shooter_right if size[0] == 60 else ambush_striker_left
-            elif direction == (-1, 0):
-                pos = [1200-size[0], random.randint(0, 700-size[1])]
-                image = enemy_images["right"] if size[0] == 40 else sentinel_shooter_right if size[0] == 60 else ambush_striker_right
+    # 보스 공격 그리기
+    for attack in boss.attacks:
+        image = boss.attack_images[attack["direction"]]
+        win.blit(image, attack["position"])
 
-            direction_vector = [direction[0], direction[1]]
-            new_enemies.append(Enemy(pos, size, image, speed, direction_vector, 1 if size[0] == 40 else 2))
-        return new_enemies
+# 메인 게임 루프
+while run:
+    if not game_active:
+        if not game_over:
+            win.blit(title_image, (0, 0))
+            pygame.display.update()
+        else:
+            # 게임 오버 화면 그리기
+            if game_over_reason == "victory":
+                win.blit(victory_image, (0, 0))
+            elif game_over_reason == "game_over":
+                win.blit(game_over_image, (0, 0))
+            elif game_over_reason == "time_over":
+                win.blit(time_over_image, (0, 0))
 
-    def handle_events(self):
+            pygame.display.update()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                target_pos = pygame.mouse.get_pos()
-                self.player.shoot(target_pos, self.power_item_active)  # self.power_item_active로 수정
+                run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    if not self.game_active:
-                        if self.game_over:
-                            self.reset_game()
-                        else:
-                            self.start_game()
-        return True
+                    if game_over:
+                        # 게임 초기화
+                        level = 1
+                        current_health = 4
+                        enemies_defeated = 0
+                        player_speed = original_player_speed
+                        power_item_active = 0
+                        game_over = False
+                        game_over_reason = None
+                        stage_clear_times = [None] * 12  # 클리어 시간 초기화
+                        for boss in bosses.values():
+                            boss.active = False
+                            boss.defeated = False
+                        collected_gems = []  # 보석 초기화
+                    game_active = True
+                    player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
+                    enemies = []
+                    start_ticks = pygame.time.get_ticks()  # 시작 시간
+                    win.blit(stage_intro_images[level - 1], (0, 0))
+                    pygame.display.update()
+                    pygame.time.delay(3000)
 
-    def start_game(self):
-        self.level = 1
-        self.game_active = True
-        self.start_ticks = pygame.time.get_ticks()
-        self.intro_screen(self.level)
-        self.player.attacks = []
-        self.enemies = []
-        self.enemies = self.generate_enemies()  # 적 생성 추가
-        self.boss = None
+                    # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
+                    attacks = []
+                    energy_balls = []
 
-    def reset_game(self):
-        self.level = 1
-        self.game_active = True
-        self.game_over = False
-        self.player.health = MAX_HEALTH
-        self.enemies_defeated = 0
-        self.start_ticks = pygame.time.get_ticks()
-        self.stage_clear_times = [None] * 12
-        self.player.attacks = []
-        self.enemies = self.generate_enemies()  # 적 생성 추가
-        self.boss = None
-        self.intro_screen(self.level)
+    else:
+        mouse_pos = pygame.mouse.get_pos()
+        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
+                attack_end = mouse_pos
+                attack_thickness = 3
+                if power_item_active == 0:
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                elif power_item_active == 1:
+                    offset = 5
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 2:
+                    offset = 10
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 3:
+                    offset = 15
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] + offset // 2, attack_end[1] + offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset // 2, attack_end[1] - offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
 
-    def update(self):
-        self.seconds = (pygame.time.get_ticks() - self.start_ticks) // 1000
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            self.player.move("left")
+            player_pos[0] -= player_speed
+            player_image = player_image2
         if keys[pygame.K_d]:
-            self.player.move("right")
+            player_pos[0] += player_speed
+            player_image = player_image1
         if keys[pygame.K_w]:
-            self.player.move("up")
+            player_pos[1] -= player_speed
+            player_image = player_image1
         if keys[pygame.K_s]:
-            self.player.move("down")
+            player_pos[1] += player_speed
+            player_image = player_image2
 
-        self.player.update_invincibility()
-        self.player.update_attacks()  # 공격 업데이트 추가
+        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정 
+        if player_pos[0] < 0:
+            player_pos[0] = 0
+        if player_pos[0] > 1240:
+            player_pos[0] = 1240
+        if player_pos[1] < 0:
+            player_pos[1] = 0
+        if player_pos[1] > 680:
+            player_pos[1] = 680
 
-        if self.seconds >= 300:
-            self.end_game("time_over")
-        
-        # 적 충돌 처리 및 업데이트
-        for attack in self.player.attacks:
-            new_enemies = []
-            for enemy in self.enemies:
-                if enemy.check_collision_with_attack(attack[0], attack[1]):
-                    enemy.hp -= 1
-                    if enemy.hp <= 0:
-                        self.enemies_defeated += 1
-                    else:
-                        new_enemies.append(enemy)
+        if seconds >= 300:
+            game_active = False
+            game_over = True
+            game_over_reason = "time_over"
+
+        if random.random() < 0.02:  # 2% 확률로 적 생성
+            new_enemies = generate_enemies(level)
+            enemies.extend(new_enemies)
+
+        # bomb 적 생성
+        if level in bomb_stages and pygame.time.get_ticks() - bomb_last_appear_time > bomb_appear_interval:
+            add_bomb_enemy()
+            bomb_last_appear_time = pygame.time.get_ticks()
+
+        # 보스 등장 체크
+        current_boss = bosses.get(level)
+        check_boss_appearance(level, seconds)
+
+        if current_boss and current_boss.active:
+            # 보스 이동
+            move_boss(current_boss)
+
+            # 보스 공격
+            boss_attack(current_boss, pygame.time.get_ticks())
+
+            # 보스 공격 업데이트 및 충돌 처리
+            update_boss_attacks(current_boss, player_pos)
+
+            # 플레이어 공격과 보스의 충돌 처리
+            new_attacks = []
+            for attack in attacks:
+                attack_start, attack_end, thickness = attack
+                if check_attack_collision(attack_start, attack_end, current_boss.position, 120):
+                    current_boss.current_hp -= attack_power
+                    current_boss.hit = True
+                    current_boss.hit_start_time = pygame.time.get_ticks()
+                    if current_boss.current_hp <= 0:
+                        current_boss.active = False
+                        current_boss.defeated = True
+                        gem_pos = [current_boss.position[0] + 40, current_boss.position[1] + 40]
+                        gem_active = True
+                        break  # 보스가 사라지면 공격을 멈춥니다
                 else:
-                    new_enemies.append(enemy)
-            self.enemies = new_enemies
+                    new_attacks.append(attack)
+            attacks = new_attacks
 
-        # 보스 처리
-        if self.boss:
-            if self.boss.check_collision_with_attack(attack[0], attack[1]):
-                self.boss.hp -= 1
-                if self.boss.hp <= 0:
-                    self.boss = None
-                    self.end_game("victory")
+            # 보스 피격 효과 지속 시간 체크
+            if current_boss.hit and pygame.time.get_ticks() - current_boss.hit_start_time > current_boss.hit_duration:
+                current_boss.hit = False
 
-            self.boss.move()
-            self.boss.attack()
+            # 보스 체력바 그리기
+            draw_boss_health_bar(current_boss)
 
-        if self.player.check_collision(self.enemies):
-            if not self.player.take_damage(1):
-                self.end_game("game_over")
+            # 보스 그리기
+            draw_boss(current_boss)
 
-    def end_game(self, reason):
-        self.game_active = False
-        self.game_over = True
-        self.game_over_reason = reason
+        draw_objects(player_pos, enemies, stage_background_images[level - 1], mouse_pos, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image, current_boss.position if current_boss and current_boss.active else None, current_boss.attacks if current_boss and current_boss.active else None, gem_pos)
+        clock.tick(30)
 
-    def draw_end_screen(self):
-        if self.game_over_reason == "victory":
-            image = victory_image
-        elif self.game_over_reason == "game_over":
-            image = game_over_image
-        elif self.game_over_reason == "time_over":
-            image = time_over_image
-
-        win.blit(image, (0, 0))
-        render_text("continue : enter", (640, 360))
-        pygame.display.update()
-
-    def run(self):
-        while True:
-            if not self.game_active:
-                if not self.game_over:
-                    self.title_screen()
-                else:
-                    self.draw_end_screen()
-            else:
-                self.update()
-                self.draw_objects()
-
-            if not self.handle_events():
-                break
-
-            clock.tick(30)
-
-# 이미지 로드 및 스케일
-title_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_cover/Cover_The_Artistic_Invasion_Bright_1210x718.JPG", (1280, 720))
-
-stage_images = [
-    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG",
-     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
-    # ... 나머지 이미지들 ...
-]
-
-stage_intro_images = [load_and_scale_image(img[0], (1280, 720)) for img in stage_images]
-stage_background_images = [load_and_scale_image(img[1], (1280, 720)) for img in stage_images]
-
-player_image1 = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me1_png.png", (40, 40))
-player_image2 = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_me2_png.png", (40, 40))
-
-collision_images = {
-    3: {"image": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_1.png", (40, 40)), "duration": 5000},
-    2: {"image": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_2.png", (40, 40)), "duration": 5000},
-    1: {"image": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_death_3.png", (40, 40)), "duration": 5000}
-}
-
-health_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Life.png", (40, 40))
-boss_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A.png", (120, 120))
-
-victory_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage14_Victory.JPG", (1280, 720))
-game_over_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage15_GameOver.JPG", (1280, 720))
-time_over_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage16_TimeOver.JPG", (1280, 720))
-
-enemy_images = {
-    "up": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_1.png", (40, 40)),
-    "down": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_2.png", (40, 40)),
-    "left": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_3.png", (40, 40)),
-    "right": load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_4.png", (40, 40))
-}
-
-sentinel_shooter_right = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Sentinel Shooter_right.png", (40, 40))
-sentinel_shooter_left = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Sentinel Shooter_left.png", (40, 40))
-
-ambush_striker_up = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_1.png", (40, 40))
-ambush_striker_down = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_2.png", (40, 40))
-ambush_striker_left = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_3.png", (40, 40))
-ambush_striker_right = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Ambush Striker_4.png", (40, 40))
-
-enemy_bomb_image = load_and_scale_image(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_item_bomb.png", (40, 40))
-
-# 게임 실행
-game = Game()
-game.run()
+pygame.quit()
