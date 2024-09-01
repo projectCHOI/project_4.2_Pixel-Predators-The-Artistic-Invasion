@@ -16,7 +16,28 @@ title_image = pygame.transform.scale(title_image, (1280, 720))
 stage_images = [
     (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_A.JPG",
      r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage1_World_B.JPG"),
-    # 나머지 스테이지 이미지 경로 추가
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage2_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage3_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage4_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage5_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage6_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage7_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage8_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage9_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage10_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage11_World_B.JPG"),
+    (r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_A.JPG",
+     r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_world/Stage12_World_B.JPG")
 ]
 
 # 화면 크기에 맞게 이미지 스케일 조정
@@ -65,9 +86,7 @@ power_item_chance = 0.1  # 10% 확률
 # 체력 회복 아이템 설정
 heal_item_images = [
     pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
-    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
+    # 추가 이미지...
 ]
 heal_item_pos = None
 current_heal_item_image = None
@@ -79,9 +98,7 @@ player_image = player_image1
 # 적 이미지 로드 및 크기 조정
 enemy_images = {
     "up": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_1.png"),
-    "down": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_2.png"),
-    "left": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_3.png"),
-    "right": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_4.png")
+    # 추가 이미지...
 }
 
 # 크기 조정
@@ -204,59 +221,9 @@ stage_1_boss = Boss(
     speed=5
 )
 
-## 스테이지 2 보스
-# stage_2_boss = Boss(
-#     stage=2,
-#     image_paths={
-#         "default": r"C:/path/to/boss_stage2.png"
-#     },
-#     attack_image_paths={
-#         "down": r"C:/path/to/boss_stage2_attack_down.png",
-#         "up": r"C:/path/to/boss_stage2_attack_up.png",
-#         "right": r"C:/path/to/boss_stage2_attack_right.png",
-#         "left": r"C:/path/to/boss_stage2_attack_left.png"
-#     },
-#     appear_time=45,  # 초
-#     max_hp=150,
-#     speed=6
-# )
-
-## 스테이지 3 보스
-# 추가 예정
-
-## 스테이지 4 보스
-# 추가 예정
-
-## 스테이지 5 보스
-# 추가 예정
-
-## 스테이지 6 보스
-# 추가 예정
-
-## 스테이지 7 보스
-# 추가 예정
-
-## 스테이지 8 보스
-# 추가 예정
-
-## 스테이지 9 보스
-# 추가 예정
-
-## 스테이지 10 보스
-# 추가 예정
-
-## 스테이지 11 보스
-# 추가 예정
-
-## 스테이지 12 보스
-# 추가 예정
-
 # 모든 보스를 관리하는 딕셔너리
 bosses = {
     1: stage_1_boss,
-    # 2: stage_2_boss,
-    # 3: stage_3_boss,
-    # ...
 }
 
 # 함수 정의
@@ -383,14 +350,51 @@ def draw_boss(boss):
         image = boss.attack_images[attack["direction"]]
         win.blit(image, attack["position"])
 
-# 메인 게임 루프
+# 함수 정의: 에너지 볼과 플레이어 충돌 체크
+def check_energy_ball_collision(ball_pos, player_pos):
+    player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+    return player_rect.collidepoint(ball_pos)
+
+# 함수 정의: 적 생성
+def generate_enemies(level):
+    new_enemies = []
+    for i in range(level):
+        enemy_pos = [random.randint(0, 1280 - 40), random.randint(0, 720 - 40)]
+        enemy_speed = random.randint(2, 5)
+        enemy_direction = random.choice(["up", "down", "left", "right"])
+        enemy_image = enemy_images[enemy_direction]
+        new_enemies.append([enemy_pos, enemy_speed, enemy_direction, enemy_image])
+    return new_enemies
+
+# 함수 정의: 폭탄 적 생성
+def add_bomb_enemy():
+    enemy_pos = [random.randint(0, 1280 - 40), random.randint(0, 720 - 40)]
+    enemy_speed = random.randint(2, 5)
+    enemy_direction = random.choice(["up", "down", "left", "right"])
+    enemy_image = pygame.transform.scale(pygame.image.load(r"C:/path/to/bomb_enemy_image.png"), (40, 40))  # 폭탄 적 이미지 설정
+    enemies.append([enemy_pos, enemy_speed, enemy_direction, enemy_image])
+
+# 함수 정의: 공격이 보스와 충돌하는지 확인
+def check_attack_collision(attack_start, attack_end, boss_pos, boss_size):
+    boss_rect = pygame.Rect(boss_pos[0], boss_pos[1], boss_size, boss_size)
+    return boss_rect.clipline(attack_start, attack_end)
+
+# 함수 정의: 대시보드 그리기 (생략된 경우)
+def draw_dashboard():
+    # 예시로 대시보드에 표시할 텍스트나 이미지 등을 추가
+    health_text = font.render(f"Health: {current_health}", True, WHITE)
+    win.blit(health_text, (10, 10))
+    # 추가 정보들을 여기에 그릴 수 있습니다.
+
+# draw_objects 함수 정의 (위에서 수정했으므로 생략)
+
+# 게임 루프
 while run:
     if not game_active:
         if not game_over:
             win.blit(title_image, (0, 0))
             pygame.display.update()
         else:
-            # 게임 오버 화면 그리기
             if game_over_reason == "victory":
                 win.blit(victory_image, (0, 0))
             elif game_over_reason == "game_over":
@@ -524,7 +528,7 @@ while run:
                         current_boss.defeated = True
                         gem_pos = [current_boss.position[0] + 40, current_boss.position[1] + 40]
                         gem_active = True
-                        break  # 보스가 사라지면 공격을 멈춥니다
+                        break  # 보스가 사라지면 공격을 멈춤
                 else:
                     new_attacks.append(attack)
             attacks = new_attacks
