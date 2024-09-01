@@ -86,7 +86,9 @@ power_item_chance = 0.1  # 10% 확률
 # 체력 회복 아이템 설정
 heal_item_images = [
     pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_a.png"), image_size),
-    # 추가 이미지...
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_b.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_c.png"), image_size),
+    pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_Fruit_d.png"), image_size)
 ]
 heal_item_pos = None
 current_heal_item_image = None
@@ -98,7 +100,9 @@ player_image = player_image1
 # 적 이미지 로드 및 크기 조정
 enemy_images = {
     "up": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_1.png"),
-    # 추가 이미지...
+    "down": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_2.png"),
+    "left": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_3.png"),
+    "right": pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/mob_enemy_Relentless Charger_4.png")
 }
 
 # 크기 조정
@@ -180,6 +184,14 @@ time_over_image = pygame.transform.scale(time_over_image, (1280, 720))
 # 획득한 보석들을 저장할 리스트
 collected_gems = []
 
+# 보스 공격 이미지 로드
+boss_attack_images = {
+    "down": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_a.png"), (40, 40)),
+    "up": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_b.png"), (40, 40)),
+    "right": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_c.png"), (40, 40)),
+    "left": pygame.transform.scale(pygame.image.load(r"C:/Users/HOME/Desktop/새싹_교육/GitHub_CHOI/project_4.2_Pixel Predators-The Artistic Invasion/project4.2_mob/Mob_Boss_A_d.png"), (40, 40))
+}
+
 # 보스 클래스 정의
 class Boss:
     def __init__(self, stage, image_paths, attack_image_paths, appear_time, max_hp, speed):
@@ -226,7 +238,29 @@ bosses = {
     1: stage_1_boss,
 }
 
-# 함수 정의
+# 폭탄 적 추가 함수
+def add_bomb_enemy():
+    direction = random.choice(bomb_directions)
+    if direction == "left":
+        x = 1280  # 화면 오른쪽에서 시작
+        y = random.randint(0, 720 - 40)
+    elif direction == "right":
+        x = 0  # 화면 왼쪽에서 시작
+        y = random.randint(0, 720 - 40)
+    elif direction == "up":
+        x = random.randint(0, 1280 - 40)
+        y = 720  # 화면 아래쪽에서 시작
+    elif direction == "down":
+        x = random.randint(0, 1280 - 40)
+        y = 0  # 화면 위쪽에서 시작
+
+    # 폭탄 적 생성 및 리스트에 추가
+    bomb = {"pos": [x, y], "dir": direction, "image": random.choice(list(enemy_images.values()))}
+    enemies.append(bomb)
+
+# 기타 함수들 정의
+
+# 보스 등장 체크 함수
 def check_boss_appearance(current_stage, elapsed_time):
     boss = bosses.get(current_stage)
     if boss and not boss.active and not boss.defeated and elapsed_time >= boss.appear_time:
@@ -350,43 +384,140 @@ def draw_boss(boss):
         image = boss.attack_images[attack["direction"]]
         win.blit(image, attack["position"])
 
-# 함수 정의: 에너지 볼과 플레이어 충돌 체크
+# draw_objects 함수 정의
+def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None, boss_pos=None, boss_attacks=None, gem_pos=None):
+    win.blit(background_image, (0, 0))  # 배경 그리기
+
+    # 플레이어 그리기
+    if player_blinking:
+        current_time = pygame.time.get_ticks()
+        if (current_time - player_blink_start_time) // blink_interval % 2 == 0:
+            win.blit(player_image, player_pos)
+    else:
+        win.blit(player_image, player_pos)
+
+    # 충돌 이미지 그리기
+    if collision_image:
+        win.blit(collision_image, player_pos)
+
+    # 적 그리기
+    for enemy in enemies:
+        win.blit(enemy["image"], enemy["pos"])
+
+    # 보스 그리기
+    if boss_pos:
+        draw_boss(current_boss)
+
+    # 보스 공격 그리기
+    if boss_attacks:
+        for attack in boss_attacks:
+            win.blit(boss_attack_images[attack[2]], (attack[0], attack[1]))
+
+    # 아이템 그리기
+    if speed_item_pos:
+        win.blit(speed_item_image, speed_item_pos)
+    if power_item_pos:
+        win.blit(power_item_image, power_item_pos)
+    if heal_item_pos and heal_item_image:
+        win.blit(heal_item_image, heal_item_pos)
+    if gem_pos:
+        win.blit(gem_image, gem_pos)
+
+    # 에너지 볼 그리기
+    for ball in energy_balls:
+        color = YELLOW if ball[2] == "yellow" else GREEN
+        pygame.draw.circle(win, color, (ball[0], ball[1]), 5)
+
+    # 공격 그리기
+    for attack in attacks:
+        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
+
+    # 마우스 위치 그리기
+    pygame.draw.circle(win, RED, mouse_pos, 5)
+
+    # 대시보드 그리기 함수 호출
+    draw_dashboard()
+    pygame.display.update()
+
+# check_energy_ball_collision 함수
 def check_energy_ball_collision(ball_pos, player_pos):
-    player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
-    return player_rect.collidepoint(ball_pos)
+    bx, by = ball_pos
+    px, py = player_pos
+    if px < bx < px + player_width and py < by < player_height:
+        return True
+    return False
 
-# 함수 정의: 적 생성
-def generate_enemies(level):
-    new_enemies = []
-    for i in range(level):
-        enemy_pos = [random.randint(0, 1280 - 40), random.randint(0, 720 - 40)]
-        enemy_speed = random.randint(2, 5)
-        enemy_direction = random.choice(["up", "down", "left", "right"])
-        enemy_image = enemy_images[enemy_direction]
-        new_enemies.append([enemy_pos, enemy_speed, enemy_direction, enemy_image])
-    return new_enemies
-
-# 함수 정의: 폭탄 적 생성
-def add_bomb_enemy():
-    enemy_pos = [random.randint(0, 1280 - 40), random.randint(0, 720 - 40)]
-    enemy_speed = random.randint(2, 5)
-    enemy_direction = random.choice(["up", "down", "left", "right"])
-    enemy_image = pygame.transform.scale(pygame.image.load(r"C:/path/to/bomb_enemy_image.png"), (40, 40))  # 폭탄 적 이미지 설정
-    enemies.append([enemy_pos, enemy_speed, enemy_direction, enemy_image])
-
-# 함수 정의: 공격이 보스와 충돌하는지 확인
-def check_attack_collision(attack_start, attack_end, boss_pos, boss_size):
-    boss_rect = pygame.Rect(boss_pos[0], boss_pos[1], boss_size, boss_size)
-    return boss_rect.clipline(attack_start, attack_end)
-
-# 함수 정의: 대시보드 그리기 (생략된 경우)
+# draw_dashboard 함수
 def draw_dashboard():
-    # 예시로 대시보드에 표시할 텍스트나 이미지 등을 추가
-    health_text = font.render(f"Health: {current_health}", True, WHITE)
-    win.blit(health_text, (10, 10))
-    # 추가 정보들을 여기에 그릴 수 있습니다.
+    # 플레이 시간 표시
+    elapsed_time = seconds
+    time_text = font.render(f"{elapsed_time}", True, WHITE)
+    win.blit(time_text, (640 - time_text.get_width() // 2, 10))  # 화면 중앙에 맞춤
+    
+    # 체력 표시
+    for i in range(current_health):
+        win.blit(health_image, (10 + i * 50, 10))
+    
+    # 제거된 적의 수 표시
+    enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
+    win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
+    
+    # 보스 체력바 표시
+    if current_boss and current_boss.active:
+        draw_boss_health_bar(current_boss)  # 보스 체력바 그리기
 
-# draw_objects 함수 정의 (위에서 수정했으므로 생략)
+# generate_enemies 함수
+def generate_enemies(level):
+    speed = random.randint(10, 15)
+    directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    sizes = [20, 40, 60]
+    num_enemies = random.randint(3, 8)
+
+    enemies = []
+    for _ in range(num_enemies):
+        direction = random.choice(directions)
+        size = random.choice(sizes)
+        if direction == (0, 1):  # 상단에서
+            pos = [random.randint(0, 1240), 0]
+            image = enemy_images["up"]
+        elif direction == (0, -1):  # 하단에서
+            pos = [random.randint(0, 1240), 720 - size]
+            image = enemy_images["down"]
+        elif direction == (1, 0):  # 좌측에서
+            pos = [0, random.randint(0, 680)]
+            image = enemy_images["left"]
+        elif direction == (-1, 0):  # 우측에서
+            pos = [1280 - size, random.randint(0, 680)]
+            image = enemy_images["right"]
+
+        if size == 40:
+            enemy_type = "move_and_disappear"
+            hp = 1  # 체력 1
+        elif size == 60:
+            target_pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
+            enemy_type = "move_and_shoot"
+            direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+            length = math.hypot(direction[0], direction[1])
+            direction = [direction[0] / length, direction[1] / length]
+            hp = 2  # 체력 2
+        elif size == 20:
+            enemy_type = "approach_and_shoot"
+            hp = 1  # 체력 1
+        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed, hp])
+
+    return enemies
+
+# check_attack_collision 함수
+def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+    ex, ey = enemy_pos
+    sx, sy = attack_start
+    ex2, ey2 = ex + enemy_size, ey + enemy_size
+
+    # 공격과 적의 충돌 체크
+    if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
+       min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
+        return True
+    return False
 
 # 게임 루프
 while run:
