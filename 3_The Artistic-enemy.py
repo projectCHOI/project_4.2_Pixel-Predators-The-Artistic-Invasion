@@ -129,7 +129,7 @@ ambush_striker_right = pygame.transform.scale(ambush_striker_right, image_size)
 enemy_bomb_image = pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/mob_item_bomb.png")
 enemy_bomb_image = pygame.transform.scale(enemy_bomb_image, (40, 40))
 
-# 보스 이미지 및 설정
+# 보스1 이미지 및 설정
 boss_image = pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/Mob_Boss_A.png")
 boss_image = pygame.transform.scale(boss_image, (120, 120))
 boss_appear_time = 30  # 보스 등장 시간 (초)
@@ -145,16 +145,43 @@ boss_hit = False  # 보스가 타격을 받았는지 여부
 boss_hit_start_time = 0  # 보스가 타격을 받은 시작 시간
 boss_hit_duration = 500  # 보스가 점멸할 시간 (밀리초)
 
-# 보스 공격 이미지 로드
+# 보스1 공격 이미지 로드
 boss_attack_images = {
     "down": pygame.transform.scale(pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/Mob_Boss_A_a.png"), (40, 40)),
     "up": pygame.transform.scale(pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/Mob_Boss_A_b.png"), (40, 40)),
     "right": pygame.transform.scale(pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/Mob_Boss_A_c.png"), (40, 40)),
     "left": pygame.transform.scale(pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/Mob_Boss_A_d.png"), (40, 40))
 }
-boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
+boss_attack_cooldown = 1000  # 보스1 공격 간격 (밀리초)
 boss_last_attack_time = 0
 boss_attacks = []
+
+# 스테이지 2 보스의 속성 정의
+boss_image_stage2 = pygame.image.load(r"C:\Users\boss3\OneDrive\바탕 화면\GitHub\project_4.2_Pixel-Predators-The-Artistic-Invasion\project4.2_mob\Mob_Boss_B.png")
+boss_image_stage2 = pygame.transform.scale(boss_image_stage2, (160, 160))  # 보스 크기
+
+boss_attack_a_image = pygame.image.load(r"C:\Users\boss3\OneDrive\바탕 화면\GitHub\project_4.2_Pixel-Predators-The-Artistic-Invasion\project4.2_mob\Mob_Boss_B_a.png")
+boss_attack_a_image = pygame.transform.scale(boss_attack_a_image, (80, 80))
+
+boss_attack_b_image = pygame.image.load(r"C:\Users\boss3\OneDrive\바탕 화면\GitHub\project_4.2_Pixel-Predators-The-Artistic-Invasion\project4.2_mob\Mob_Boss_B_b.png")
+boss_attack_b_image = pygame.transform.scale(boss_attack_b_image, (80, 80))
+
+boss_attack_c_image = pygame.image.load(r"C:\Users\boss3\OneDrive\바탕 화면\GitHub\project_4.2_Pixel-Predators-The-Artistic-Invasion\project4.2_mob\Mob_Boss_B_c.png")
+boss_attack_c_image = pygame.transform.scale(boss_attack_c_image, (40, 40))
+
+boss_attack_d_image = pygame.image.load(r"C:\Users\boss3\OneDrive\바탕 화면\GitHub\project_4.2_Pixel-Predators-The-Artistic-Invasion\project4.2_mob\Mob_Boss_B_d.png")
+boss_attack_d_image = pygame.transform.scale(boss_attack_d_image, (40, 40))
+
+# 보스 속성
+boss_hp_stage2 = 200  # 체력 200
+boss_speed_stage2 = 6  # 좌우 이동 시 속도 6
+boss_pos_stage2 = [640 - 80, -160]  # 보스 등장 위치 (상단 중앙)
+boss_direction_x_stage2 = 1  # 좌우 이동 방향
+boss_attack_cooldown_energy_ball = 2000  # 에너지 볼 공격 쿨타임
+boss_attack_cooldown_area = 3000  # 광역 공격 쿨타임
+boss_last_attack_time_energy_ball = pygame.time.get_ticks()  # 에너지 볼 공격 타이머 초기화
+boss_last_attack_time_area = pygame.time.get_ticks()  # 광역 공격 타이머 초기화
+boss_special_attack = False  # 특수 공격 상태
 
 # 보석 이미지
 gem_image = pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/mob_Jewelry_1.png")
@@ -631,7 +658,7 @@ while run:
             boss_hp = 100  # 보스 체력 초기화
 
         if boss_active:
-            # 보스 이동 패턴
+            # 보스1 이동 패턴
             if boss_move_phase == 1:  # 중앙으로 이동
                 target_pos = [640 - 60, 360 - 60]
                 direction = [target_pos[0] - boss_pos[0], target_pos[1] - boss_pos[1]]
@@ -660,13 +687,13 @@ while run:
                 if boss_pos[1] <= 60 or boss_pos[1] >= 720 - 180:
                     boss_direction_y *= -1  # 위아래 방향 전환
 
-            # 보스 공격
+            # 보스1 공격
             if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
                 boss_last_attack_time = pygame.time.get_ticks()
 
                 possible_directions = []
 
-                # 보스의 체력에 따른 공격 방향 설정
+                # 보스1의 체력에 따른 공격 방향 설정
                 if boss_hp <= 100 and boss_hp > 80:
                     possible_directions = ["down"]
                 elif boss_hp <= 80 and boss_hp > 60:
@@ -691,7 +718,7 @@ while run:
 
                     boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
 
-        # 보스 공격 이동 및 충돌 처리
+        # 보스1 공격 이동 및 충돌 처리
         new_boss_attacks = []
         for attack in boss_attacks:
             if attack[2] == "down":
@@ -705,7 +732,7 @@ while run:
 
             if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
                 if check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                    current_health -= 2  # 보스 공격에 맞으면 2의 데미지를 입음
+                    current_health -= 2  # 보스1 공격에 맞으면 2의 데미지를 입음
                     if current_health <= 0:
                         game_active = False
                         game_over = True
@@ -714,6 +741,100 @@ while run:
                     new_boss_attacks.append(attack)
 
         boss_attacks = new_boss_attacks
+
+        # 게임 루프에서 보스2의 등장 조건과 속도 및 공격 패턴 조정 로직
+if boss_active_stage2:
+    # 보스2 체력에 따른 속도 및 공격 속도 조정
+    if boss_hp_stage2 <= boss_hp_stage2 // 2:
+        boss_speed_stage2 = 8  # 체력이 50% 이하일 때 속도 증가
+        boss_attack_cooldown_energy_ball = 1000  # 에너지 볼 공격 속도 증가
+        boss_attack_cooldown_area = 2000  # 광역 공격 속도 증가
+
+    # 보스2 좌우 이동 패턴
+    boss_pos_stage2[0] += boss_speed_stage2 * boss_direction_x_stage2
+    if boss_pos_stage2[0] <= 80 or boss_pos_stage2[0] >= 1280 - 160:
+        boss_direction_x_stage2 *= -1  # 경계를 만나면 방향 전환
+
+    # 에너지 볼 공격 패턴
+    if pygame.time.get_ticks() - boss_last_attack_time_energy_ball > boss_attack_cooldown_energy_ball:
+        boss_last_attack_time_energy_ball = pygame.time.get_ticks()
+
+        # 정면 공격 (C와 D 이미지를 사용한 5방향 공격)
+        for i in range(-2, 3):  # 5방향 공격
+            angle_rad = math.radians(i * 15)  # 각도 조절
+            attack_dir = [math.cos(angle_rad), math.sin(angle_rad)]
+            boss_attacks.append([boss_pos_stage2[0] + 80, boss_pos_stage2[1] + 160, attack_dir, boss_attack_c_image])
+
+    # 광역 공격 패턴 (특수 공격)
+    if pygame.time.get_ticks() - boss_last_attack_time_area > boss_attack_cooldown_area:
+        boss_last_attack_time_area = pygame.time.get_ticks()
+        boss_special_attack = True  # 특수 공격 활성화
+
+        # 왼쪽 광역 공격
+        for angle in range(45, 135, 15):
+            rad = math.radians(angle)
+            attack_dir = [math.cos(rad), math.sin(rad)]
+            boss_attacks.append([boss_pos_stage2[0] - 40, boss_pos_stage2[1] + 80, attack_dir, boss_attack_a_image])
+
+        # 오른쪽 광역 공격
+        for angle in range(45, 135, 15):
+            rad = math.radians(angle)
+            attack_dir = [math.cos(rad), math.sin(rad)]
+            boss_attacks.append([boss_pos_stage2[0] + 160, boss_pos_stage2[1] + 80, attack_dir, boss_attack_b_image])
+
+        # 특수 공격 후 보스 크기 원상복귀
+        boss_special_attack = False
+
+        # 보스2의 체력 바를 그리는 함수 호출
+        if boss_active_stage2:
+            draw_boss_health_bar(boss_hp_stage2, 200)  # 보스2 체력바 그리기
+
+        # 게임 루프에서 보스2의 등장 조건과 그래픽 처리
+if boss_active_stage2:
+    # 보스 체력에 따른 속도 및 공격 속도 조정
+    if boss_hp_stage2 <= boss_hp_stage2 // 2:
+        boss_speed_stage2 = 8  # 체력이 50% 이하일 때 속도 증가
+        boss_attack_cooldown_energy_ball = 1000  # 에너지 볼 공격 속도 증가
+        boss_attack_cooldown_area = 2000  # 광역 공격 속도 증가
+
+    # 보스2 좌우 이동 패턴
+    boss_pos_stage2[0] += boss_speed_stage2 * boss_direction_x_stage2
+    if boss_pos_stage2[0] <= 80 or boss_pos_stage2[0] >= 1280 - 160:
+        boss_direction_x_stage2 *= -1  # 경계를 만나면 방향 전환
+
+    # 보스 크기 변경 (특수 공격 시)
+    boss_scale_factor = 1.5 if boss_special_attack else 1  # 공격 시 보스의 크기를 키움
+    boss_image_scaled = pygame.transform.scale(boss_image_stage2, (int(160 * boss_scale_factor), int(160 * boss_scale_factor)))
+    
+    # 보스가 공격을 받았을 때 점멸 효과
+    if boss_hit_stage2:
+        current_time = pygame.time.get_ticks()
+        if (current_time - boss_hit_start_time_stage2) // 100 % 2 == 0:
+            win.blit(boss_image_scaled, (boss_pos_stage2[0], boss_pos_stage2[1]))
+    else:
+        win.blit(boss_image_scaled, (boss_pos_stage2[0], boss_pos_stage2[1]))
+
+    # 에너지 볼 공격 패턴
+    if pygame.time.get_ticks() - boss_last_attack_time_energy_ball > boss_attack_cooldown_energy_ball:
+        boss_last_attack_time_energy_ball = pygame.time.get_ticks()
+        for i in range(-2, 3):  # 5방향 공격
+            angle_rad = math.radians(i * 15)  # 각도 조절
+            attack_dir = [math.cos(angle_rad), math.sin(angle_rad)]
+            boss_attacks.append([boss_pos_stage2[0] + 80, boss_pos_stage2[1] + 160, attack_dir, boss_attack_c_image])
+
+    # 광역 공격 패턴
+    if pygame.time.get_ticks() - boss_last_attack_time_area > boss_attack_cooldown_area:
+        boss_last_attack_time_area = pygame.time.get_ticks()
+        boss_special_attack = True  # 특수 공격 활성화
+        for angle in range(45, 135, 15):
+            rad = math.radians(angle)
+            attack_dir = [math.cos(rad), math.sin(rad)]
+            boss_attacks.append([boss_pos_stage2[0] - 40, boss_pos_stage2[1] + 80, attack_dir, boss_attack_a_image])
+        for angle in range(45, 135, 15):
+            rad = math.radians(angle)
+            attack_dir = [math.cos(rad), math.sin(rad)]
+            boss_attacks.append([boss_pos_stage2[0] + 160, boss_pos_stage2[1] + 80, attack_dir, boss_attack_b_image])
+        boss_special_attack = False  # 특수 공격 후 보스 크기 원상복귀
 
         # 적 이동 및 충돌 처리
         for enemy in enemies:
