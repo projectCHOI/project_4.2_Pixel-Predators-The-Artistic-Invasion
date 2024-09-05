@@ -289,7 +289,24 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
             win.blit(boss_image, boss_pos)
     if boss_attacks:
         for attack in boss_attacks:
-            win.blit(boss_attack_images[attack[2]], (attack[0], attack[1]))
+            direction = attack[2]
+            
+            # direction이 리스트인 경우, 방향을 결정
+            if isinstance(direction, list):
+                if direction[0] > 0:
+                    direction_str = "right"
+                elif direction[0] < 0:
+                    direction_str = "left"
+                elif direction[1] > 0:
+                    direction_str = "down"
+                elif direction[1] < 0:
+                    direction_str = "up"
+            else:
+                direction_str = direction  # 이미 문자열인 경우 그대로 사용
+            
+    # 변환된 direction_str을 딕셔너리 키로 사용
+    win.blit(boss_attack_images[direction_str], (attack[0], attack[1]))
+
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
