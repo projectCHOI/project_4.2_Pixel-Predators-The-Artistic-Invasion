@@ -290,7 +290,8 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
     if boss_attacks:
         for attack in boss_attacks:
             direction = attack[2]
-            
+            direction_str = None  # 기본값을 None으로 설정
+
             # direction이 리스트인 경우, 방향을 결정
             if isinstance(direction, list):
                 if direction[0] > 0:
@@ -302,7 +303,40 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, collision_ima
                 elif direction[1] < 0:
                     direction_str = "up"
             else:
-                direction_str = direction  # 이미 문자열인 경우 그대로 사용
+                # 이미 문자열일 경우 그대로 사용
+                direction_str = direction
+
+            # direction_str이 None이 아니고 boss_attack_images에 있는지 확인
+            if direction_str in boss_attack_images:
+                win.blit(boss_attack_images[direction_str], (attack[0], attack[1]))
+            else:
+                print(f"Invalid or undefined attack direction: {direction_str}")
+
+            # direction_str이 None이 아닌지 확인
+            if direction_str and direction_str in boss_attack_images:
+                win.blit(boss_attack_images[direction_str], (attack[0], attack[1]))
+            else:
+                print(f"Invalid attack direction: {direction_str}")
+
+
+            # direction_str이 정의되었는지 확인하는 조건문 추가
+            if direction_str in boss_attack_images:
+                win.blit(boss_attack_images[direction_str], (attack[0], attack[1]))
+            else:
+                print(f"Invalid attack direction: {direction_str}")
+                
+                # direction이 리스트인 경우, 방향을 결정
+                if isinstance(direction, list):
+                    if direction[0] > 0:
+                        direction_str = "right"
+                    elif direction[0] < 0:
+                        direction_str = "left"
+                    elif direction[1] > 0:
+                        direction_str = "down"
+                    elif direction[1] < 0:
+                        direction_str = "up"
+                else:
+                    direction_str = direction  # 이미 문자열인 경우 그대로 사용
             
     # 변환된 direction_str을 딕셔너리 키로 사용
     win.blit(boss_attack_images[direction_str], (attack[0], attack[1]))
