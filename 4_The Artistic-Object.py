@@ -1,3 +1,4 @@
+# 코드 요약본 제작/실패
 import pygame
 import random
 import math
