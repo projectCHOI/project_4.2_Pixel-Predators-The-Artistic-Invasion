@@ -66,7 +66,7 @@ health_image = pygame.transform.scale(health_image, image_size)
 max_health = 7
 current_health = 4
 
-# 스피드 아이템 설정
+# 적들의 속도를 변경 아이템 설정
 speed_item_image = pygame.image.load(r"C:/Users/boss3/OneDrive/바탕 화면/GitHub/project_4.2_Pixel-Predators-The-Artistic-Invasion/project4.2_mob/mob_item_Slowly_2.PNG")
 speed_item_image = pygame.transform.scale(speed_item_image, image_size)
 speed_item_pos = None
@@ -829,7 +829,7 @@ while run:
                     if enemy_hp <= 0:
                         hit = True
                         enemies_defeated += 1  # 제거된 적의 수 증가
-                        # 스피드 아이템 생성
+                        # 적들의 속도를 변경 아이템 생성
                         if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                             speed_item_pos = (enemy_pos[0], enemy_pos[1])
                         # 공격력 증가 아이템 생성
@@ -888,7 +888,7 @@ while run:
                     gem_active = False
                     gem_pos = None  # 보석 위치 초기화
 
-        # 스피드 아이템 획득 체크
+        # 적들의 속도를 변경 아이템 획득 체크
         if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
             speed_item_active = True
             speed_item_start_time = pygame.time.get_ticks()
@@ -897,7 +897,7 @@ while run:
                 enemy[4] = 7
             speed_item_pos = None
 
-        # 스피드 아이템 지속시간 체크
+        # 적들의 속도를 변경 아이템 지속시간 체크
         if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
             speed_item_active = False
             # 적들의 속도를 원래 속도로 복원
