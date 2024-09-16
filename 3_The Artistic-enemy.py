@@ -326,7 +326,7 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
 def check_energy_ball_collision(ball_pos, player_pos):
     bx, by = ball_pos
     px, py = player_pos
-    if px < bx < px + player_width and py < by < py + player_height:
+    if px < bx < px + player_width and py < by < player_height:
         return True
     return False
 
@@ -517,7 +517,121 @@ def draw_end_screen():
     
     pygame.display.update()
 
-# 게임 루프에서 스테이지 클리어 시간 기록 추가
+# Boss Logic for Stage 1
+def stage1_boss(seconds, player_pos, attacks, energy_balls):
+    global boss_active, boss_pos, boss_hp, boss_move_phase, boss_direction_x, boss_direction_y, boss_last_attack_time, boss_attacks, boss_hit, boss_hit_start_time, gem_pos, gem_active, boss_defeated, current_health, game_active, game_over, game_over_reason
+    
+    # 보스 등장 조건 체크
+    if not boss_active and seconds >= boss_appear_time and not boss_defeated:
+        boss_active = True
+        boss_pos = [640 - 60, 0]
+        boss_hp = 100  # 보스 체력 초기화
+
+    if boss_active:
+        # 보스 이동 패턴
+        if boss_move_phase == 1:  # 중앙으로 이동
+            target_pos = [640 - 60, 360 - 60]
+            direction = [target_pos[0] - boss_pos[0], target_pos[1] - boss_pos[1]]
+            length = math.hypot(direction[0], direction[1])
+            if length > boss_speed:
+                direction = [direction[0] / length, direction[1] / length]
+                boss_pos[0] += direction[0] * boss_speed
+                boss_pos[1] += direction[1] * boss_speed
+            else:
+                boss_pos = target_pos
+                boss_move_phase = 2
+
+        elif boss_move_phase == 2:  # 좌우 이동
+            if boss_hp > 50:
+                boss_pos[0] += boss_speed * boss_direction_x
+                if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
+                    boss_direction_x *= -1  # 방향 전환
+            else:
+                boss_move_phase = 3
+
+        elif boss_move_phase == 3:  # 좌우+위아래 이동
+            boss_pos[0] += boss_speed * boss_direction_x
+            boss_pos[1] += boss_speed * boss_direction_y
+            if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
+                boss_direction_x *= -1  # 좌우 방향 전환
+            if boss_pos[1] <= 60 or boss_pos[1] >= 720 - 180:
+                boss_direction_y *= -1  # 위아래 방향 전환
+
+        # 보스 공격
+        if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
+            boss_last_attack_time = pygame.time.get_ticks()
+
+            possible_directions = []
+
+            # 보스의 체력에 따른 공격 방향 설정
+            if boss_hp <= 100 and boss_hp > 80:
+                possible_directions = ["down"]
+            elif boss_hp <= 80 and boss_hp > 60:
+                possible_directions = ["down", "up"]
+            elif boss_hp <= 60 and boss_hp > 40:
+                possible_directions = ["down", "up", "right"]
+            elif boss_hp <= 40 and boss_hp > 0:
+                possible_directions = ["down", "up", "right", "left"]
+
+            # 가능한 방향 중에서 랜덤으로 선택
+            if possible_directions:
+                attack_direction = random.choice(possible_directions)
+
+                if attack_direction == "down":
+                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1] + 120]
+                elif attack_direction == "up":
+                    attack_start_pos = [boss_pos[0] + 60, boss_pos[1]]
+                elif attack_direction == "right":
+                    attack_start_pos = [boss_pos[0] + 120, boss_pos[1] + 60]
+                elif attack_direction == "left":
+                    attack_start_pos = [boss_pos[0], boss_pos[1] + 60]
+
+                boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
+
+    # 보스 공격 이동 및 충돌 처리
+    new_boss_attacks = []
+    for attack in boss_attacks:
+        if attack[2] == "down":
+            attack[1] += 10
+        elif attack[2] == "up":
+            attack[1] -= 10
+        elif attack[2] == "right":
+            attack[0] += 10
+        elif attack[2] == "left":
+            attack[0] -= 10
+
+        if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
+            if check_energy_ball_collision((attack[0], attack[1]), player_pos):
+                current_health -= 2  # 보스 공격에 맞으면 2의 데미지를 입음
+                if current_health <= 0:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+            else:
+                new_boss_attacks.append(attack)
+
+    boss_attacks = new_boss_attacks
+
+    # 플레이어의 공격이 보스에게 충돌하는지 확인
+    for attack in attacks:
+        attack_start, attack_end, thickness = attack
+        if check_attack_collision(attack_start, attack_end, boss_pos, 120):
+            boss_hp -= attack_power
+            boss_hit = True  # 보스가 공격을 받았음을 표시
+            boss_hit_start_time = pygame.time.get_ticks()  # 점멸 시작 시간 기록
+            if boss_hp <= 0:
+                boss_active = False
+                boss_hp = 0  # 보스 체력을 0으로 유지
+                gem_pos = [boss_pos[0] + 40, boss_pos[1] + 40]
+                gem_active = True
+                boss_defeated = True  # 보스가 제거된 것으로 표시
+                break  # 보스가 사라지면 공격을 멈춥니다
+
+    # 보스 점멸 지속 시간 체크
+    if boss_hit and pygame.time.get_ticks() - boss_hit_start_time > boss_hit_duration:
+        boss_hit = False  # 점멸 효과 해제
+
+# Main game loop
 while run:
     if not game_active:
         if not game_over:
@@ -622,96 +736,9 @@ while run:
             add_bomb_enemy()
             bomb_last_appear_time = pygame.time.get_ticks()
 
-        # 보스 등장 조건 체크
-        if not boss_active and level == 1 and seconds >= boss_appear_time and not boss_defeated:
-            boss_active = True
-            boss_pos = [640 - 60, 0]
-            boss_hp = 100  # 보스 체력 초기화
-
-        if boss_active:
-            # 보스 이동 패턴
-            if boss_move_phase == 1:  # 중앙으로 이동
-                target_pos = [640 - 60, 360 - 60]
-                direction = [target_pos[0] - boss_pos[0], target_pos[1] - boss_pos[1]]
-                length = math.hypot(direction[0], direction[1])
-                if length > boss_speed:
-                    direction = [direction[0] / length, direction[1] / length]
-                    boss_pos[0] += direction[0] * boss_speed
-                    boss_pos[1] += direction[1] * boss_speed
-                else:
-                    boss_pos = target_pos
-                    boss_move_phase = 2
-
-            elif boss_move_phase == 2:  # 좌우 이동
-                if boss_hp > 50:
-                    boss_pos[0] += boss_speed * boss_direction_x
-                    if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
-                        boss_direction_x *= -1  # 방향 전환
-                else:
-                    boss_move_phase = 3
-
-            elif boss_move_phase == 3:  # 좌우+위아래 이동
-                boss_pos[0] += boss_speed * boss_direction_x
-                boss_pos[1] += boss_speed * boss_direction_y
-                if boss_pos[0] <= 60 or boss_pos[0] >= 1280 - 180:
-                    boss_direction_x *= -1  # 좌우 방향 전환
-                if boss_pos[1] <= 60 or boss_pos[1] >= 720 - 180:
-                    boss_direction_y *= -1  # 위아래 방향 전환
-
-            # 보스 공격
-            if pygame.time.get_ticks() - boss_last_attack_time > boss_attack_cooldown:
-                boss_last_attack_time = pygame.time.get_ticks()
-
-                possible_directions = []
-
-                # 보스의 체력에 따른 공격 방향 설정
-                if boss_hp <= 100 and boss_hp > 80:
-                    possible_directions = ["down"]
-                elif boss_hp <= 80 and boss_hp > 60:
-                    possible_directions = ["down", "up"]
-                elif boss_hp <= 60 and boss_hp > 40:
-                    possible_directions = ["down", "up", "right"]
-                elif boss_hp <= 40 and boss_hp > 0:
-                    possible_directions = ["down", "up", "right", "left"]
-
-                # 가능한 방향 중에서 랜덤으로 선택
-                if possible_directions:
-                    attack_direction = random.choice(possible_directions)
-
-                    if attack_direction == "down":
-                        attack_start_pos = [boss_pos[0] + 60, boss_pos[1] + 120]
-                    elif attack_direction == "up":
-                        attack_start_pos = [boss_pos[0] + 60, boss_pos[1]]
-                    elif attack_direction == "right":
-                        attack_start_pos = [boss_pos[0] + 120, boss_pos[1] + 60]
-                    elif attack_direction == "left":
-                        attack_start_pos = [boss_pos[0], boss_pos[1] + 60]
-
-                    boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
-
-        # 보스 공격 이동 및 충돌 처리
-        new_boss_attacks = []
-        for attack in boss_attacks:
-            if attack[2] == "down":
-                attack[1] += 10
-            elif attack[2] == "up":
-                attack[1] -= 10
-            elif attack[2] == "right":
-                attack[0] += 10
-            elif attack[2] == "left":
-                attack[0] -= 10
-
-            if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
-                if check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                    current_health -= 2  # 보스 공격에 맞으면 2의 데미지를 입음
-                    if current_health <= 0:
-                        game_active = False
-                        game_over = True
-                        game_over_reason = "game_over"
-                else:
-                    new_boss_attacks.append(attack)
-
-        boss_attacks = new_boss_attacks
+        # Handle Stage 1 boss
+        if level == 1:
+            stage1_boss(seconds, player_pos, attacks, energy_balls)
 
         # 적 이동 및 충돌 처리
         for enemy in enemies:
