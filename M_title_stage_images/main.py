@@ -21,7 +21,7 @@ YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 
 # 폰트 설정
-font_path = os.path.join(BASE_DIR, "assets", "font", "MaruBuri-Regular.ttf")
+font_path = os.path.join(BASE_DIR, "assets", "fonts", "SLEIGothicOTF.otf")
 font_size = 30
 font = pygame.font.Font(font_path, font_size)
 
