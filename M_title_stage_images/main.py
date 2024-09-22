@@ -35,8 +35,8 @@ def load_image(*path_parts, size=None):
 
 # 플레이어 설정
 player_size = (40, 40)
-player_image1 = load_image("players", "player1.png", size=player_size)
-player_image2 = load_image("players", "player2.png", size=player_size)
+player_image1 = load_image("player", "mob_me1_png.png", size=player_size)  # 오른쪽 이동 시 이미지
+player_image2 = load_image("player", "mob_me2_png.png", size=player_size)  # 왼쪽 이동 시 이미지
 player_image = player_image1
 player_pos = [640 - player_size[0] // 2, 360 - player_size[1] // 2]
 player_speed = 5
