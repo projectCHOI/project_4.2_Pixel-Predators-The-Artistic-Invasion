@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 import os
-from bosses.Stage_1_Boss import Stage1Boss  # Stage_1_Boss 모듈 임포트
+from bosses.Stage_1_Boss import Stage1Boss
 
 pygame.init()
 
