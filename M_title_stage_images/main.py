@@ -87,9 +87,9 @@ collision_image = None
 collision_effect_start_time = 0
 collision_effect_duration = 0
 collision_images = {
-    1: {"image": load_image("effects", "collision1.png", size=player_size), "duration": 500},
-    2: {"image": load_image("effects", "collision2.png", size=player_size), "duration": 500},
-    3: {"image": load_image("effects", "collision3.png", size=player_size), "duration": 500},
+    1: {"image": load_image("player", "mob_death_1.png", size=player_size), "duration": 500},
+    2: {"image": load_image("player", "mob_death_2.png", size=player_size), "duration": 500},
+    3: {"image": load_image("player", "mob_death_3.png", size=player_size), "duration": 500},
 }
 speed_item_chance = 0.1
 power_item_chance = 0.1
