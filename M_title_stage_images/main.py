@@ -43,25 +43,27 @@ player_speed = 5
 original_player_speed = player_speed
 
 # 적 설정
+# 적 이미지 로드
+enemy_image = load_image("enemies", "mob_enemy_Ambush Striker_1.png", size=(40, 40))
 enemy_images = {
-    "up": load_image("enemies", "enemy_up.png", size=(40, 40)),
-    "down": load_image("enemies", "enemy_down.png", size=(40, 40)),
-    "left": load_image("enemies", "enemy_left.png", size=(40, 40)),
-    "right": load_image("enemies", "enemy_right.png", size=(40, 40)),
+    "up": enemy_image,
+    "down": enemy_image,
+    "left": enemy_image,
+    "right": enemy_image,
 }
 
 # 아이템 이미지 로드
-speed_item_image = load_image("items", "item_speed.png", size=(40, 40))
-power_item_image = load_image("items", "item_power.png", size=(40, 40))
+speed_item_image = load_image("items", "mob_item_Quickly.png", size=(40, 40))
+power_item_image = load_image("items", "mob_item_Defense.png", size=(40, 40))
 heal_item_images = [
-    load_image("items", "item_heal_1.png", size=(40, 40)),
-    load_image("items", "item_heal_2.png", size=(40, 40)),
+    load_image("items", "mob_item_Life.png", size=(40, 40)),
+    load_image("items", "mob_item_Life_2.PNG", size=(40, 40)),
 ]
 
 # 배경 이미지 로드
 stage_background_images = []
 for i in range(1, 13):
-    bg_image = load_image("backgrounds", f"stage_{i}.png", size=(WIN_WIDTH, WIN_HEIGHT))
+    bg_image = load_image("stages", f"Stage{i}_World_A.JPG", size=(WIN_WIDTH, WIN_HEIGHT))
     stage_background_images.append(bg_image)
 
 # 기타 설정
