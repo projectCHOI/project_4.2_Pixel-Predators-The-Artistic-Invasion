@@ -6,7 +6,8 @@ import os
 pygame.init()
 
 # 윈도우 설정
-win = pygame.display.set_mode((1280, 720))
+win_width, win_height = 1280, 720
+win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 
 # BASE_DIR은 프로젝트의 루트 디렉토리를 가리킵니다.
@@ -18,13 +19,24 @@ BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 # 이미지 로딩 함수
 def load_image(*path_parts, size=None):
     path = os.path.join(BASE_IMAGE_PATH, *path_parts)
-    image = pygame.image.load(path)
+    try:
+        image = pygame.image.load(path).convert_alpha()
+    except pygame.error as e:
+        print(f"Cannot load image: {path}")
+        raise SystemExit(e)
     if size:
         image = pygame.transform.scale(image, size)
     return image
 
 # 모듈에서 타이틀 및 스테이지 이미지 임포트
-from title_stage_images import title_image, stage_intro_images, stage_background_images
+# 이 모듈은 별도로 작성되어 있어야 합니다.
+# title_stage_images.py 파일에 title_image, stage_intro_images, stage_background_images 정의
+try:
+    from title_stage_images import title_image, stage_intro_images, stage_background_images
+except ImportError:
+    print("title_stage_images 모듈을 찾을 수 없습니다. 해당 모듈을 생성해주세요.")
+    pygame.quit()
+    exit()
 
 # 이미지 크기 설정
 image_size = (40, 40)
@@ -127,7 +139,13 @@ bomb_directions = ["left", "right", "up", "down"]
 clock = pygame.time.Clock()
 font_path = os.path.join(BASE_DIR, "assets", "fonts", "SLEIGothicOTF.otf")
 font_size = 30  # 폰트 크기
-font = pygame.font.Font(font_path, font_size)  # 폰트 설정
+try:
+    font = pygame.font.Font(font_path, font_size)  # 폰트 설정
+except FileNotFoundError:
+    print(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+    pygame.quit()
+    exit()
+
 level = 1
 max_level = 12
 run = True
@@ -163,69 +181,70 @@ victory_image = load_image("stages", "Stage14_Victory.JPG", size=(1280, 720))
 game_over_image = load_image("stages", "Stage15_GameOver.JPG", size=(1280, 720))
 time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
 
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
-    win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
-    win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
-    if collision_image:
-        win.blit(collision_image, (player_pos[0], player_pos[1]))
-    for enemy in enemies:
-        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image = enemy[:8]  # 이미지 추가
-        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
-    if show_star:
-        win.blit(star_image, (star_pos[0], star_pos[1]))
-    if speed_item_pos:
-        win.blit(speed_item_image, speed_item_pos)
-    if power_item_pos:
-        win.blit(power_item_image, power_item_pos)
-    if heal_item_pos and heal_item_image:
-        win.blit(heal_item_image, heal_item_pos)
-    
-    # 에너지 볼 그리기
-    for ball in energy_balls:
-        color = YELLOW if ball[2] == "yellow" else GREEN
-        pygame.draw.circle(win, color, (ball[0], ball[1]), 5)
-    
-    # 공격 그리기
-    for attack in attacks:
-        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
-    
-    # 마우스 위치 그리기
-    pygame.draw.circle(win, RED, mouse_pos, 5)
-    
-    # 대시보드 그리기 함수 호출
-    draw_dashboard()  # 대시보드 그리기
+# 각 스테이지 클리어 시간을 저장하는 리스트
+stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
+
+# 스테이지 클리어 시간 기록 함수
+def record_stage_clear_time(stage, time_taken):
+    stage_clear_times[stage - 1] = time_taken
+
+# 총 플레이 시간을 계산하는 함수
+def calculate_total_play_time():
+    total_seconds = sum(time for time in stage_clear_times if time is not None)
+    minutes = total_seconds // 60
+    seconds = total_seconds % 60
+    return minutes, seconds
+
+# 게임 종료 화면 그리기 함수
+def draw_end_screen():
+    if game_over_reason == "victory":
+        image = victory_image
+    elif game_over_reason == "game_over":
+        image = game_over_image
+    elif game_over_reason == "time_over":
+        image = time_over_image
+    else:
+        image = game_over_image  # 기본값 설정
+
+    win.blit(image, (0, 0))
+    text = font.render("Press Enter to Continue", True, WHITE)
+    win.blit(text, (win_width // 2 - text.get_width() // 2, win_height // 2 - text.get_height() // 2))
+
+    # 획득한 별 표시
+    star_spacing = 60  # 이미지 간격 60 픽셀
+    total_star_width = len(collected_stars) * star_spacing
+    start_x = win_width // 2 - total_star_width // 2
+    for idx, collected_star in enumerate(collected_stars):
+        win.blit(collected_star, (start_x + idx * star_spacing, 450))
+
+    # 총 플레이 시간 계산 및 표시
+    minutes, seconds = calculate_total_play_time()
+    total_time_text = font.render(f"Total Play Time: {minutes}m {seconds}s", True, WHITE)
+    win.blit(total_time_text, (win_width // 2 - total_time_text.get_width() // 2, 680))  # 화면 하단 중앙에 맞춤
+
     pygame.display.update()
 
-# bomb 적 추가 함수
-def add_bomb_enemy():
-    direction = random.choice(bomb_directions)
-    size = 40
-    pos = None
-    if direction == "left":
-        pos = [0, random.randint(0, 680)]
-    elif direction == "right":
-        pos = [1240, random.randint(0, 680)]
-    elif direction == "up":
-        pos = [random.randint(0, 1240), 0]
-    elif direction == "down":
-        pos = [random.randint(0, 1240), 680]
-    target_pos = [640, 360]  # 중심을 향하도록 설정
-    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-    length = math.hypot(direction[0], direction[1])
-    direction = [direction[0] / length, direction[1] / length]
-    enemies.append([pos, size, "bomb", direction, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+# 스테이지 시작 시 시간 제한 함수
+def get_stage_duration(level):
+    # 레벨에 따라 스테이지 시간 조정 (예: 레벨 1: 60초, 레벨 2: 55초, ...)
+    base_duration = 60  # 기본 스테이지 시간 (초)
+    reduction = (level - 1) * 5  # 레벨당 5초 감소
+    return max(30, base_duration - reduction)  # 최소 30초
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type = enemy[:3]
-        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
-           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
+        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or
+            enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
+           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or
+            enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
             if enemy_type == "bomb":
                 return "bomb"  # bomb 충돌 시
             return True
     return False
 
+# 공격이 적에게 충돌하는지 확인하는 함수
 def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
     ex, ey = enemy_pos
     sx, sy = attack_start
@@ -237,6 +256,7 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
         return True
     return False
 
+# 에너지 볼과 플레이어의 충돌 체크 함수
 def check_energy_ball_collision(ball_pos, player_pos):
     bx, by = ball_pos
     px, py = player_pos
@@ -244,19 +264,28 @@ def check_energy_ball_collision(ball_pos, player_pos):
         return True
     return False
 
-# 타이틀 화면
+# 타이틀 화면 그리기 함수
 def title_screen():
     win.blit(title_image, (0, 0))
     pygame.display.update()
 
-# 인트로 화면
+# 인트로 화면 그리기 함수
 def intro_screen(stage):
-    win.blit(stage_intro_images[stage - 1], (0, 0))
+    if stage - 1 < len(stage_intro_images):
+        win.blit(stage_intro_images[stage - 1], (0, 0))
+    else:
+        win.fill(BLACK)  # 기본 배경 설정
     pygame.display.update()
-    pygame.time.delay(3000)
+    pygame.time.delay(3000)  # 3초 대기
 
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level):
+    enemies = []
+    num_enemies = 0
+    speed = 10
+    directions = [(0, 1)]  # 초기 방향: 아래쪽
+    sizes = [40]
+
     if level == 1:
         speed = 10
         directions = [(0, 1)]
@@ -294,112 +323,166 @@ def generate_enemies(level):
         num_enemies = random.randint(6, 24)
     elif level == 8:
         speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0),
+                     (1, 1), (1, -1), (-1, 1), (-1, -1)]
         sizes = [20, 40, 60]
         num_enemies = random.randint(6, 26)
     elif level == 9:
         speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0),
+                     (1, 1), (1, -1), (-1, 1), (-1, -1)]
         sizes = [20, 40, 60]
         num_enemies = random.randint(8, 30)
     elif level == 10:
         speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0),
+                     (1, 1), (1, -1), (-1, 1), (-1, -1)]
         sizes = [20, 40, 60]
         num_enemies = random.randint(8, 30)
     elif level == 11:
         speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0),
+                     (1, 1), (1, -1), (-1, 1), (-1, -1)]
         sizes = [20, 40, 60]
         num_enemies = random.randint(10, 32)
     elif level == 12:
         speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        directions = [(0, 1), (0, -1), (1, 0), (-1, 0),
+                     (1, 1), (1, -1), (-1, 1), (-1, -1)]
         sizes = [20, 40, 60]
         num_enemies = random.randint(15, 32)
 
-    enemies = []
     for _ in range(num_enemies):
         direction = random.choice(directions)
         size = random.choice(sizes)
+        pos = [0, 0]
+        image = enemy_images["up"]
+
         if direction == (0, 1):  # 상단에서
-            pos = [random.randint(0, 1200-size), 0]
-            image = enemy_images["up"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_up
+            pos = [random.randint(0, win_width - size), 0]
+            if size == 40:
+                image = enemy_images["up"]
+            elif size == 60:
+                image = ambush_striker_up
+            else:
+                image = sentinel_shooter_left
         elif direction == (0, -1):  # 하단에서
-            pos = [random.randint(0, 1200-size), 700-size]
-            image = enemy_images["down"] if size == 40 else sentinel_shooter_left if size == 60 else ambush_striker_down
+            pos = [random.randint(0, win_width - size), win_height - size]
+            if size == 40:
+                image = enemy_images["down"]
+            elif size == 60:
+                image = ambush_striker_down
+            else:
+                image = sentinel_shooter_left
         elif direction == (1, 0):  # 좌측에서
-            pos = [0, random.randint(0, 700-size)]
-            image = enemy_images["left"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_left
+            pos = [0, random.randint(0, win_height - size)]
+            if size == 40:
+                image = enemy_images["left"]
+            elif size == 60:
+                image = ambush_striker_left
+            else:
+                image = sentinel_shooter_right
         elif direction == (-1, 0):  # 우측에서
-            pos = [1200-size, random.randint(0, 700-size)]
-            image = enemy_images["right"] if size == 40 else sentinel_shooter_right if size == 60 else ambush_striker_right
+            pos = [win_width - size, random.randint(0, win_height - size)]
+            if size == 40:
+                image = enemy_images["right"]
+            elif size == 60:
+                image = ambush_striker_right
+            else:
+                image = sentinel_shooter_right
+
         if size == 40:
             enemy_type = "move_and_disappear"
         elif size == 60:
-            target_pos = [random.randint(100, 1100), random.randint(100, 600)]  # 랜덤한 화면 내 특정 장소
+            target_pos = [random.randint(100, win_width - 100), random.randint(100, win_height - 100)]  # 랜덤한 화면 내 특정 장소
+            direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+            length = math.hypot(direction_vector[0], direction_vector[1])
+            direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
             enemy_type = "move_and_shoot"
-            direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-            length = math.hypot(direction[0], direction[1])
-            direction = [direction[0] / length, direction[1] / length]
+            enemies.append([pos, size, enemy_type, direction_normalized, speed, target_pos, 0, image, speed])
+            continue
         elif size == 20:
             enemy_type = "approach_and_shoot"
-        enemies.append([pos, size, enemy_type, direction, speed, target_pos if size == 60 else None, 0, image, speed])  # 이미지 및 원래 속도 추가
+
+        enemies.append([pos, size, enemy_type, direction, speed, None, 0, image, speed])  # original_speed 추가
 
     return enemies
 
+# bomb 적 추가 함수
+def add_bomb_enemy():
+    direction = random.choice(bomb_directions)
+    size = 40
+    pos = [0, 0]
+    if direction == "left":
+        pos = [0, random.randint(0, win_height - size)]
+    elif direction == "right":
+        pos = [win_width - size, random.randint(0, win_height - size)]
+    elif direction == "up":
+        pos = [random.randint(0, win_width - size), 0]
+    elif direction == "down":
+        pos = [random.randint(0, win_width - size), win_height - size]
+    target_pos = [win_width // 2, win_height // 2]  # 중심을 향하도록 설정
+    direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+    length = math.hypot(direction_vector[0], direction_vector[1])
+    direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
+    enemies.append([pos, size, "bomb", direction_normalized, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
+
 # 대시보드 그리기 함수
-def draw_dashboard():
+def draw_dashboard(elapsed_stage_time):
     # 플레이 시간 표시
-    elapsed_time = seconds
-    time_text = font.render(f"{elapsed_time}", True, WHITE)
-    win.blit(time_text, (640 - time_text.get_width() // 2, 10))  # 화면 중앙에 맞춤
-    
+    time_text = font.render(f"Time: {elapsed_stage_time}s", True, WHITE)
+    win.blit(time_text, (win_width // 2 - time_text.get_width() // 2, 10))  # 화면 중앙 상단에 표시
+
     # 체력 표시
     for i in range(current_health):
-        win.blit(health_image, (10 + i * 50, 10))
-    
+        win.blit(health_image, (10 + i * (health_image.get_width() + 10), 10))
+
     # 제거된 적의 수 표시
-    enemies_defeated_text = font.render(f"제거: {enemies_defeated}", True, WHITE)
-    win.blit(enemies_defeated_text, (1280 - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽에 맞춤
+    enemies_defeated_text = font.render(f"Enemy: {enemies_defeated}", True, WHITE)
+    win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
-# 각 스테이지 클리어 시간을 저장하는 리스트
-stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
+    # 스테이지 시간 표시
+    remaining_time = max(0, stage_duration - elapsed_stage_time)
+    stage_time_text = font.render(f"Stage Time Left: {remaining_time}s", True, WHITE)
+    win.blit(stage_time_text, (win_width // 2 - stage_time_text.get_width() // 2, 50))  # 중앙 상단에 표시
 
-# 스테이지를 클리어할 때마다 클리어 시간을 기록하는 함수
-def record_stage_clear_time(stage, time_taken):
-    stage_clear_times[stage - 1] = time_taken
+    # 무적 시간 표시
+    if invincible:
+        invincible_text = font.render("Invincible!", True, YELLOW)
+        win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
 
-# 총 플레이 시간을 계산하는 함수
-def calculate_total_play_time():
-    total_seconds = sum(time for time in stage_clear_times if time is not None)
-    minutes = total_seconds // 60
-    seconds = total_seconds % 60
-    return minutes, seconds
+# 화면에 객체 그리기 함수
+def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
+    win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
+    win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
+    if collision_image:
+        win.blit(collision_image, (player_pos[0], player_pos[1]))
+    for enemy in enemies:
+        enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
+        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+    if show_star:
+        win.blit(star_image, (star_pos[0], star_pos[1]))
+    if speed_item_pos:
+        win.blit(speed_item_image, speed_item_pos)
+    if power_item_pos:
+        win.blit(power_item_image, power_item_pos)
+    if heal_item_pos and heal_item_image:
+        win.blit(heal_item_image, heal_item_pos)
 
-# 게임 종료 화면 그리기 함수
-def draw_end_screen():
-    if game_over_reason == "victory":
-        image = victory_image
-    elif game_over_reason == "game_over":
-        image = game_over_image
-    elif game_over_reason == "time_over":
-        image = time_over_image
+    # 에너지 볼 그리기
+    for ball in energy_balls:
+        color = YELLOW if ball[2] == "yellow" else GREEN
+        pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
 
-    win.blit(image, (0, 0))
-    text = font.render("continue : enter", True, WHITE)
-    win.blit(text, (640 - text.get_width() // 2, 360 - text.get_height() // 2))  # 화면 중앙에 맞춤
-    
-    # 획득한 별 표시
-    star_spacing = 60  # 이미지 간격 60 픽셀
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (640 - (len(collected_stars) * star_spacing) // 2 + idx * star_spacing, 450))
+    # 공격 그리기
+    for attack in attacks:
+        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
 
-    # 총 플레이 시간 계산 및 표시
-    minutes, seconds = calculate_total_play_time()
-    total_time_text = font.render(f"Total play time : {minutes}m {seconds}s", True, WHITE)
-    win.blit(total_time_text, (640 - total_time_text.get_width() // 2, 680))  # 화면 하단 중앙에 맞춤
-    
+    # 마우스 위치 그리기 (선택 사항)
+    # pygame.draw.circle(win, RED, mouse_pos, 5)
+
+    # 대시보드 그리기 함수 호출
+    draw_dashboard(elapsed_stage_time)  # 대시보드 그리기
     pygame.display.update()
 
 # 게임 루프
@@ -409,7 +492,7 @@ while run:
             title_screen()
         else:
             draw_end_screen()
-            
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -427,21 +510,27 @@ while run:
                         game_over_reason = None
                         stage_clear_times = [None] * 12  # 클리어 시간 초기화
                     game_active = True
-                    player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 플레이어를 중앙에 위치
+                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]  # 플레이어를 중앙에 위치
                     enemies = []
                     show_star = False
-                    star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
-                    star_image = star_images[level - 1]
-                    start_ticks = pygame.time.get_ticks()  # 시작 시간
+                    star_pos = [random.randint(0, win_width - star_size), random.randint(0, win_height - star_size)]
+                    star_image = star_images[level - 1] if level - 1 < len(star_images) else star_images[0]
+                    start_ticks = pygame.time.get_ticks()  # 전체 게임 시작 시간
+                    stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간
                     intro_screen(level)
 
                     # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
                     attacks = []
                     energy_balls = []
 
+                    # 스테이지 시간 설정
+                    stage_duration = get_stage_duration(level)
+
     else:
         mouse_pos = pygame.mouse.get_pos()
-        seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 초 계산
+        total_seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 전체 게임 경과 시간
+        elapsed_stage_time = (pygame.time.get_ticks() - stage_start_ticks) // 1000  # 스테이지 경과 시간
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -467,6 +556,7 @@ while run:
                     attacks.append((attack_start, (attack_end[0] - offset // 2, attack_end[1] - offset // 2), attack_thickness))
                     attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
 
+        # 키 입력 처리 및 플레이어 이동
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
             player_pos[0] -= player_speed
@@ -484,44 +574,61 @@ while run:
         # 플레이어가 화면 밖으로 나가지 않도록 위치 조정 
         if player_pos[0] < 0:
             player_pos[0] = 0
-        if player_pos[0] > 1240:
-            player_pos[0] = 1240
+        if player_pos[0] > win_width - player_width:
+            player_pos[0] = win_width - player_width
         if player_pos[1] < 0:
             player_pos[1] = 0
-        if player_pos[1] > 680:
-            player_pos[1] = 680
+        if player_pos[1] > win_height - player_height:
+            player_pos[1] = win_height - player_height
 
-        if seconds > star_appear_time:
-            show_star = True
-
-        if show_star and (player_pos[0] < star_pos[0] < player_pos[0] + player_width or star_pos[0] < player_pos[0] < star_pos[0] + star_size) and \
-           (player_pos[1] < star_pos[1] < player_pos[1] + player_height or player_pos[1] < star_pos[1] < player_pos[1] + star_size):
-            collected_stars.append(star_image)  # 획득한 별 이미지 추가
-            # 스테이지 클리어 시간 기록
-            record_stage_clear_time(level, seconds)
-            level += 1
-            if level > max_level:
-                game_active = False
-                game_over = True
-                game_over_reason = "victory"
-            else:
-                player_pos = [640 - player_width // 2, 360 - player_height // 2]  # 레벨 시작 시 플레이어를 중앙에 위치
-                intro_screen(level)
-                start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
-                enemies = []
-                show_star = False
-                star_pos = [random.randint(0, 1280 - star_size), random.randint(0, 720 - star_size)]
-                star_image = star_images[level - 1]
-
-                # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
-                attacks = []
-                energy_balls = []
-
-        if seconds >= 300:
+        # 스테이지 시간 초과 체크
+        if elapsed_stage_time > stage_duration:
             game_active = False
             game_over = True
             game_over_reason = "time_over"
 
+        # 전체 게임 시간 초과 체크
+        if total_seconds >= 300:
+            game_active = False
+            game_over = True
+            game_over_reason = "time_over"
+
+        # 별 등장 시간 체크
+        if total_seconds > star_appear_time:
+            show_star = True
+
+        # 별 수집 체크
+        star_collected = False
+        if show_star:
+            star_rect = pygame.Rect(star_pos[0], star_pos[1], star_size, star_size)
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+            if player_rect.colliderect(star_rect):
+                collected_stars.append(star_image)  # 획득한 별 이미지 추가
+                # 스테이지 클리어 시간 기록
+                record_stage_clear_time(level, elapsed_stage_time)
+                level += 1
+                if level > max_level:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "victory"
+                else:
+                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]  # 플레이어를 중앙에 위치
+                    intro_screen(level)
+                    start_ticks = pygame.time.get_ticks()  # 전체 게임 시작 시간 초기화
+                    stage_start_ticks = pygame.time.get_ticks()  # 새로운 레벨 시작 시간 초기화
+                    enemies = []
+                    show_star = False
+                    star_pos = [random.randint(0, win_width - star_size), random.randint(0, win_height - star_size)]
+                    star_image = star_images[level - 1] if level - 1 < len(star_images) else star_images[0]
+
+                    # 새로운 스테이지 시작 시 공격 및 에너지 볼 리스트 초기화
+                    attacks = []
+                    energy_balls = []
+
+                    # 스테이지 시간 설정
+                    stage_duration = get_stage_duration(level)
+
+        # 적 생성
         if random.random() < 0.02:  # 2% 확률로 적 생성
             new_enemies = generate_enemies(level)
             enemies.extend(new_enemies)
@@ -531,8 +638,9 @@ while run:
             add_bomb_enemy()
             bomb_last_appear_time = pygame.time.get_ticks()
 
+        # 적 이동 및 행동 처리
         for enemy in enemies:
-            pos, size, enemy_type, direction, speed, target_pos, shots_fired, _, original_speed = enemy
+            pos, size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed = enemy
             if enemy_type == "move_and_disappear":
                 pos[0] += direction[0] * speed
                 pos[1] += direction[1] * speed
@@ -555,27 +663,128 @@ while run:
             elif enemy_type == "approach_and_shoot":
                 if pygame.time.get_ticks() % 5000 < 2500:
                     target_pos = [player_pos[0], player_pos[1]]
-                    direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                    length = math.hypot(direction[0], direction[1])
-                    direction = [direction[0] / length, direction[1] / length]
-                    pos[0] += direction[0] * speed
-                    pos[1] += direction[1] * speed
-                    if length < 100:  # 플레이어에게 접근
-                        energy_balls.append([pos[0], pos[1], "green", direction])
+                    direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                    length = math.hypot(direction_vector[0], direction_vector[1])
+                    if length != 0:
+                        direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
+                        pos[0] += direction_normalized[0] * speed
+                        pos[1] += direction_normalized[1] * speed
+                        if length < 100:  # 플레이어에게 접근
+                            energy_balls.append([pos[0], pos[1], "green", direction_normalized])
                 else:
-                    direction = [random.choice([-1, 1]), random.choice([-1, 1])]
-                    pos[0] += direction[0] * speed
-                    pos[1] += direction[1] * speed
+                    direction_vector = [random.choice([-1, 1]), random.choice([-1, 1])]
+                    pos[0] += direction_vector[0] * speed
+                    pos[1] += direction_vector[1] * speed
             elif enemy_type == "bomb":
                 target_pos = [player_pos[0], player_pos[1]]
-                direction = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-                length = math.hypot(direction[0], direction[1])
-                direction = [direction[0] / length, direction[1] / length]
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
+                direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
+                length = math.hypot(direction_vector[0], direction_vector[1])
+                if length != 0:
+                    direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
+                    pos[0] += direction_normalized[0] * speed
+                    pos[1] += direction_normalized[1] * speed
 
+        # 공격 처리: 공격을 이동시키고 화면 밖으로 나간 공격은 제거
+        new_attacks = []
+        for attack in attacks:
+            start, end, thickness = attack
+            direction_vector = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction_vector[0], direction_vector[1])
+            if length == 0:
+                continue
+            direction_normalized = (direction_vector[0] / length, direction_vector[1] / length)
+            new_end = (end[0] + direction_normalized[0] * attack_speed,
+                       end[1] + direction_normalized[1] * attack_speed)
+            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
+                new_attacks.append((end, new_end, thickness))
+        attacks = new_attacks
+
+        # 공격이 적에게 충돌하는지 확인
+        new_enemies = []
+        for enemy in enemies:
+            enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
+            hit = False
+            for attack in attacks:
+                attack_start, attack_end, thickness = attack
+                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+                    hit = True
+                    enemies_defeated += 1  # 제거된 적의 수 증가
+                    # 스피드 아이템 생성
+                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
+                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
+                    # 공격력 증가 아이템 생성
+                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
+                        power_item_pos = (enemy_pos[0], enemy_pos[1])
+                    # 체력 회복 아이템 생성
+                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
+                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
+                        current_heal_item_image = random.choice(heal_item_images)
+                    break
+            if not hit:
+                new_enemies.append(enemy)
+        enemies = new_enemies
+
+        # 아이템 획득 체크
+        # 스피드 아이템
+        if speed_item_pos:
+            speed_rect = pygame.Rect(speed_item_pos[0], speed_item_pos[1], speed_item_image.get_width(), speed_item_image.get_height())
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+            if player_rect.colliderect(speed_rect):
+                speed_item_active = True
+                speed_item_start_time = pygame.time.get_ticks()
+                # 적들의 속도를 7로 변경
+                for enemy in enemies:
+                    enemy[4] = 7
+                speed_item_pos = None
+
+        # 스피드 아이템 지속시간 체크
+        if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
+            speed_item_active = False
+            # 적들의 속도를 원래 속도로 복원
+            for enemy in enemies:
+                enemy[4] = enemy[8]  # original_speed로 복원
+
+        # 공격력 증가 아이템
+        if power_item_pos:
+            power_rect = pygame.Rect(power_item_pos[0], power_item_pos[1], power_item_image.get_width(), power_item_image.get_height())
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+            if player_rect.colliderect(power_rect):
+                power_item_active += 1
+                power_item_pos = None
+
+        # 체력 회복 아이템
+        if heal_item_pos and current_heal_item_image:
+            heal_rect = pygame.Rect(heal_item_pos[0], heal_item_pos[1], current_heal_item_image.get_width(), current_heal_item_image.get_height())
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+            if player_rect.colliderect(heal_rect):
+                if current_health < max_health:
+                    current_health += 1
+                heal_item_pos = None
+                current_heal_item_image = None
+
+        # 에너지 볼 이동 및 충돌 체크
+        new_energy_balls = []
+        for ball in energy_balls:
+            if ball[2] == "yellow":
+                ball[0] += ball[3][0] * 5
+                ball[1] += ball[3][1] * 5
+            elif ball[2] == "green":
+                ball[0] += ball[3][0] * 5
+                ball[1] += ball[3][1] * 5
+            if 0 <= ball[0] <= win_width and 0 <= ball[1] <= win_height:
+                if check_energy_ball_collision((ball[0], ball[1]), player_pos):
+                    current_health -= 1
+                    if current_health <= 0:
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                else:
+                    new_energy_balls.append(ball)
+        energy_balls = new_energy_balls
+
+        # 충돌 체크 및 무적 처리
         if not invincible:
-            collision = check_collision(player_pos, [(enemy[0], enemy[1], enemy[2]) for enemy in enemies])
+            collision = check_collision(player_pos, enemies)
             if collision:
                 if collision == "bomb":  # bomb 충돌 시 즉시 사망
                     current_health = 0
@@ -607,98 +816,13 @@ while run:
 
         # 충돌 이미지 표시 시간 체크
         if pygame.time.get_ticks() - collision_effect_start_time < collision_effect_duration:
-            collision_image = collision_image
+            pass
         else:
             collision_image = None
 
-        # 마우스 클릭
-        new_attacks = []
-        for attack in attacks:
-            start, end, thickness = attack
-            direction = (end[0] - start[0], end[1] - start[1])
-            length = math.hypot(direction[0], direction[1])
-            if length == 0:
-                continue
-            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
-            new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= 1280 and 0 <= new_end[1] <= 720:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
-        attacks = new_attacks
-
-        # 공격이 적에게 충돌하는지 확인
-        new_enemies = []
-        for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
-            hit = False
-            for attack in attacks:
-                attack_start, attack_end, thickness = attack
-                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
-                    hit = True
-                    enemies_defeated += 1  # 제거된 적의 수 증가
-                    # 스피드 아이템 생성
-                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
-                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 공격력 증가 아이템 생성
-                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
-                        power_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 체력 회복 아이템 생성
-                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
-                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
-                        current_heal_item_image = random.choice(heal_item_images)
-                    break
-            if not hit:
-                new_enemies.append(enemy)
-        enemies = new_enemies
-
-        # 스피드 아이템 획득 체크
-        if speed_item_pos and player_pos[0] < speed_item_pos[0] < player_pos[0] + player_width and player_pos[1] < speed_item_pos[1] < player_pos[1] + player_height:
-            speed_item_active = True
-            speed_item_start_time = pygame.time.get_ticks()
-            # 적들의 속도를 7로 변경
-            for enemy in enemies:
-                enemy[4] = 7
-            speed_item_pos = None
-
-        # 스피드 아이템 지속시간 체크
-        if speed_item_active and pygame.time.get_ticks() - speed_item_start_time > speed_item_duration:
-            speed_item_active = False
-            # 적들의 속도를 원래 속도로 복원
-            for enemy in enemies:
-                enemy[4] = enemy[8]  # original_speed로 복원
-
-        # 공격력 증가 아이템 획득 체크
-        if power_item_pos and player_pos[0] < power_item_pos[0] < player_pos[0] + player_width and player_pos[1] < power_item_pos[1] < player_pos[1] + player_height:
-            power_item_active += 1
-            power_item_pos = None
-
-        # 체력 회복 아이템 획득 체크
-        if heal_item_pos and player_pos[0] < heal_item_pos[0] < player_pos[0] + player_width and player_pos[1] < heal_item_pos[1] < player_pos[1] + player_height:
-            if current_health < max_health:
-                current_health += 1
-            heal_item_pos = None
-
-        # 에너지 볼 이동 및 충돌 체크
-        new_energy_balls = []
-        for ball in energy_balls:
-            if ball[2] == "yellow":
-                ball[0] += ball[3][0] * 5
-                ball[1] += ball[3][1] * 5
-            elif ball[2] == "green":
-                ball[0] += ball[3][0] * 5
-                ball[1] += ball[3][1] * 5
-            if 0 <= ball[0] <= 1280 and 0 <= ball[1] <= 720:
-                if check_energy_ball_collision((ball[0], ball[1]), player_pos):
-                    current_health -= 1
-                    if current_health <= 0:
-                        game_active = False
-                        game_over = True
-                        game_over_reason = "game_over"
-                else:
-                    new_energy_balls.append(ball)
-        energy_balls = new_energy_balls
-
-        # 공격이 아이템에 충돌하는지 확인 (아이템은 사라지지 않도록 예외 처리)
-        draw_objects(player_pos, enemies, star_pos, show_star, stage_background_images[level - 1], mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+        # 화면 업데이트
+        background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
+        draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         clock.tick(30)
 
 pygame.quit()
