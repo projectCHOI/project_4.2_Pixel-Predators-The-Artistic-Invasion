@@ -447,9 +447,9 @@ def draw_dashboard(elapsed_stage_time):
 #    win.blit(stage_time_text, (win_width // 2 - stage_time_text.get_width() // 2, 50))  # 중앙 상단에 표시
 
     # 무적 시간 표시
-    if invincible:
-        invincible_text = font.render("Invincible!", True, YELLOW)
-        win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
+#    if invincible:
+#        invincible_text = font.render("Invincible!", True, YELLOW)
+#        win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
 
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
