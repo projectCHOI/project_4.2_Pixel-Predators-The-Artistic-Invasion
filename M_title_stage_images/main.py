@@ -442,9 +442,9 @@ def draw_dashboard(elapsed_stage_time):
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
     # 스테이지 시간 표시
-    remaining_time = max(0, stage_duration - elapsed_stage_time)
-    stage_time_text = font.render(f"Stage Time Left: {remaining_time}s", True, WHITE)
-    win.blit(stage_time_text, (win_width // 2 - stage_time_text.get_width() // 2, 50))  # 중앙 상단에 표시
+#    remaining_time = max(0, stage_duration - elapsed_stage_time)
+#    stage_time_text = font.render(f"Stage Time Left: {remaining_time}s", True, WHITE)
+#    win.blit(stage_time_text, (win_width // 2 - stage_time_text.get_width() // 2, 50))  # 중앙 상단에 표시
 
     # 무적 시간 표시
     if invincible:
