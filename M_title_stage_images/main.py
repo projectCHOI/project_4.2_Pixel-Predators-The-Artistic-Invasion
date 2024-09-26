@@ -561,7 +561,7 @@ while run:
                     # 공격 시작 위치는 플레이어의 중앙
                     attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                     # 초기 공격 끝 위치는 시작 위치
-                    attack_end = attack_start
+                    attack_end = (attack_start[0] + direction[0] * 3, attack_start[1] + direction[1] * 3)
                     # 공격 리스트에 추가 (딕셔너리 형태)
                     attacks.append({'start': attack_start, 'end': attack_end, 'direction': direction, 'thickness': 3})
                     # 마지막 공격 시간 업데이트
