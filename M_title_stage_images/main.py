@@ -547,6 +547,9 @@ while run:
                 distance = min(distance, max_distance)
                 cooldown = min_cooldown + (max_cooldown - min_cooldown) * (distance / max_distance)
                 if current_time - last_attack_time >= cooldown:
+                    # 공격 생성 로직
+                    attacks.append({'start': attack_start, 'end': attack_end, 'direction': direction, 'thickness': 3})
+                    last_attack_time = current_time
                     # 공격 방향 계산
                     dx = mouse_pos[0] - (player_pos[0] + player_width // 2)
                     dy = mouse_pos[1] - (player_pos[1] + player_height // 2)
@@ -829,7 +832,7 @@ while run:
 
         # 공격을 한 프레임 후 제거
         attacks = []
-        
+
         clock.tick(30)
 
 pygame.quit()
