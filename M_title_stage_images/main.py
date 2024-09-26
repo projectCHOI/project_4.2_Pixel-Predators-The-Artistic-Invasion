@@ -472,7 +472,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
 
     # 공격 그리기
     for attack in attacks:
-        pygame.draw.line(win, RED, attack['start'], attack['end'], attack['thickness'])
+        pygame.draw.line(win, (255, 0, 0), attack[0], attack[1], attack[2])
 
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
@@ -538,32 +538,28 @@ while run:
                 run = False
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
-            attack_end = mouse_pos
-            attack_thickness = 3    
+                attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
+                attack_end = mouse_pos
+                attack_thickness = 3    
 
-                # 공격 간격 조정
-                distance = math.hypot(mouse_pos[0] - (player_pos[0] + player_width // 2),
-                                      mouse_pos[1] - (player_pos[1] + player_height // 2))
-                distance = min(distance, max_distance)
-                cooldown = min_cooldown + (max_cooldown - min_cooldown) * (distance / max_distance)
-                if current_time - last_attack_time >= cooldown:
-                    # 공격 방향 계산
-                    dx = mouse_pos[0] - (player_pos[0] + player_width // 2)
-                    dy = mouse_pos[1] - (player_pos[1] + player_height // 2)
-                    distance_to_mouse = math.hypot(dx, dy)
-                    if distance_to_mouse == 0:
-                        direction = (0, 0)
-                    else:
-                        direction = (dx / distance_to_mouse, dy / distance_to_mouse)
-                    # 공격 시작 위치는 플레이어의 중앙
-                    attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
-                    # 초기 공격 끝 위치는 시작 위치
-                    attack_end = (attack_start[0] + direction[0] * 3, attack_start[1] + direction[1] * 3)
-                    # 공격 리스트에 추가 (딕셔너리 형태)
-                    attacks.append({'start': attack_start, 'end': attack_end, 'direction': direction, 'thickness': 3})
-                    # 마지막 공격 시간 업데이트
-                    last_attack_time = current_time
+            # 공격력 증가 아이템에 따라 여러 발 공격 생성
+                if power_item_active == 0:
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                elif power_item_active == 1:
+                    offset = 5
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 2:
+                    offset = 10
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 3:
+                    offset = 15
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] + offset // 2, attack_end[1] + offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset // 2, attack_end[1] - offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
 
         # 키 입력 처리 및 플레이어 이동
         keys = pygame.key.get_pressed()
@@ -681,27 +677,16 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
-        # 공격 처리: 공격을 한 프레임 동안만 유지
-        # 공격이 적에게 충돌하는지 확인
+        # 적들과 공격 충돌 체크
         new_enemies = []
         for enemy in enemies:
             enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
             hit = False
             for attack in attacks:
-                attack_start, attack_end, thickness = attack['start'], attack['end'], attack['thickness']
+                attack_start, attack_end, thickness = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
-                    enemies_defeated += 1  # 제거된 적의 수 증가
-                    # 스피드 아이템 생성
-                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
-                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 공격력 증가 아이템 생성
-                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
-                        power_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 체력 회복 아이템 생성
-                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
-                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
-                        current_heal_item_image = random.choice(heal_item_images)
+                    enemies_defeated += 1  # 적 제거 수 증가
                     break
             if not hit:
                 new_enemies.append(enemy)
@@ -804,9 +789,9 @@ while run:
             collision_image = None
 
         # 화면 업데이트
-        background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
-        draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
-
+        pygame.display.update()
+        pygame.time.delay(30)
+        
         # 공격을 한 프레임 후 제거
         attacks = []
 
