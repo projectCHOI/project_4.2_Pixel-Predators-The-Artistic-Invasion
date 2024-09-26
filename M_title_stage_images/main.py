@@ -163,6 +163,8 @@ collision_effect_duration = 0
 attacks = []
 attack_speed = 20
 enemies_defeated = 0  # 제거된 적의 수
+power_item_active = 0  # 공격력 증가 아이템 획득 수
+last_attack_time = 0  # 마지막 공격 시간 추적
 
 # 마우스 클릭 추적
 mouse_down_time = 0
@@ -440,15 +442,10 @@ def draw_dashboard(elapsed_stage_time):
     enemies_defeated_text = font.render(f"Enemy: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
-    # 스테이지 시간 표시
-#    remaining_time = max(0, stage_duration - elapsed_stage_time)
-#    stage_time_text = font.render(f"Stage Time Left: {remaining_time}s", True, WHITE)
-#    win.blit(stage_time_text, (win_width // 2 - stage_time_text.get_width() // 2, 50))  # 중앙 상단에 표시
-
-    # 무적 시간 표시
-#    if invincible:
-#        invincible_text = font.render("Invincible!", True, YELLOW)
-#        win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
+    # 무적 시간 표시 (주석 처리)
+    # if invincible:
+    #     invincible_text = font.render("Invincible!", True, YELLOW)
+    #     win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
 
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
@@ -539,17 +536,18 @@ while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                current_time = pygame.time.get_ticks()
+            attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
+            attack_end = mouse_pos
+            attack_thickness = 3    
+
                 # 공격 간격 조정
                 distance = math.hypot(mouse_pos[0] - (player_pos[0] + player_width // 2),
                                       mouse_pos[1] - (player_pos[1] + player_height // 2))
                 distance = min(distance, max_distance)
                 cooldown = min_cooldown + (max_cooldown - min_cooldown) * (distance / max_distance)
                 if current_time - last_attack_time >= cooldown:
-                    # 공격 생성 로직
-                    attacks.append({'start': attack_start, 'end': attack_end, 'direction': direction, 'thickness': 3})
-                    last_attack_time = current_time
                     # 공격 방향 계산
                     dx = mouse_pos[0] - (player_pos[0] + player_width // 2)
                     dy = mouse_pos[1] - (player_pos[1] + player_height // 2)
@@ -566,7 +564,7 @@ while run:
                     attacks.append({'start': attack_start, 'end': attack_end, 'direction': direction, 'thickness': 3})
                     # 마지막 공격 시간 업데이트
                     last_attack_time = current_time
-                    
+
         # 키 입력 처리 및 플레이어 이동
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -582,7 +580,7 @@ while run:
             player_pos[1] += player_speed
             player_image = player_image2
 
-        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정 
+        # 플레이어가 화면 밖으로 나가지 않도록 위치 조정
         if player_pos[0] < 0:
             player_pos[0] = 0
         if player_pos[0] > win_width - player_width:
@@ -591,18 +589,6 @@ while run:
             player_pos[1] = 0
         if player_pos[1] > win_height - player_height:
             player_pos[1] = win_height - player_height
-
-        # 스테이지 시간 초과 체크
-        if elapsed_stage_time > stage_duration:
-            game_active = False
-            game_over = True
-            game_over_reason = "time_over"
-
-        # 전체 게임 시간 초과 체크
-        if total_seconds >= 300:
-            game_active = False
-            game_over = True
-            game_over_reason = "time_over"
 
         # 별 등장 시간 체크
         if total_seconds > star_appear_time:
@@ -695,16 +681,7 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
-        # 공격 처리: 공격을 이동시키고 화면 밖으로 나간 공격은 제거
-        new_attacks = []
-        for attack in attacks:
-            attack['end'] = (attack['end'][0] + attack['direction'][0] * attack_speed,
-                            attack['end'][1] + attack['direction'][1] * attack_speed)
-            # 화면 밖으로 나간 공격은 제거
-            if 0 <= attack['end'][0] <= win_width and 0 <= attack['end'][1] <= win_height:
-                new_attacks.append(attack)
-        attacks = new_attacks
-
+        # 공격 처리: 공격을 한 프레임 동안만 유지
         # 공격이 적에게 충돌하는지 확인
         new_enemies = []
         for enemy in enemies:
@@ -714,7 +691,7 @@ while run:
                 attack_start, attack_end, thickness = attack['start'], attack['end'], attack['thickness']
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
-                    enemies_defeated += 1 # 제거된 적의 수 증가
+                    enemies_defeated += 1  # 제거된 적의 수 증가
                     # 스피드 아이템 생성
                     if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                         speed_item_pos = (enemy_pos[0], enemy_pos[1])
