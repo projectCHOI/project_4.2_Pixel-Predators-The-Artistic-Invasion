@@ -29,7 +29,6 @@ def load_image(*path_parts, size=None):
     return image
 
 # 모듈에서 타이틀 및 스테이지 이미지 임포트
-# title_stage_images.py 파일에 title_image, stage_intro_images, stage_background_images 정의
 try:
     from title_stage_images import title_image, stage_intro_images, stage_background_images
 except ImportError:
@@ -85,7 +84,7 @@ heal_item_chance = 0.2  # 20% 확률
 # 초기 플레이어 이미지
 player_image = player_image1
 
-# 적 이미지 로드 및 크기 조정 (파일 이름에 공백 포함)
+# 적 이미지 로드 및 크기 조정
 enemy_images = {
     "up": load_image("enemies", "mob_enemy_Relentless Charger_1.png", size=image_size),
     "down": load_image("enemies", "mob_enemy_Relentless Charger_2.png", size=image_size),
@@ -93,7 +92,7 @@ enemy_images = {
     "right": load_image("enemies", "mob_enemy_Relentless Charger_4.png", size=image_size)
 }
 
-# 새로운 적 이미지 로드 및 크기 조정 (파일 이름에 공백 포함)
+# 새로운 적 이미지 로드 및 크기 조정
 sentinel_shooter_right = load_image("enemies", "mob_enemy_Sentinel Shooter_right.png", size=image_size)
 sentinel_shooter_left = load_image("enemies", "mob_enemy_Sentinel Shooter_left.png", size=image_size)
 
@@ -110,7 +109,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
-BLACK = (0, 0, 0)  # 색상을 검은색으로 설정
+BLACK = (0, 0, 0)
 
 # 플레이어 설정
 player_speed = 10  # 속도 조정
@@ -149,7 +148,6 @@ level = 1
 max_level = 12
 run = True
 game_active = False
-stage_duration = 60  # 스테이지 진행 시간 (초)
 invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
@@ -161,10 +159,8 @@ collision_effect_duration = 0
 
 # 공격 설정
 attacks = []
-attack_speed = 20
+attack_speed = 20  # 공격의 속도 설정
 enemies_defeated = 0  # 제거된 적의 수
-power_item_active = 0  # 공격력 증가 아이템 획득 수
-last_attack_time = 0  # 마지막 공격 시간 추적
 
 # 마우스 클릭 추적
 mouse_down_time = 0
@@ -225,7 +221,7 @@ def draw_end_screen():
 
     pygame.display.update()
 
-# 스테이지 시작 시 시간 제한 함수240924
+# 스테이지 시작 시 시간 제한 함수
 def get_stage_duration(level):
     # 레벨에 따라 스테이지 시간 조정 (예: 레벨 1: 60초, 레벨 2: 55초, ...)
     base_duration = 60  # 기본 스테이지 시간 (초)
@@ -236,10 +232,8 @@ def get_stage_duration(level):
 def check_collision(player_pos, enemies):
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type = enemy[:3]
-        if (player_pos[0] < enemy_pos[0] < player_pos[0] + player_width or
-            enemy_pos[0] < player_pos[0] < enemy_pos[0] + enemy_size) and \
-           (player_pos[1] < enemy_pos[1] < player_pos[1] + player_height or
-            enemy_pos[1] < player_pos[1] < enemy_pos[1] + enemy_size):
+        if (player_pos[0] < enemy_pos[0] + enemy_size and player_pos[0] + player_width > enemy_pos[0] and
+            player_pos[1] < enemy_pos[1] + enemy_size and player_pos[1] + player_height > enemy_pos[1]):
             if enemy_type == "bomb":
                 return "bomb"  # bomb 충돌 시
             return True
@@ -252,10 +246,11 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
     ex2, ey2 = ex + enemy_size, ey + enemy_size
 
     # 광선과 적의 충돌 체크
-    if min(sx, attack_end[0]) <= ex2 and max(sx, attack_end[0]) >= ex and \
-       min(sy, attack_end[1]) <= ey2 and max(sy, attack_end[1]) >= ey:
-        return True
-    return False
+    line_rect = pygame.Rect(min(sx, attack_end[0]), min(sy, attack_end[1]),
+                            abs(attack_end[0] - sx), abs(attack_end[1] - sy))
+    enemy_rect = pygame.Rect(ex, ey, enemy_size, enemy_size)
+
+    return line_rect.colliderect(enemy_rect)
 
 # 에너지 볼과 플레이어의 충돌 체크 함수
 def check_energy_ball_collision(ball_pos, player_pos):
@@ -791,7 +786,7 @@ while run:
         # 화면 업데이트
         pygame.display.update()
         pygame.time.delay(30)
-        
+
         # 공격을 한 프레임 후 제거
         attacks = []
 
