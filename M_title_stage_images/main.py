@@ -467,7 +467,8 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
 
     # 공격 그리기
     for attack in attacks:
-        pygame.draw.line(win, (255, 0, 0), attack[0], attack[1], attack[2])
+        pygame.draw.line(win, RED, (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2),
+                         attack['position'], attack['thickness'])
 
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
