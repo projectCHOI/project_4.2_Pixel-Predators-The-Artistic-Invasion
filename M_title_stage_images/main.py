@@ -826,6 +826,10 @@ while run:
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+
+        # 공격을 한 프레임 후 제거
+        attacks = []
+        
         clock.tick(30)
 
 pygame.quit()
