@@ -159,7 +159,8 @@ collision_effect_duration = 0
 
 # 공격 설정
 attacks = []
-attack_speed = 20  # 공격의 속도 설정
+attack_speed = 20
+attack_power = 1  # 플레이어의 공격력 추가
 enemies_defeated = 0  # 제거된 적의 수
 
 # 마우스 클릭 추적
@@ -245,7 +246,7 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
     sx, sy = attack_start
     ex2, ey2 = ex + enemy_size, ey + enemy_size
 
-    # 광선과 적의 충돌 체크
+    # 공격 선분의 직사각형 영역 계산
     line_rect = pygame.Rect(min(sx, attack_end[0]), min(sy, attack_end[1]),
                             abs(attack_end[0] - sx), abs(attack_end[1] - sy))
     enemy_rect = pygame.Rect(ex, ey, enemy_size, enemy_size)
@@ -437,11 +438,6 @@ def draw_dashboard(elapsed_stage_time):
     enemies_defeated_text = font.render(f"Enemy: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
-    # 무적 시간 표시 (주석 처리)
-    # if invincible:
-    #     invincible_text = font.render("Invincible!", True, YELLOW)
-    #     win.blit(invincible_text, (win_width // 2 - invincible_text.get_width() // 2, 80))  # 중앙 상단에 표시
-
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
@@ -467,8 +463,7 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
 
     # 공격 그리기
     for attack in attacks:
-        pygame.draw.line(win, RED, (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2),
-                         attack['position'], attack['thickness'])
+        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
 
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
@@ -476,12 +471,6 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     # 대시보드 그리기 함수 호출
     draw_dashboard(elapsed_stage_time)  # 대시보드 그리기
     pygame.display.update()
-
-# 공격 쿨다운 관련 변수 초기화
-last_attack_time = 0
-min_cooldown = 200  # 최소 쿨다운 (밀리초)
-max_cooldown = 1000  # 최대 쿨다운 (밀리초)
-max_distance = 500  # 최대 거리 (픽셀)
 
 # 게임 루프
 while run:
@@ -535,28 +524,26 @@ while run:
             if event.type == pygame.QUIT:
                 run = False  # 게임 루프 종료
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                current_time = pygame.time.get_ticks()
-                # 공격 쿨다운 계산
-                dx = mouse_pos[0] - (player_pos[0] + player_width // 2)
-                dy = mouse_pos[1] - (player_pos[1] + player_height // 2)
-                distance = math.hypot(dx, dy)
-                distance = min(distance, max_distance)
-                cooldown = min_cooldown + (max_cooldown - min_cooldown) * (distance / max_distance)
-                if current_time - last_attack_time >= cooldown:
-                    # 공격 방향 계산
-                    if distance == 0:
-                        direction = (0, 0)
-                    else:
-                        direction = (dx / distance, dy / distance)
-                    # 공격 시작 위치 (플레이어 중심)
-                    attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
-                    # 공격 리스트에 추가
-                    attacks.append({
-                        'position': [attack_start[0], attack_start[1]],  # 공격의 현재 위치
-                        'direction': direction,  # 공격 방향
-                        'thickness': 3  # 공격 두께
-                    })
-                    last_attack_time = current_time  # 마지막 공격 시간 업데이트
+                attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
+                attack_end = mouse_pos
+                attack_thickness = 3
+                if power_item_active == 0:
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                elif power_item_active == 1:
+                    offset = 5
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 2:
+                    offset = 10
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                elif power_item_active == 3:
+                    offset = 15
+                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] + offset // 2, attack_end[1] + offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset // 2, attack_end[1] - offset // 2), attack_thickness))
+                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
 
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
@@ -668,13 +655,20 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
-        # 공격 위치 업데이트
+        # 공격 이동 및 위치 업데이트
+        new_attacks = []
         for attack in attacks:
-            attack['position'][0] += attack['direction'][0] * attack_speed
-            attack['position'][1] += attack['direction'][1] * attack_speed
-
-        # 화면 밖으로 나간 공격 제거
-        attacks = [attack for attack in attacks if 0 <= attack['position'][0] <= win_width and 0 <= attack['position'][1] <= win_height]
+            start, end, thickness = attack
+            direction = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction[0], direction[1])
+            if length == 0:
+                continue
+            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
+            new_start = (start[0] + direction[0], start[1] + direction[1])
+            new_end = (end[0] + direction[0], end[1] + direction[1])
+            if 0 <= new_start[0] <= win_width and 0 <= new_start[1] <= win_height:
+                new_attacks.append((new_start, new_end, thickness))
+        attacks = new_attacks
 
         # 공격과 적의 충돌 처리
         new_enemies = []
@@ -682,9 +676,8 @@ while run:
             enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
             hit = False
             for attack in attacks:
-                attack_pos = attack['position']
-                attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
-                if check_attack_collision(attack_start, attack_pos, enemy_pos, enemy_size):
+                attack_start, attack_end, thickness = attack
+                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1  # 제거된 적의 수 증가
                     # 아이템 생성 로직
@@ -703,10 +696,42 @@ while run:
                 new_enemies.append(enemy)
         enemies = new_enemies
 
-        # 적에게 맞은 공격 제거
-        attacks = [attack for attack in attacks if not any(
-            check_attack_collision((player_pos[0] + player_width // 2, player_pos[1] + player_height // 2),
-                                   attack['position'], enemy[0], enemy[1]) for enemy in enemies)]
+        # 플레이어와 적의 충돌 체크
+        if not invincible:
+            collision = check_collision(player_pos, enemies)
+            if collision:
+                if collision == "bomb":  # bomb 충돌 시 즉시 사망
+                    current_health = 0
+                    collision_image = collision_images[1]["image"]
+                    collision_effect_duration = collision_images[1]["duration"]
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+                else:
+                    current_health -= 1
+                    invincible = True
+                    invincible_start_time = pygame.time.get_ticks()
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    if current_health <= 0:
+                        collision_image = collision_images[1]["image"]
+                        collision_effect_duration = collision_images[1]["duration"]
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                    elif current_health == 2:
+                        collision_image = collision_images[3]["image"]
+                        collision_effect_duration = collision_images[3]["duration"]
+                    elif current_health == 1:
+                        collision_image = collision_images[2]["image"]
+                        collision_effect_duration = collision_images[2]["duration"]
+
+        # 무적 시간 처리
+        if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
+            invincible = False
+
+        # 충돌 이미지 표시 시간 체크
+        if pygame.time.get_ticks() - collision_effect_start_time >= collision_effect_duration:
+            collision_image = None
 
         # 아이템 획득 체크
         # 스피드 아이템
@@ -761,43 +786,6 @@ while run:
                 else:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
-
-        # 플레이어와 적의 충돌 체크
-        if not invincible:
-            collision = check_collision(player_pos, enemies)
-            if collision:
-                if collision == "bomb":  # bomb 충돌 시 즉시 사망
-                    current_health = 0
-                    collision_image = collision_images[1]["image"]
-                    collision_effect_duration = collision_images[1]["duration"]
-                    game_active = False
-                    game_over = True
-                    game_over_reason = "game_over"
-                else:
-                    current_health -= 1
-                    invincible = True
-                    invincible_start_time = pygame.time.get_ticks()
-                    collision_effect_start_time = pygame.time.get_ticks()
-                    if current_health <= 0:
-                        collision_image = collision_images[1]["image"]
-                        collision_effect_duration = collision_images[1]["duration"]
-                        game_active = False
-                        game_over = True
-                        game_over_reason = "game_over"
-                    elif current_health == 2:
-                        collision_image = collision_images[3]["image"]
-                        collision_effect_duration = collision_images[3]["duration"]
-                    elif current_health == 1:
-                        collision_image = collision_images[2]["image"]
-                        collision_effect_duration = collision_images[2]["duration"]
-
-        # 무적 시간 처리
-        if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
-            invincible = False
-
-        # 충돌 이미지 표시 시간 체크
-        if pygame.time.get_ticks() - collision_effect_start_time >= collision_effect_duration:
-            collision_image = None
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
