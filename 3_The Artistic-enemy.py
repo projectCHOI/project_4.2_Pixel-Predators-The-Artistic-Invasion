@@ -840,7 +840,7 @@ while run:
                 continue
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
             new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= 1280 and 0 <= new_end[1] <= 720:
+            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
 
