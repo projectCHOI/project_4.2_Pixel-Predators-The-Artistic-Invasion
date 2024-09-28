@@ -664,11 +664,11 @@ while run:
             if length == 0:
                 continue
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
-            new_start = (start[0] + direction[0], start[1] + direction[1])
-            new_end = (end[0] + direction[0], end[1] + direction[1])
-            if 0 <= new_start[0] <= win_width and 0 <= new_start[1] <= win_height:
-                new_attacks.append((new_start, new_end, thickness))
+            new_end = (start[0] + direction[0], start[1] + direction[1])
+            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
+
 
         # 공격과 적의 충돌 처리
         new_enemies = []
