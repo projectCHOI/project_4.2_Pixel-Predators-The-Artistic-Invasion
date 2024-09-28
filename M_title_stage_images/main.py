@@ -529,6 +529,7 @@ while run:
                 attack_thickness = 3
                 if power_item_active == 0:
                     attacks.append((attack_start, attack_end, attack_thickness))
+
                 elif power_item_active == 1:
                     offset = 5
                     attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
