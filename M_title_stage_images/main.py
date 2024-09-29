@@ -118,21 +118,6 @@ original_player_speed = player_speed
 # 에너지 볼 설정
 energy_balls = []
 
-# 별 설정
-star_size = 40  # 크기를 40으로 조정
-star_images = []
-for i in range(1, 13):
-    star_image = load_image("items", f"mob_Jewelry_{i}.png", size=(star_size, star_size))
-    star_images.append(star_image)
-
-star_appear_time = 10
-
-# bomb 적 등장 설정
-bomb_stages = [2, 3, 5, 7, 11]
-bomb_appear_interval = 10000  # 10초 간격으로 등장
-bomb_last_appear_time = 0
-bomb_directions = ["left", "right", "up", "down"]
-
 # 게임 설정
 clock = pygame.time.Clock()
 font_path = os.path.join(BASE_DIR, "assets", "fonts", "SLEIGothicOTF.otf")
@@ -167,9 +152,6 @@ enemies_defeated = 0  # 제거된 적의 수
 mouse_down_time = 0
 mouse_held = False
 
-# 획득한 별 이미지 추적
-collected_stars = []
-
 # 게임 오버 상태 및 이유
 game_over = False
 game_over_reason = None  # "victory", "game_over", "time_over"
@@ -178,20 +160,6 @@ game_over_reason = None  # "victory", "game_over", "time_over"
 victory_image = load_image("stages", "Stage14_Victory.JPG", size=(1280, 720))
 game_over_image = load_image("stages", "Stage15_GameOver.JPG", size=(1280, 720))
 time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
-
-# 각 스테이지 클리어 시간을 저장하는 리스트
-stage_clear_times = [None] * 12  # 스테이지 1부터 12까지의 클리어 시간을 저장
-
-# 스테이지 클리어 시간 기록 함수
-def record_stage_clear_time(stage, time_taken):
-    stage_clear_times[stage - 1] = time_taken
-
-# 총 플레이 시간을 계산하는 함수
-def calculate_total_play_time():
-    total_seconds = sum(time for time in stage_clear_times if time is not None)
-    minutes = total_seconds // 60
-    seconds = total_seconds % 60
-    return minutes, seconds
 
 # 게임 종료 화면 그리기 함수
 def draw_end_screen():
@@ -207,24 +175,10 @@ def draw_end_screen():
     win.blit(image, (0, 0))
     text = font.render("Press Enter to Continue", True, WHITE)
     win.blit(text, (win_width // 2 - text.get_width() // 2, win_height // 2 - text.get_height() // 2))
-
-    # 획득한 별 표시
-    star_spacing = 60  # 이미지 간격 60 픽셀
-    total_star_width = len(collected_stars) * star_spacing
-    start_x = win_width // 2 - total_star_width // 2
-    for idx, collected_star in enumerate(collected_stars):
-        win.blit(collected_star, (start_x + idx * star_spacing, 450))
-
-    # 총 플레이 시간 계산 및 표시
-    minutes, seconds = calculate_total_play_time()
-    total_time_text = font.render(f"Total Play Time: {minutes}m {seconds}s", True, WHITE)
-    win.blit(total_time_text, (win_width // 2 - total_time_text.get_width() // 2, 680))  # 화면 하단 중앙에 맞춤
-
     pygame.display.update()
 
 # 스테이지 시작 시 시간 제한 함수
 def get_stage_duration(level):
-    # 레벨에 따라 스테이지 시간 조정 (예: 레벨 1: 60초, 레벨 2: 55초, ...)
     base_duration = 60  # 기본 스테이지 시간 (초)
     reduction = (level - 1) * 5  # 레벨당 5초 감소
     return max(30, base_duration - reduction)  # 최소 30초
@@ -405,6 +359,12 @@ def generate_enemies(level):
 
     return enemies
 
+# bomb 적 등장 설정
+bomb_stages = [2, 3, 5, 7, 11]
+bomb_appear_interval = 10000  # 10초 간격으로 등장
+bomb_last_appear_time = 0
+bomb_directions = ["left", "right", "up", "down"]
+
 # bomb 적 추가 함수
 def add_bomb_enemy():
     direction = random.choice(bomb_directions)
@@ -439,7 +399,7 @@ def draw_dashboard(elapsed_stage_time):
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
 # 화면에 객체 그리기 함수
-def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
+def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
     win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
     if collision_image:
@@ -447,8 +407,6 @@ def draw_objects(player_pos, enemies, star_pos, show_star, background_image, mou
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
-    if show_star:
-        win.blit(star_image, (star_pos[0], star_pos[1]))
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
@@ -491,19 +449,14 @@ while run:
                         # 게임 상태 초기화
                         level = 1
                         current_health = 3
-                        collected_stars = []
                         enemies_defeated = 0
                         player_speed = original_player_speed
                         power_item_active = 0
                         game_over = False
                         game_over_reason = None
-                        stage_clear_times = [None] * 12  # 스테이지 클리어 시간 초기화
                     game_active = True  # 게임 시작
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]  # 플레이어 위치 초기화
                     enemies = []
-                    show_star = False
-                    star_pos = [random.randint(0, win_width - star_size), random.randint(0, win_height - star_size)]
-                    star_image = star_images[level - 1] if level - 1 < len(star_images) else star_images[0]
                     start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록
                     stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 기록
                     intro_screen(level)  # 스테이지 인트로 화면 표시
@@ -564,41 +517,6 @@ while run:
         # 플레이어가 화면 밖으로 나가지 않도록 제한
         player_pos[0] = max(0, min(player_pos[0], win_width - player_width))
         player_pos[1] = max(0, min(player_pos[1], win_height - player_height))
-
-        # 별 등장 시간 체크
-        if total_seconds > star_appear_time:
-            show_star = True
-
-        # 별 수집 체크
-        if show_star:
-            star_rect = pygame.Rect(star_pos[0], star_pos[1], star_size, star_size)
-            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
-            if player_rect.colliderect(star_rect):
-                collected_stars.append(star_image)  # 별 이미지 추가
-                # 스테이지 클리어 시간 기록
-                record_stage_clear_time(level, elapsed_stage_time)
-                level += 1  # 다음 레벨로 진행
-                if level > max_level:
-                    game_active = False
-                    game_over = True
-                    game_over_reason = "victory"
-                else:
-                    # 새로운 스테이지 초기화
-                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
-                    intro_screen(level)
-                    start_ticks = pygame.time.get_ticks()  # 전체 게임 시작 시간 초기화
-                    stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 초기화
-                    enemies = []
-                    show_star = False
-                    star_pos = [random.randint(0, win_width - star_size), random.randint(0, win_height - star_size)]
-                    star_image = star_images[level - 1] if level - 1 < len(star_images) else star_images[0]
-
-                    # 공격 및 에너지 볼 리스트 초기화
-                    attacks = []
-                    energy_balls = []
-
-                    # 스테이지 시간 설정
-                    stage_duration = get_stage_duration(level)
 
         # 적 생성
         if random.random() < 0.02:  # 2% 확률로 적 생성
@@ -790,7 +708,7 @@ while run:
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
-        draw_objects(player_pos, enemies, star_pos, show_star, background_image, mouse_pos, star_image,
+        draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
 
         # 프레임 설정
