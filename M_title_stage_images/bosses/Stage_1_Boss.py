@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random 
 
 # BASE_DIR 설정: 프로젝트의 루트 디렉토리로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
