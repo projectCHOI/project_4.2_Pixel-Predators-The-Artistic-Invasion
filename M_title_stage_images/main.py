@@ -724,6 +724,20 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
+        # 보스와 플레이어 공격 간의 충돌 체크
+        boss.check_hit(attacks)
+
+        # 보스가 활성화되어 있으면 보스 및 공격 그리기
+        if boss.boss_active:
+            boss.draw(win)  # 보스 그리기
+            boss.draw_attacks(win)  # 보스의 공격 그리기
+
+        # 화면 업데이트
+#        background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
+#        draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time)
+
+        #
+
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
