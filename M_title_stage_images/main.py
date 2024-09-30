@@ -3,6 +3,8 @@ import random
 import math
 import os
 
+from bosses.Stage_1_Boss import Stage1Boss
+
 pygame.init()
 
 # 윈도우 설정
