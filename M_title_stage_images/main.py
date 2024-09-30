@@ -439,13 +439,10 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
 while run:
     if not game_active:
         if not game_over:
-            # 타이틀 화면 표시
             title_screen()
         else:
-            # 게임 종료 화면 표시 (승리, 게임 오버, 시간 초과 등)
             draw_end_screen()
 
-        # 키 입력 처리
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False  # 게임 루프 종료
@@ -466,41 +463,29 @@ while run:
                     start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록
                     stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 기록
                     intro_screen(level)  # 스테이지 인트로 화면 표시
+
+                    # 공격 및 에너지 볼 리스트 초기화
                     attacks = []
                     energy_balls = []
-                    stage_duration = get_stage_duration(level)
-                    boss.reset()  # 보스 리셋
 
+                    # 스테이지 시간 설정
+                    stage_duration = get_stage_duration(level)
     else:
         # 마우스 위치 가져오기
         mouse_pos = pygame.mouse.get_pos()
         total_seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 전체 게임 경과 시간
         elapsed_stage_time = (pygame.time.get_ticks() - stage_start_ticks) // 1000  # 스테이지 경과 시간
 
-        # 보스 등장 여부 체크
-        boss.check_appear(total_seconds, level)
-
-        if boss.boss_active:
-            boss.move()  # 보스 이동 처리
-            boss.attack()  # 보스 공격 처리
-            if boss.update_attacks(player_pos):  # 보스 공격과 플레이어 충돌 체크
-                current_health -= 1
-                if current_health <= 0:
-                    game_active = False
-                    game_over = True
-                    game_over_reason = "game_over"
-
-        # 이벤트 처리
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False  # 게임 루프 종료
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                # 플레이어 공격 처리
                 attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                 attack_end = mouse_pos
                 attack_thickness = 3
                 if power_item_active == 0:
                     attacks.append((attack_start, attack_end, attack_thickness))
+
                 elif power_item_active == 1:
                     offset = 5
                     attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
@@ -592,15 +577,48 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
-        # 보스와 플레이어 공격 간의 충돌 체크
-        boss.check_hit(attacks)
+        # 공격 이동 및 위치 업데이트
+        new_attacks = []
+        for attack in attacks:
+            start, end, thickness = attack
+            direction = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction[0], direction[1])
+            if length == 0:
+                continue
+            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
+            new_end = (start[0] + direction[0], start[1] + direction[1])
+            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
+        attacks = new_attacks
 
-        # 보스가 활성화되어 있으면 보스 그리기
-        if boss.boss_active:
-            boss.draw(win)  # 보스 그리기
-            boss.draw_attacks(win)  # 보스의 공격 그리기
 
-        # 적과 플레이어의 충돌 체크
+        # 공격과 적의 충돌 처리
+        new_enemies = []
+        for enemy in enemies:
+            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
+            hit = False
+            for attack in attacks:
+                attack_start, attack_end, thickness = attack
+                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+                    hit = True
+                    enemies_defeated += 1  # 제거된 적의 수 증가
+                    # 아이템 생성 로직
+                    # 스피드 아이템 생성
+                    if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
+                        speed_item_pos = (enemy_pos[0], enemy_pos[1])
+                    # 공격력 증가 아이템 생성
+                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
+                        power_item_pos = (enemy_pos[0], enemy_pos[1])
+                    # 체력 회복 아이템 생성
+                    if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
+                        heal_item_pos = (enemy_pos[0], enemy_pos[1])
+                        current_heal_item_image = random.choice(heal_item_images)
+                    break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
+            if not hit:
+                new_enemies.append(enemy)
+        enemies = new_enemies
+
+        # 플레이어와 적의 충돌 체크
         if not invincible:
             collision = check_collision(player_pos, enemies)
             if collision:
