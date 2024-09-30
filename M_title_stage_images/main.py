@@ -468,6 +468,9 @@ while run:
                     attacks = []
                     energy_balls = []
 
+                    # 보스 초기화
+                    boss.reset()
+
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
@@ -531,6 +534,18 @@ while run:
             add_bomb_enemy()
             bomb_last_appear_time = pygame.time.get_ticks()
 
+        #[보스 등장 체크 및 행동 처리]
+        boss.check_appear(total_seconds, level)  # 보스 등장 체크
+        if boss.boss_active:
+            boss.move()  # 보스 이동
+            boss.attack()  # 보스 공격
+            if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
+                current_health -= 1
+                if current_health <= 0:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+
         # 적 이동 및 행동 처리
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed = enemy
@@ -590,7 +605,7 @@ while run:
             if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
-
+##
 
         # 공격과 적의 충돌 처리
         new_enemies = []
