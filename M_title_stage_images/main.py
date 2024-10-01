@@ -184,9 +184,9 @@ def draw_end_screen():
 
 # 스테이지 시작 시 시간 제한 함수
 def get_stage_duration(level):
-    base_duration = 60  # 기본 스테이지 시간 (초)
+    base_duration = 600  # 기본 스테이지 시간 (초)
     reduction = (level - 1) * 5  # 레벨당 5초 감소
-    return max(30, base_duration - reduction)  # 최소 30초
+    return max(300, base_duration - reduction)  # 최소 30초
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
