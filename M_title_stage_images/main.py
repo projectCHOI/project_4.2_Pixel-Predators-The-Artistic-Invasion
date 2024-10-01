@@ -733,12 +733,6 @@ while run:
             boss.draw_attacks(win)  # 보스의 공격 그리기
 
         # 화면 업데이트
-#        background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
-#        draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time)
-
-        #
-
-        # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
