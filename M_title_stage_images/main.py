@@ -609,7 +609,6 @@ while run:
             if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
                 new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
         attacks = new_attacks
-##
 
         # 공격과 적의 충돌 처리
         new_enemies = []
