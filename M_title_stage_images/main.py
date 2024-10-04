@@ -536,6 +536,10 @@ while run:
 
         #[보스 등장 체크 및 행동 처리]
         boss.check_appear(total_seconds, level)  # 보스 등장 체크
+
+        #!! 디버깅 출력 추가
+        print(f"Total Seconds: {total_seconds}, Level: {level}, Boss Active: {boss.boss_active}, Boss Defeated: {boss.boss_defeated}")
+
         if boss.boss_active:
             boss.move()  # 보스 이동
             boss.attack()  # 보스 공격
