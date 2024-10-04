@@ -731,15 +731,17 @@ while run:
         # 보스와 플레이어 공격 간의 충돌 체크
         boss.check_hit(attacks)
 
-        # 보스가 활성화되어 있으면 보스 및 공격 그리기
-        if boss.boss_active:
-            boss.draw(win)  # 보스 그리기
-            boss.draw_attacks(win)  # 보스의 공격 그리기
-
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+
+        #!! 보스와 그의 공격을 다른 객체들을 그린 후에 출연.
+        if boss.boss_active:
+            boss.draw(win)  # 보스 그리기
+            boss.draw_attacks(win)  # 보스의 공격 그리기
+
+        pygame.display.update()
 
         # 프레임 설정
         clock.tick(30)
