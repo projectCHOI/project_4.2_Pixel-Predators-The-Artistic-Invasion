@@ -747,12 +747,13 @@ while run:
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
-                     collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+                    collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
 
-        #!! 보스와 그의 공격을 다른 객체들을 그린 후에 출연.
+        # 보스와 그의 공격을 그리기
         if boss.boss_active:
             boss.draw(win)  # 보스 그리기
             boss.draw_attacks(win)  # 보스의 공격 그리기
+            boss.draw_health_bar(win, font)  # 보스의 체력 바 그리기
 
         pygame.display.update()
 
