@@ -406,10 +406,12 @@ def draw_dashboard(elapsed_stage_time):
 # draw_objects 수정
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
-    win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
-    win.blit(player_image, (player_pos[0], player_pos[1]))  # 플레이어 이미지를 화면에 그리기
-    if collision_image:
-        win.blit(collision_image, (player_pos[0], player_pos[1]))
+    win.blit(background_image, (0, 0))  # 배경 그리기
+    # 보스와 보스의 공격을 배경 다음에 그리기
+    if boss.boss_active:
+        boss.draw(win)
+        boss.draw_attacks(win)
+    # 그 외 요소들 그리기
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
@@ -419,6 +421,17 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
         win.blit(power_item_image, power_item_pos)
     if heal_item_pos and heal_item_image:
         win.blit(heal_item_image, heal_item_pos)
+    win.blit(player_image, (player_pos[0], player_pos[1]))
+    if collision_image:
+        win.blit(collision_image, (player_pos[0], player_pos[1]))
+    for ball in energy_balls:
+        color = YELLOW if ball[2] == "yellow" else GREEN
+        pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
+    for attack in attacks:
+        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
+    pygame.draw.circle(win, RED, mouse_pos, 5)
+    draw_dashboard(elapsed_stage_time)
+    pygame.display.update()
 
     # 에너지 볼 그리기
     for ball in energy_balls:
