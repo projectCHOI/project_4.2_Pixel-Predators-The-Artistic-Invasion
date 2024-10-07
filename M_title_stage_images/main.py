@@ -403,6 +403,7 @@ def draw_dashboard(elapsed_stage_time):
     enemies_defeated_text = font.render(f"Enemy: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
+# draw_objects 수정
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경을 전체 화면에 그리기
