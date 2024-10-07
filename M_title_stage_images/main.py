@@ -749,10 +749,14 @@ while run:
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                     collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
 
-        # 보스와 그의 공격을 그리기
+        #  보스와 그의 공격을 그리기
         if boss.boss_active:
             boss.draw(win)  # 보스 그리기
             boss.draw_attacks(win)  # 보스의 공격 그리기
+        
+        # 대시보드 및 보스 체력 바 그리기
+        draw_dashboard(elapsed_stage_time)
+        if boss.boss_active:
             boss.draw_health_bar(win, font)  # 보스의 체력 바 그리기
 
         pygame.display.update()
