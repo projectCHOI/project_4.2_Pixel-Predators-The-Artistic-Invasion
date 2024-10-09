@@ -24,7 +24,7 @@ def load_image(*path_parts, size=None):
     try:
         image = pygame.image.load(path).convert_alpha()
     except pygame.error as e:
-        print(f"Cannot load image: {path}")
+#         print(f"Cannot load image: {path}")
         raise SystemExit(e)
     if size:
         image = pygame.transform.scale(image, size)
@@ -34,7 +34,7 @@ def load_image(*path_parts, size=None):
 try:
     from title_stage_images import title_image, stage_intro_images, stage_background_images
 except ImportError:
-    print("title_stage_images 모듈을 찾을 수 없습니다. 해당 모듈을 생성해주세요.")
+#     print("title_stage_images 모듈을 찾을 수 없습니다. 해당 모듈을 생성해주세요.")
     pygame.quit()
     exit()
 
@@ -130,7 +130,7 @@ font_size = 30  # 폰트 크기
 try:
     font = pygame.font.Font(font_path, font_size)  # 폰트 설정
 except FileNotFoundError:
-    print(f"폰트 파일을 찾을 수 없습니다: {font_path}")
+#     print(f"폰트 파일을 찾을 수 없습니다: {font_path}")
     pygame.quit()
     exit()
 
