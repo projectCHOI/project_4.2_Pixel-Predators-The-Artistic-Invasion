@@ -13,8 +13,7 @@ win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 
 # BASE_DIR은 프로젝트의 루트 디렉토리
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # 이미지의 기본 경로를 정의합니다.
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
