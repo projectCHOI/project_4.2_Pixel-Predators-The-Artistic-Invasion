@@ -751,16 +751,18 @@ while run:
                 # 보석을 획득했을 때 다음 스테이지로 이동
                 level += 1  # 다음 스테이지로 이동
                 boss.reset()  # 보스 상태 초기화
+                boss.boss_defeated = False  # 보스 처치 상태 재설정
+                boss.boss_appeared = False  # 보스 등장 여부 재설정
                 enemies = []  # 적 목록 초기화
                 start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
                 stage_start_ticks = pygame.time.get_ticks()
-                intro_screen(level)  # 다음 스테이지 인트로 화면 표시
+                intro_screen(level)# 다음 스테이지 인트로 화면 표시
                 # 필요한 경우 추가 초기화 로직
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
-                    collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
+                     collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
 
         # 보스와 그의 공격을 그리기
         if boss.boss_active:
@@ -769,9 +771,6 @@ while run:
             boss.draw_health_bar(win, font)  # 보스의 체력 바 그리기
         else:
             boss.draw_gem(win)  # 보석 그리기
-
-        # 대시보드 그리기
-        draw_dashboard(elapsed_stage_time)
 
         pygame.display.update()
 
