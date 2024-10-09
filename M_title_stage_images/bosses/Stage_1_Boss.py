@@ -269,7 +269,8 @@ class Stage1Boss:
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 60, 0]
-        self.boss_defeated = False
+        #! self.boss_defeated = False  # boss_defeated를 재설정하지 않음
+        self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
