@@ -554,6 +554,7 @@ while run:
         # 디버깅
         # print(f"Total Seconds: {total_seconds}, Level: {level}, Boss Active: {boss.boss_active}, Boss Defeated: {boss.boss_defeated}")
 
+        # 보스가 활성화된 경우 처리
         if boss.boss_active:
             boss.move()  # 보스 이동
             boss.attack()  # 보스 공격
