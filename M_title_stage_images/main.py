@@ -754,7 +754,7 @@ while run:
             boss.draw(win)  # 보스 그리기
             boss.draw_attacks(win)  # 보스의 공격 그리기
         else:
-        boss.draw_gem(win)  # 보석 그리기
+            boss.draw_gem(win)  # 보석 그리기
         
         # 대시보드 및 보스 체력 바 그리기
         draw_dashboard(elapsed_stage_time)
