@@ -40,6 +40,7 @@ class Stage1Boss:
         self.boss_direction_y = 1  # 보스의 상하 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
+        self.boss_appeared = False  # 보스가 이미 등장했는지 여부 추가
         self.boss_move_phase = 1  # 보스의 이동 단계
         self.boss_hit = False  # 보스 피격 상태
         self.boss_hit_start_time = 0  # 보스 피격 시점
@@ -62,18 +63,19 @@ class Stage1Boss:
         condition_level = (current_level == 1)
         condition_active = (not self.boss_active)
         condition_time = (seconds >= self.boss_appear_time)
-        condition_defeated = (not self.boss_defeated)
+        condition_not_appeared = (not self.boss_appeared)  # 수정된 부분
 
         print(f"Condition - Level is 1: {condition_level}")
         print(f"Condition - Boss not active: {condition_active}")
         print(f"Condition - Time >= appear time: {condition_time}")
-        print(f"Condition - Boss not defeated: {condition_defeated}")
+        print(f"Condition - Boss not appeared yet: {condition_not_appeared}")
 
-        if condition_level and condition_active and condition_time and condition_defeated:
+        if condition_level and condition_active and condition_time and condition_not_appeared:
             print(">>> Boss is now active!")
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True  # 보스가 등장했음을 표시
         elif self.boss_active:
             print("Boss is already active.")
         else:
