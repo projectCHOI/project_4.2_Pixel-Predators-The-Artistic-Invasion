@@ -50,6 +50,8 @@ class Stage1Boss:
         self.boss_last_attack_time = 0  # 마지막 공격 시점
         self.gem_pos = None  # 보석의 위치
         self.gem_active = False  # 보석 활성화 상태
+        self.boss_hit_duration = 100  # 깜박임 효과의 간격(밀리초)
+        self.boss_invincible_duration = 1000  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
         # 디버깅 메시지 출력
