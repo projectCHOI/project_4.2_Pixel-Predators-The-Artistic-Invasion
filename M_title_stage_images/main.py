@@ -403,7 +403,6 @@ def draw_dashboard(elapsed_stage_time):
     enemies_defeated_text = font.render(f"Enemy: {enemies_defeated}", True, WHITE)
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
-# draw_objects 수정
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경 그리기
@@ -431,7 +430,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
         pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
     pygame.draw.circle(win, RED, mouse_pos, 5)
     draw_dashboard(elapsed_stage_time)
-    pygame.display.update()
+#    pygame.display.update()
 
     # 에너지 볼 그리기
     for ball in energy_balls:
@@ -447,7 +446,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
 
     # 대시보드 그리기 함수 호출
     draw_dashboard(elapsed_stage_time)  # 대시보드 그리기
-    pygame.display.update()
+#    pygame.display.update()
 
 # 게임 루프
 while run:
@@ -763,15 +762,16 @@ while run:
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
-
+        
         # 보스와 그의 공격을 그리기
-        if boss.boss_active:
-            boss.draw(win)  # 보스 그리기
-            boss.draw_attacks(win)  # 보스의 공격 그리기
-            boss.draw_health_bar(win, font)  # 보스의 체력 바 그리기
-        else:
-            boss.draw_gem(win)  # 보석 그리기
+        if boss.boss_hp > 0:
+            boss.draw(win)
+            boss.draw_attacks(win)
+            boss.draw_health_bar(win, font)
+        elif boss.gem_active:
+            boss.draw_gem(win)
 
+        # 화면 업데이트
         pygame.display.update()
 
         # 프레임 설정
