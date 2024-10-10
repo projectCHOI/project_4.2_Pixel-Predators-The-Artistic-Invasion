@@ -183,12 +183,16 @@ class Stage1Boss:
         return False
 
     def draw(self, win):
-        # 보스 체력이 0보다 클 때만 그리기
         if self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
             if self.boss_hit:
-                current_time = pygame.time.get_ticks()
-                if (current_time - self.boss_hit_start_time) % (self.boss_hit_duration * 2) < self.boss_hit_duration:
+                if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
+                    self.boss_hit = False  # 무적 상태 및 깜박임 종료
                     win.blit(self.boss_image, self.boss_pos)
+                else:
+                    # 깜박임 효과
+                    if (current_time // self.boss_hit_duration) % 2 == 0:
+                        win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
             print(f"Boss drawn at position: {self.boss_pos}")
