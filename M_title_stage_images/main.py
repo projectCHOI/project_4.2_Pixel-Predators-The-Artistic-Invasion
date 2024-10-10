@@ -406,14 +406,12 @@ def draw_dashboard(elapsed_stage_time):
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경 그리기
-    # 보스와 보스의 공격을 배경 다음에 그리기
-    if boss.boss_active:
-        boss.draw(win)
-        boss.draw_attacks(win)
-    # 그 외 요소들 그리기
+    # 보스나 보스의 공격은 여기서 그리지 않습니다.
+    # 적 그리기
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+    # 아이템 및 플레이어 그리기
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
@@ -423,14 +421,16 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
     win.blit(player_image, (player_pos[0], player_pos[1]))
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
+    # 에너지 볼 및 공격 그리기
     for ball in energy_balls:
         color = YELLOW if ball[2] == "yellow" else GREEN
         pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
     for attack in attacks:
         pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
+    # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
+    # 대시보드 그리기
     draw_dashboard(elapsed_stage_time)
-#    pygame.display.update()
 
     # 에너지 볼 그리기
     for ball in energy_balls:
