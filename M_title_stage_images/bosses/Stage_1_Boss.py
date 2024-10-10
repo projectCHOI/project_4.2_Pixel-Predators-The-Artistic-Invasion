@@ -236,14 +236,21 @@ class Stage1Boss:
             print("Boss defeated message displayed.")
 
     def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
+            # 보스가 무적 상태일 때는 공격을 무시합니다.
+            return
+        else:
+            self.boss_hit = False  # 무적 상태 해제
+
         for attack in attacks:
             attack_start, attack_end, thickness = attack
             if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
-                self.boss_hp -= 1  # 공격력 적용
+                self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
                 self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_start_time = pygame.time.get_ticks()  # 점멸 시작 시간 기록
+                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
                 print(f"Boss hit by player attack! HP reduced to {self.boss_hp}")
                 if self.boss_hp <= 0:
                     self.boss_active = False
@@ -252,6 +259,7 @@ class Stage1Boss:
                     self.boss_defeated = True
                     print("Boss defeated!")
                 break  # 한 번에 하나의 공격만 처리
+
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
