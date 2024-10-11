@@ -470,20 +470,19 @@ while run:
                         power_item_active = 0
                         game_over = False
                         game_over_reason = None
+                        start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록 (게임 오버 시에만 초기화)
+                    start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록 (항상 초기화)
                     game_active = True  # 게임 시작
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]  # 플레이어 위치 초기화
                     enemies = []
-                    start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록
                     stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 기록
                     intro_screen(level)  # 스테이지 인트로 화면 표시
 
                     # 공격 및 에너지 볼 리스트 초기화
                     attacks = []
                     energy_balls = []
-
                     # 보스 초기화
                     boss.reset()
-
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
@@ -548,7 +547,8 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
-        boss.check_appear(elapsed_stage_time, level)
+#!        boss.check_appear(elapsed_stage_time, level)
+        boss.check_appear(total_seconds, level)
         # 디버깅
         # print(f"Total Seconds: {total_seconds}, Level: {level}, Boss Active: {boss.boss_active}, Boss Defeated: {boss.boss_defeated}")
 
