@@ -548,8 +548,7 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
-        boss.check_appear(total_seconds, level)  # 보스 등장 체크
-
+        boss.check_appear(elapsed_stage_time, level)
         # 디버깅
         # print(f"Total Seconds: {total_seconds}, Level: {level}, Boss Active: {boss.boss_active}, Boss Defeated: {boss.boss_defeated}")
 
