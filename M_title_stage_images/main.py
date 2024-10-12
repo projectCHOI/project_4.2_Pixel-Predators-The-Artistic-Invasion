@@ -450,6 +450,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
 
 # 게임 루프
 while run:
+    delta_time = clock.tick(60) / 1000  # 프레임 레이트를 60으로 설정하고 delta_time을 계산
     if not game_active:
         if not game_over:
             title_screen()
@@ -520,16 +521,16 @@ while run:
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
-            player_pos[0] -= player_speed
+            player_pos[0] -= player_speed * delta_time
             player_image = player_image2
         if keys[pygame.K_d]:
-            player_pos[0] += player_speed
+            player_pos[0] += player_speed * delta_time
             player_image = player_image1
         if keys[pygame.K_w]:
-            player_pos[1] -= player_speed
+            player_pos[1] -= player_speed * delta_time
             player_image = player_image1
         if keys[pygame.K_s]:
-            player_pos[1] += player_speed
+            player_pos[1] += player_speed * delta_time
             player_image = player_image2
 
         # 플레이어가 화면 밖으로 나가지 않도록 제한
