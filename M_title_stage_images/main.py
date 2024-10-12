@@ -761,9 +761,9 @@ while run:
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
-        
+            
         # 보스와 그의 공격을 그리기
-        if boss.boss_hp > 0:
+        if boss.boss_active and boss.boss_hp > 0:
             boss.draw(win)
             boss.draw_attacks(win)
             boss.draw_health_bar(win, font)
