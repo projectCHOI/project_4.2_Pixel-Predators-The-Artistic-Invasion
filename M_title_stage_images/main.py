@@ -563,19 +563,20 @@ while run:
                     game_active = False
                     game_over = True
                     game_over_reason = "game_over"
-
+        #
         # 적 이동 및 행동 처리
         for enemy in enemies:
             pos, size, enemy_type, direction, speed, target_pos, shots_fired, enemy_image, original_speed = enemy
             if enemy_type == "move_and_disappear":
-                pos[0] += direction[0] * speed
-                pos[1] += direction[1] * speed
+                pos[0] += direction[0] * speed * delta_time
+                pos[1] += direction[1] * speed * delta_time
             elif enemy_type == "move_and_shoot":
                 if target_pos:
                     distance_to_target = math.hypot(target_pos[0] - pos[0], target_pos[1] - pos[1])
-                    if distance_to_target > speed:
-                        pos[0] += direction[0] * speed
-                        pos[1] += direction[1] * speed
+                    if distance_to_target > speed * delta_time:
+                        direction_normalized = [direction[0] / length, direction[1] / length]
+                        pos[0] += direction_normalized[0] * speed * delta_time
+                        pos[1] += direction_normalized[1] * speed * delta_time
                     else:
                         pos[0], pos[1] = target_pos
                         enemy[5] = None  # target_pos를 None으로 설정하여 적이 멈추게 함
