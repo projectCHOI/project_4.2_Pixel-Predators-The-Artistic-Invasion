@@ -774,7 +774,7 @@ while run:
         pygame.display.update()
 
         # 프레임 설정
-        clock.tick(30)
+        clock.tick(60)
 
 # 게임 종료
 pygame.quit()
