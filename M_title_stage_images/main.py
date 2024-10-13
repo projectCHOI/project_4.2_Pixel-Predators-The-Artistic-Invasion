@@ -681,8 +681,11 @@ while run:
                         collision_effect_duration = collision_images[2]["duration"]
 
         # 무적 시간 처리
-        if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
-            invincible = False
+        if invincible:
+            invincible_elapsed_time += delta_time
+            if invincible_elapsed_time >= invincible_duration / 1000:  # 밀리초를 초로 변환하여 비교
+                invincible = False
+                invincible_elapsed_time = 0
 
         # 충돌 이미지 표시 시간 체크
         if pygame.time.get_ticks() - collision_effect_start_time >= collision_effect_duration:
