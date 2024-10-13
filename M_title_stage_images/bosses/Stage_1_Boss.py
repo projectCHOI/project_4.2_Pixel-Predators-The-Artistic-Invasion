@@ -34,7 +34,7 @@ class Stage1Boss:
         self.max_boss_hp = 100  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 100  # 보스의 이동 속도 (픽셀/초)
+        self.boss_speed = 5  # 보스의 이동 속도
         self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_direction_y = 1  # 보스의 상하 이동 방향
@@ -43,66 +43,97 @@ class Stage1Boss:
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부 추가
         self.boss_move_phase = 1  # 보스의 이동 단계
         self.boss_hit = False  # 보스 피격 상태
-        self.boss_hit_elapsed_time = 0  # 보스 피격 경과 시간
-        self.boss_hit_effect_duration = 1000  # 무적 상태 지속 시간(밀리초)
-        self.boss_blink_interval = 100  # 깜박임 효과의 간격(밀리초)
+        self.boss_hit_start_time = 0  # 보스 피격 시점
+        self.boss_hit_duration = 500  # 보스 피격 효과 지속 시간 (밀리초)
         self.boss_attacks = []  # 보스의 공격 리스트
         self.boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
-        self.attack_elapsed_time = 0  # 공격 경과 시간
+        self.boss_last_attack_time = 0  # 마지막 공격 시점
         self.gem_pos = None  # 보석의 위치
         self.gem_active = False  # 보석 활성화 상태
+        self.boss_hit_duration = 100  # 깜박임 효과의 간격(밀리초)
+        self.boss_invincible_duration = 1000  # 무적 상태 지속 시간(밀리초)
 
-    def check_appear(self, elapsed_stage_time, current_level):
-        if current_level == 1 and not self.boss_active and elapsed_stage_time >= self.boss_appear_time and not self.boss_appeared:
+    def check_appear(self, seconds, current_level):
+        # 디버깅 메시지 출력
+        print("=== Boss Appearance Check ===")
+        print(f"Seconds elapsed: {seconds}")
+        print(f"Current level: {current_level}")
+        print(f"Boss active: {self.boss_active}")
+        print(f"Boss defeated: {self.boss_defeated}")
+        print(f"Boss appear time: {self.boss_appear_time}")
+
+        condition_level = (current_level == 1)
+        condition_active = (not self.boss_active)
+        condition_time = (seconds >= self.boss_appear_time)
+        condition_not_appeared = (not self.boss_appeared)  # 수정된 부분
+
+        print(f"Condition - Level is 1: {condition_level}")
+        print(f"Condition - Boss not active: {condition_active}")
+        print(f"Condition - Time >= appear time: {condition_time}")
+        print(f"Condition - Boss not appeared yet: {condition_not_appeared}")
+
+        if condition_level and condition_active and condition_time and condition_not_appeared:
+            print(">>> Boss is now active!")
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
+        elif self.boss_active:
+            print("Boss is already active.")
+        else:
+            print("Boss does not appear yet.")
 
-    def move(self, delta_time):
+    def move(self):
         # 이동 후 위치 제한 함수 추가
         def limit_position():
             self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 120))
             self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 120))
-
-        speed = self.boss_speed * delta_time  # 시간 기반 이동 속도
+            print(f"Boss position after limiting: {self.boss_pos}")
 
         if self.boss_move_phase == 1:
             # 중앙으로 이동
             target_pos = [640 - 60, 360 - 60]
             direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
             length = math.hypot(direction[0], direction[1])
-            if length > speed:
+            if length > self.boss_speed:
                 direction = [direction[0] / length, direction[1] / length]
-                self.boss_pos[0] += direction[0] * speed
-                self.boss_pos[1] += direction[1] * speed
+                self.boss_pos[0] += direction[0] * self.boss_speed
+                self.boss_pos[1] += direction[1] * self.boss_speed
             else:
                 self.boss_pos = target_pos
                 self.boss_move_phase = 2
+            print(f"Boss moving to center: {self.boss_pos}")
         elif self.boss_move_phase == 2:
             # 좌우 이동
-            self.boss_pos[0] += speed * self.boss_direction_x
+            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
             if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
                 self.boss_direction_x *= -1  # 방향 전환
+                print(f"Boss changed direction: {self.boss_direction_x}")
             if self.boss_hp <= self.max_boss_hp / 2:
                 self.boss_move_phase = 3
+                print("Boss move phase changed to 3")
+            print(f"Boss moving horizontally: {self.boss_pos}")
         elif self.boss_move_phase == 3:
             # 좌우 및 상하 이동
-            self.boss_pos[0] += speed * self.boss_direction_x
-            self.boss_pos[1] += speed * self.boss_direction_y
+            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
+            self.boss_pos[1] += self.boss_speed * self.boss_direction_y
             if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
                 self.boss_direction_x *= -1  # 좌우 방향 전환
+                print(f"Boss changed horizontal direction: {self.boss_direction_x}")
             if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 120:
                 self.boss_direction_y *= -1  # 상하 방향 전환
+                print(f"Boss changed vertical direction: {self.boss_direction_y}")
+            print(f"Boss moving diagonally: {self.boss_pos}")
 
         # 위치 제한 적용
         limit_position()
 
-    def attack(self, delta_time):
-        self.attack_elapsed_time += delta_time * 1000  # 밀리초로 변환
-        if self.attack_elapsed_time >= self.boss_attack_cooldown:
-            self.attack_elapsed_time = 0
+    def attack(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
+            self.boss_last_attack_time = current_time
             possible_directions = []
+
             # 보스의 체력에 따른 공격 방향 설정
             if self.boss_hp > self.max_boss_hp * 0.75:
                 possible_directions = ["down"]
@@ -116,6 +147,7 @@ class Stage1Boss:
             attack_direction = random.choice(possible_directions)
             attack_start_pos = self.get_attack_start_pos(attack_direction)
             self.boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
+            print(f"Boss attacks towards {attack_direction} from {attack_start_pos}")
 
     def get_attack_start_pos(self, direction):
         if direction == "down":
@@ -127,49 +159,50 @@ class Stage1Boss:
         elif direction == "left":
             return [self.boss_pos[0], self.boss_pos[1] + 40]
 
-    def update_attacks(self, player_pos, delta_time):
+    def update_attacks(self, player_pos):
         new_boss_attacks = []
-        attack_speed = 300  # 공격 속도 (픽셀/초)
         for attack in self.boss_attacks:
-            speed = attack_speed * delta_time
             if attack[2] == "down":
-                attack[1] += speed
+                attack[1] += 10
             elif attack[2] == "up":
-                attack[1] -= speed
+                attack[1] -= 10
             elif attack[2] == "right":
-                attack[0] += speed
+                attack[0] += 10
             elif attack[2] == "left":
-                attack[0] -= speed
+                attack[0] -= 10
 
             if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
                 if self.check_energy_ball_collision((attack[0], attack[1]), player_pos):
+                    print("Boss attack hit the player!")
                     return True  # 플레이어에게 맞음
                 else:
                     new_boss_attacks.append(attack)
+            else:
+                print(f"Boss attack out of bounds and removed: {attack}")
         self.boss_attacks = new_boss_attacks
         return False
 
-    def draw(self, win, delta_time):
+    def draw(self, win):
         if self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
             if self.boss_hit:
-                self.boss_hit_elapsed_time += delta_time * 1000  # 밀리초로 변환
-                if self.boss_hit_elapsed_time >= self.boss_hit_effect_duration:
+                if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
                     self.boss_hit = False  # 무적 상태 및 깜박임 종료
-                    self.boss_hit_elapsed_time = 0
                     win.blit(self.boss_image, self.boss_pos)
                 else:
                     # 깜박임 효과
-                    blink_interval = int((self.boss_hit_elapsed_time // self.boss_blink_interval) % 2)
-                    if blink_interval == 0:
+                    if (current_time // self.boss_hit_duration) % 2 == 0:
                         win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
+            print(f"Boss drawn at position: {self.boss_pos}")
         else:
-            pass  # 보스가 죽었을 때는 그리지 않음
+            print("Boss HP is zero or less; not drawn.")
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             win.blit(self.boss_attack_images[attack[2]], (attack[0], attack[1]))
+            print(f"Boss attack drawn at position: ({attack[0]}, {attack[1]}) in direction {attack[2]}")
 
     def draw_gem(self, win):
         if self.gem_active:
@@ -201,13 +234,16 @@ class Stage1Boss:
 
             # 체력 바 테두리 그리기
             pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
+            print(f"Boss health bar drawn with HP: {self.boss_hp}/{self.max_boss_hp}")
         elif self.boss_hp <= 0 and self.boss_defeated:
             # 보스가 제거되었을 때 메시지 표시 (옵션)
             defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
             win.blit(defeated_text, (10, 680))
+            print("Boss defeated message displayed.")
 
     def check_hit(self, attacks):
-        if self.boss_hit:
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             # 보스가 무적 상태일 때는 공격을 무시합니다.
             return
         else:
@@ -220,13 +256,16 @@ class Stage1Boss:
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
                 self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_elapsed_time = 0  # 피격 경과 시간 초기화
+                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+                print(f"Boss hit by player attack! HP reduced to {self.boss_hp}")
                 if self.boss_hp <= 0:
                     self.boss_active = False
                     self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
                     self.gem_active = True
                     self.boss_defeated = True
+                    print("Boss defeated!")
                 break  # 한 번에 하나의 공격만 처리
+
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
@@ -236,6 +275,7 @@ class Stage1Boss:
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False
+                print("Player collected the gem!")
                 return True
         return False
 
@@ -243,18 +283,21 @@ class Stage1Boss:
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 60, 0]
+        #! self.boss_defeated = False  # boss_defeated를 재설정하지 않음
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
         self.boss_move_phase = 1
         self.boss_hit = False
+        print("Boss state has been reset.")
 
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
         player_width, player_height = 40, 40  # 플레이어 크기
         if px < bx < px + player_width and py < by < py + player_height:
+            print("Player hit by boss attack!")
             return True
         return False
 
