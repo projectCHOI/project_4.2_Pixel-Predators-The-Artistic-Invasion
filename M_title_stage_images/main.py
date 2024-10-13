@@ -489,8 +489,8 @@ while run:
     else:
         # 마우스 위치 가져오기
         mouse_pos = pygame.mouse.get_pos()
-        total_seconds = (pygame.time.get_ticks() - start_ticks) // 1000  # 전체 게임 경과 시간
-        elapsed_stage_time = (pygame.time.get_ticks() - stage_start_ticks) // 1000  # 스테이지 경과 시간
+        total_seconds += delta_time
+        elapsed_stage_time += delta_time
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
