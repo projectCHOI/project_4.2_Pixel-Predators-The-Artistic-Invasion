@@ -31,7 +31,7 @@ class Stage1Boss:
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
         self.boss_appear_time = 30  # 보스 등장 시간 (초)
-        self.max_boss_hp = 100  # 보스의 최대 체력
+        self.max_boss_hp = 10  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
         self.boss_speed = 5  # 보스의 이동 속도
@@ -44,14 +44,14 @@ class Stage1Boss:
         self.boss_move_phase = 1  # 보스의 이동 단계
         self.boss_hit = False  # 보스 피격 상태
         self.boss_hit_start_time = 0  # 보스 피격 시점
-        self.boss_hit_duration = 500  # 보스 피격 효과 지속 시간 (밀리초)
+        self.boss_hit_duration = 100  # 보스 피격 효과 지속 시간 (밀리초)
         self.boss_attacks = []  # 보스의 공격 리스트
         self.boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
         self.boss_last_attack_time = 0  # 마지막 공격 시점
         self.gem_pos = None  # 보석의 위치
         self.gem_active = False  # 보석 활성화 상태
         self.boss_hit_duration = 100  # 깜박임 효과의 간격(밀리초)
-        self.boss_invincible_duration = 1000  # 무적 상태 지속 시간(밀리초)
+        self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
         # 디버깅 메시지 출력
