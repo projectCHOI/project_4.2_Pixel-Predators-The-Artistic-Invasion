@@ -763,7 +763,7 @@ while run:
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         
         # 보스와 그의 공격을 그리기
-        if boss.boss_hp > 0:
+        if boss.boss_active and boss.boss_hp > 0:
             boss.draw(win)
             boss.draw_attacks(win)
             boss.draw_health_bar(win, font)
