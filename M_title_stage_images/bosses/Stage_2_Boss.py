@@ -30,11 +30,11 @@ class Stage1Boss:
         }
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
-        self.boss_appear_time = 30  # 보스 등장 시간 (초)
-        self.max_boss_hp = 10  # 보스의 최대 체력
+        self.boss_appear_time = 40  # 보스 등장 시간 (초)
+        self.max_boss_hp = 20  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 5  # 보스의 이동 속도
+        self.boss_speed = 7  # 보스의 이동 속도
         self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_direction_y = 1  # 보스의 상하 이동 방향
