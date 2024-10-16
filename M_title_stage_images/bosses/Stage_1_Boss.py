@@ -12,8 +12,7 @@ def load_image(*path_parts, size=None):
     try:
         image = pygame.image.load(path).convert_alpha()
     except pygame.error as e:
-        print(f"Cannot load image: {path}")
-        raise SystemExit(e)
+        raise SystemExit(f"Cannot load image: {path}\n{e}")
     if size:
         image = pygame.transform.scale(image, size)
     return image
@@ -64,10 +63,6 @@ class Stage1Boss:
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
-        elif self.boss_active:
-            print("Boss is already active.")
-        else:
-            print("Boss does not appear yet.")
 
     def move(self):
         # 이동 후 위치 제한 함수 추가
@@ -125,7 +120,6 @@ class Stage1Boss:
             attack_direction = random.choice(possible_directions)
             attack_start_pos = self.get_attack_start_pos(attack_direction)
             self.boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
-            print(f"Boss attacks towards {attack_direction} from {attack_start_pos}")
 
     def get_attack_start_pos(self, direction):
         if direction == "down":
@@ -151,12 +145,11 @@ class Stage1Boss:
 
             if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
                 if self.check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                    print("Boss attack hit the player!")
                     return True  # 플레이어에게 맞음
                 else:
                     new_boss_attacks.append(attack)
             else:
-                print(f"Boss attack out of bounds and removed: {attack}")
+                pass  # 공격이 화면 밖으로 나가면 제거
         self.boss_attacks = new_boss_attacks
         return False
 
@@ -173,14 +166,10 @@ class Stage1Boss:
                         win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
-            print(f"Boss drawn at position: {self.boss_pos}")
-        else:
-            print("Boss HP is zero or less; not drawn.")
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             win.blit(self.boss_attack_images[attack[2]], (attack[0], attack[1]))
-
 
     def draw_gem(self, win):
         if self.gem_active:
@@ -212,7 +201,6 @@ class Stage1Boss:
 
             # 체력 바 테두리 그리기
             pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
-            print(f"Boss health bar drawn with HP: {self.boss_hp}/{self.max_boss_hp}")
         elif self.boss_hp <= 0 and self.boss_defeated:
             # 보스가 제거되었을 때 메시지 표시 (옵션)
             defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
@@ -240,7 +228,6 @@ class Stage1Boss:
                     self.gem_active = True
                     self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
-
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
