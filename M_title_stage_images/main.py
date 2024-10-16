@@ -4,6 +4,7 @@ import math
 import os
 
 from bosses.Stage_1_Boss import Stage1Boss
+from bosses.Stage_2_Boss import Stage2Boss
 
 pygame.init()
 
