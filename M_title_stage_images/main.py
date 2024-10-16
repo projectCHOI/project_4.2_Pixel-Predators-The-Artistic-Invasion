@@ -485,7 +485,7 @@ while run:
                     # 보스 초기화
                     current_boss = bosses.get(level)  # 현재 레벨에 해당하는 보스 선택
                     if current_boss:
-                        current_boss.reset()
+                        current_boss.reset()   
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
@@ -550,13 +550,15 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
-        boss.check_appear(total_seconds, level)
+        if current_boss:
+            current_boss.check_appear(total_seconds, level)
 
         # 보스가 활성화된 경우 처리
-        if boss.boss_active:
-            boss.move()  # 보스 이동
-            boss.attack()  # 보스 공격
-            if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
+        if current_boss and current_boss.boss_active:
+            current_boss.move()
+            current_boss.attack()
+            if current_boss.update_attacks(player_pos):
+                # 플레이어가 보스의 공격에 맞았을 때 처리
                 current_health -= 1
                 if current_health <= 0:
                     game_active = False
@@ -769,12 +771,12 @@ while run:
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         
         # 보스와 그의 공격을 그리기
-        if boss.boss_active and boss.boss_hp > 0:
-            boss.draw(win)
-            boss.draw_attacks(win)
-            boss.draw_health_bar(win, font)
-        elif boss.gem_active:
-            boss.draw_gem(win)
+        if current_boss and current_boss.boss_active and current_boss.boss_hp > 0:
+            current_boss.draw(win)
+            current_boss.draw_attacks(win)
+            current_boss.draw_health_bar(win, font)
+        elif current_boss and current_boss.gem_active:
+            current_boss.draw_gem(win)
 
         # 화면 업데이트
         pygame.display.update()
