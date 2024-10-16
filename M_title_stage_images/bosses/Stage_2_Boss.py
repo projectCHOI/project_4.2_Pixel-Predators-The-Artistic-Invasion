@@ -20,12 +20,12 @@ def load_image(*path_parts, size=None):
 class Stage1Boss:
     def __init__(self):
         # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage1.png", size=(120, 120))
+        self.boss_image = load_image("bosses", "boss_stage2.png", size=(120, 120))
         self.boss_attack_images = {
-            "down": load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40)),
-            "up": load_image("boss_skilles", "boss_stage1_b.png", size=(40, 40)),
-            "right": load_image("boss_skilles", "boss_stage1_c.png", size=(40, 40)),
-            "left": load_image("boss_skilles", "boss_stage1_d.png", size=(40, 40))
+            "down": load_image("boss_skilles", "boss_stage2_a.png", size=(40, 40)),
+            "up": load_image("boss_skilles", "boss_stage2_b.png", size=(40, 40)),
+            "right": load_image("boss_skilles", "boss_stage2_c.png", size=(40, 40)),
+            "left": load_image("boss_skilles", "boss_stage2_d.png", size=(40, 40))
         }
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
