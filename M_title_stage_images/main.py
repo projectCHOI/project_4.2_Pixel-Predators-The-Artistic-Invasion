@@ -24,7 +24,6 @@ def load_image(*path_parts, size=None):
     try:
         image = pygame.image.load(path).convert_alpha()
     except pygame.error as e:
-#         print(f"Cannot load image: {path}")
         raise SystemExit(e)
     if size:
         image = pygame.transform.scale(image, size)
@@ -34,7 +33,6 @@ def load_image(*path_parts, size=None):
 try:
     from title_stage_images import title_image, stage_intro_images, stage_background_images
 except ImportError:
-#     print("title_stage_images 모듈을 찾을 수 없습니다. 해당 모듈을 생성해주세요.")
     pygame.quit()
     exit()
 
@@ -130,7 +128,6 @@ font_size = 30  # 폰트 크기
 try:
     font = pygame.font.Font(font_path, font_size)  # 폰트 설정
 except FileNotFoundError:
-#     print(f"폰트 파일을 찾을 수 없습니다: {font_path}")
     pygame.quit()
     exit()
 
@@ -446,7 +443,6 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
 
     # 대시보드 그리기 함수 호출
     draw_dashboard(elapsed_stage_time)  # 대시보드 그리기
-#    pygame.display.update()
 
 # 게임 루프
 while run:
@@ -547,10 +543,7 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
-#!        boss.check_appear(elapsed_stage_time, level)
         boss.check_appear(total_seconds, level)
-        # 디버깅
-        # print(f"Total Seconds: {total_seconds}, Level: {level}, Boss Active: {boss.boss_active}, Boss Defeated: {boss.boss_defeated}")
 
         # 보스가 활성화된 경우 처리
         if boss.boss_active:
@@ -754,7 +747,7 @@ while run:
                 enemies = []  # 적 목록 초기화
                 start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
                 stage_start_ticks = pygame.time.get_ticks()
-                intro_screen(level)# 다음 스테이지 인트로 화면 표시
+                intro_screen(level)  # 다음 스테이지 인트로 화면 표시
                 # 필요한 경우 추가 초기화 로직
 
         # 화면 업데이트
