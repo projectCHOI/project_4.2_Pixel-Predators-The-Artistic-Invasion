@@ -116,8 +116,12 @@ BLACK = (0, 0, 0)
 player_speed = 10  # 속도 조정
 original_player_speed = player_speed
 
-# 보스 초기화
-boss = Stage1Boss()
+# 보스를 담을 딕셔너리 생성
+bosses = {
+    1: Stage1Boss(),
+    2: Stage2Boss()
+}
+current_boss = None  # 현재 보스 객체
 
 # 에너지 볼 설정
 energy_balls = []
