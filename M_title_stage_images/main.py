@@ -483,7 +483,9 @@ while run:
                     attacks = []
                     energy_balls = []
                     # 보스 초기화
-                    boss.reset()
+                    current_boss = bosses.get(level)  # 현재 레벨에 해당하는 보스 선택
+                    if current_boss:
+                        current_boss.reset()
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
