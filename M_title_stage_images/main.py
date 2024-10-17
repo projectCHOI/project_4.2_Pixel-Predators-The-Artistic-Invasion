@@ -429,21 +429,6 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
     # 대시보드 그리기
     draw_dashboard(elapsed_stage_time)
 
-    # 에너지 볼 그리기
-    for ball in energy_balls:
-        color = YELLOW if ball[2] == "yellow" else GREEN
-        pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
-
-    # 공격 그리기
-    for attack in attacks:
-        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
-
-    # 마우스 위치 그리기
-    pygame.draw.circle(win, RED, mouse_pos, 5)
-
-    # 대시보드 그리기 함수 호출
-    draw_dashboard(elapsed_stage_time)  # 대시보드 그리기
-
 # 게임 루프
 while run:
     if not game_active:
@@ -555,6 +540,22 @@ while run:
                     game_active = False
                     game_over = True
                     game_over_reason = "game_over"
+
+        # 보스가 공격받았는지 체크
+        boss.check_hit(attacks)
+
+        # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
+        if boss.gem_active:
+            if boss.check_gem_collision(player_pos):
+                pass  # 보스 클래스 내부에서 처리되므로 별도의 작업이 필요 없습니다.
+            if boss.stage_cleared:
+                level += 1  # 다음 스테이지로 이동
+                boss.reset()  # 보스 상태 초기화
+                enemies = []  # 적 목록 초기화
+                start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
+                stage_start_ticks = pygame.time.get_ticks()
+                intro_screen(level)  # 다음 스테이지 인트로 화면 표시
+                continue  # 루프의 나머지 부분을 건너뛰고 다음 스테이지로 이동
 
         # 적 이동 및 행동 처리
         for enemy in enemies:
@@ -733,30 +734,13 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
-        # 보스와 플레이어 공격 간의 충돌 체크
-        boss.check_hit(attacks)
-
-        # 보석과 플레이어의 충돌 체크 및 다음 스테이지로 이동
-        if boss.gem_active:
-            if boss.check_gem_collision(player_pos):
-                # 보석을 획득했을 때 다음 스테이지로 이동
-                level += 1  # 다음 스테이지로 이동
-                boss.reset()  # 보스 상태 초기화
-                boss.boss_defeated = False  # 보스 처치 상태 재설정
-                boss.boss_appeared = False  # 보스 등장 여부 재설정
-                enemies = []  # 적 목록 초기화
-                start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
-                stage_start_ticks = pygame.time.get_ticks()
-                intro_screen(level)  # 다음 스테이지 인트로 화면 표시
-                # 필요한 경우 추가 초기화 로직
-
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
-        
+
         # 보스와 그의 공격을 그리기
-        if boss.boss_active and boss.boss_hp > 0:
+        if boss.boss_active:
             boss.draw(win)
             boss.draw_attacks(win)
             boss.draw_health_bar(win, font)
