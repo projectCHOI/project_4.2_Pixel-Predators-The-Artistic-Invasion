@@ -4,7 +4,6 @@ import math
 import os
 
 from bosses.Stage_1_Boss import Stage1Boss
-from bosses.Stage_2_Boss import Stage2Boss
 
 pygame.init()
 
@@ -116,12 +115,8 @@ BLACK = (0, 0, 0)
 player_speed = 10  # 속도 조정
 original_player_speed = player_speed
 
-# 보스를 담을 딕셔너리 생성
-bosses = {
-    1: Stage1Boss(),
-    2: Stage2Boss()
-}
-current_boss = None  # 현재 보스 객체
+# 보스 초기화
+boss = Stage1Boss()
 
 # 에너지 볼 설정
 energy_balls = []
@@ -483,9 +478,7 @@ while run:
                     attacks = []
                     energy_balls = []
                     # 보스 초기화
-                    current_boss = bosses.get(level)  # 현재 레벨에 해당하는 보스 선택
-                    if current_boss:
-                        current_boss.reset()   
+                    boss.reset()
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
@@ -550,15 +543,13 @@ while run:
             bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
-        if current_boss:
-            current_boss.check_appear(total_seconds, level)
+        boss.check_appear(total_seconds, level)
 
         # 보스가 활성화된 경우 처리
-        if current_boss and current_boss.boss_active:
-            current_boss.move()
-            current_boss.attack()
-            if current_boss.update_attacks(player_pos):
-                # 플레이어가 보스의 공격에 맞았을 때 처리
+        if boss.boss_active:
+            boss.move()  # 보스 이동
+            boss.attack()  # 보스 공격
+            if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
                 current_health -= 1
                 if current_health <= 0:
                     game_active = False
@@ -742,28 +733,22 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
-#!        # 보스와 플레이어 공격 간의 충돌 체크
-#!        boss.check_hit(attacks)
         # 보스와 플레이어 공격 간의 충돌 체크
-        if current_boss:
-            current_boss.check_hit(attacks)
+        boss.check_hit(attacks)
 
         # 보석과 플레이어의 충돌 체크 및 다음 스테이지로 이동
-        if current_boss and current_boss.gem_active:
-            if current_boss.check_gem_collision(player_pos):
+        if boss.gem_active:
+            if boss.check_gem_collision(player_pos):
                 # 보석을 획득했을 때 다음 스테이지로 이동
                 level += 1  # 다음 스테이지로 이동
-                current_boss.reset()  # 보스 상태 초기화
-                current_boss.boss_defeated = False  # 보스 처치 상태 재설정
-                current_boss.boss_appeared = False  # 보스 등장 여부 재설정
+                boss.reset()  # 보스 상태 초기화
+                boss.boss_defeated = False  # 보스 처치 상태 재설정
+                boss.boss_appeared = False  # 보스 등장 여부 재설정
                 enemies = []  # 적 목록 초기화
                 start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
                 stage_start_ticks = pygame.time.get_ticks()
                 intro_screen(level)  # 다음 스테이지 인트로 화면 표시
                 # 필요한 경우 추가 초기화 로직
-                current_boss = bosses.get(level)  # 다음 레벨의 보스로 변경
-                if current_boss:
-                    current_boss.reset()
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
@@ -771,12 +756,12 @@ while run:
                      collision_image, speed_item_pos, power_item_pos, heal_item_pos, current_heal_item_image)
         
         # 보스와 그의 공격을 그리기
-        if current_boss and current_boss.boss_active and current_boss.boss_hp > 0:
-            current_boss.draw(win)
-            current_boss.draw_attacks(win)
-            current_boss.draw_health_bar(win, font)
-        elif current_boss and current_boss.gem_active:
-            current_boss.draw_gem(win)
+        if boss.boss_active and boss.boss_hp > 0:
+            boss.draw(win)
+            boss.draw_attacks(win)
+            boss.draw_health_bar(win, font)
+        elif boss.gem_active:
+            boss.draw_gem(win)
 
         # 화면 업데이트
         pygame.display.update()
