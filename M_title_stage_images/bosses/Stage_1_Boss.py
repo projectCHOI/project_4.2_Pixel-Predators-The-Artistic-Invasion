@@ -27,7 +27,7 @@ class Stage1Boss:
             "right": load_image("boss_skilles", "boss_stage1_c.png", size=(40, 40)),
             "left": load_image("boss_skilles", "boss_stage1_d.png", size=(40, 40))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(50, 50))
         # 보스 속성 초기화
         self.boss_appear_time = 30  # 보스 등장 시간 (초)
         self.max_boss_hp = 10  # 보스의 최대 체력
