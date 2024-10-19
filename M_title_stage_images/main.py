@@ -183,7 +183,7 @@ def draw_end_screen():
 def get_stage_duration(level):
     base_duration = 600  # 기본 스테이지 시간 (초)
     reduction = (level - 1) * 5  # 레벨당 5초 감소
-    return max(300, base_duration - reduction)  # 최소 30초
+    return max(300, base_duration - reduction)  # 최소 300초
 
 # 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
@@ -403,7 +403,6 @@ def draw_dashboard(elapsed_stage_time):
 # 화면에 객체 그리기 함수
 def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
     win.blit(background_image, (0, 0))  # 배경 그리기
-    # 보스나 보스의 공격은 여기서 그리지 않습니다.
     # 적 그리기
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
@@ -535,7 +534,7 @@ while run:
             boss.move()  # 보스 이동
             boss.attack()  # 보스 공격
             if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
-                current_health -= 1
+                current_health -= boss.boss_damage
                 if current_health <= 0:
                     game_active = False
                     game_over = True
@@ -547,8 +546,6 @@ while run:
         # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
         if boss.gem_active:
             if boss.check_gem_collision(player_pos):
-                pass  # 보스 클래스 내부에서 처리되므로 별도의 작업이 필요 없습니다.
-            if boss.stage_cleared:
                 level += 1  # 다음 스테이지로 이동
                 boss.reset()  # 보스 상태 초기화
                 enemies = []  # 적 목록 초기화
