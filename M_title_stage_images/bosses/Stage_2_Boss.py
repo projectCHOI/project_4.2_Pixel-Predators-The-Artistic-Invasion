@@ -27,19 +27,19 @@ class Stage1Boss:
             "right": load_image("boss_skilles", "boss_stage2_c.png", size=(40, 40)),
             "left": load_image("boss_skilles", "boss_stage2_d.png", size=(40, 40))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_2.png", size=(40, 40))
         # 보스 속성 초기화
-        self.boss_appear_time = 20  # 보스 등장 시간 (초)
-        self.max_boss_hp = 10  # 보스의 최대 체력
+        self.boss_appear_time = 30  # 보스 등장 시간 (초)
+        self.max_boss_hp = 20  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 5  # 보스의 이동 속도
+        self.boss_speed = 7  # 보스의 이동 속도
         self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_direction_y = 1  # 보스의 상하 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
-        self.boss_appeared = False  # 보스가 이미 등장했는지 여부 추가
+        self.boss_appeared = False  # 보스가 이미 등장했는지 여부
         self.boss_move_phase = 1  # 보스의 이동 단계
         self.boss_hit = False  # 보스 피격 상태
         self.boss_hit_start_time = 0  # 보스 피격 시점
@@ -49,16 +49,11 @@ class Stage1Boss:
         self.boss_last_attack_time = 0  # 마지막 공격 시점
         self.gem_pos = None  # 보석의 위치
         self.gem_active = False  # 보석 활성화 상태
-        self.boss_hit_duration = 100  # 깜박임 효과의 간격(밀리초)
+        self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        condition_level = (current_level == 1)
-        condition_active = (not self.boss_active)
-        condition_time = (seconds >= self.boss_appear_time)
-        condition_not_appeared = (not self.boss_appeared)  # 수정된 부분
-
-        if condition_level and condition_active and condition_time and condition_not_appeared:
+        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
@@ -133,6 +128,7 @@ class Stage1Boss:
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
+        player_hit = False
         for attack in self.boss_attacks:
             if attack[2] == "down":
                 attack[1] += 10
@@ -145,13 +141,13 @@ class Stage1Boss:
 
             if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
                 if self.check_energy_ball_collision((attack[0], attack[1]), player_pos):
-                    return True  # 플레이어에게 맞음
+                    player_hit = True  # 플레이어에게 맞음
                 else:
                     new_boss_attacks.append(attack)
             else:
                 pass  # 공격이 화면 밖으로 나가면 제거
         self.boss_attacks = new_boss_attacks
-        return False
+        return player_hit
 
     def draw(self, win):
         if self.boss_hp > 0:
@@ -237,6 +233,7 @@ class Stage1Boss:
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False
+                self.stage_cleared = True  # 스테이지 클리어
                 return True
         return False
 
@@ -244,13 +241,14 @@ class Stage1Boss:
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 60, 0]
-        #! self.boss_defeated = False  # boss_defeated를 재설정하지 않음
+        self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
         self.boss_move_phase = 1
         self.boss_hit = False
+        self.stage_cleared = False
 
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
