@@ -17,7 +17,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Stage1Boss:
+class Stage2Boss:
     def __init__(self):
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage2.png", size=(120, 120))
@@ -53,7 +53,7 @@ class Stage1Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 2 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
