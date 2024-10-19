@@ -6,7 +6,6 @@ import os
 # 필요한 보스 클래스를 모두 임포트합니다.
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
-# 추가적인 보스 클래스를 여기에 임포트합니다.
 
 pygame.init()
 
