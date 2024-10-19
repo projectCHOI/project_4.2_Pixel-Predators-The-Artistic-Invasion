@@ -20,7 +20,7 @@ def load_image(*path_parts, size=None):
 class Stage1Boss:
     def __init__(self):
         # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage1.png", size=(120, 120))
+        self.boss_image = load_image("bosses", "boss_stage1.png", size=(240, 240))
         self.boss_attack_images = {
             "down": load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40)),
             "up": load_image("boss_skilles", "boss_stage1_b.png", size=(40, 40)),
