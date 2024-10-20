@@ -39,7 +39,7 @@ except ImportError:
     exit()
 
 # 이미지 크기 설정
-image_size = (40, 40)
+image_size = (50, 50)
 player_width, player_height = image_size
 
 # 플레이어 이미지 로드
