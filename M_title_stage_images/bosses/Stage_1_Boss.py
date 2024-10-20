@@ -27,9 +27,9 @@ class Stage1Boss:
             "right": load_image("boss_skilles", "boss_stage1_c.png", size=(40, 40)),
             "left": load_image("boss_skilles", "boss_stage1_d.png", size=(40, 40))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(50, 50))
+        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
-        self.boss_appear_time = 30  # 보스 등장 시간 (초)
+        self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 10  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
@@ -62,36 +62,24 @@ class Stage1Boss:
     def move(self):
         # 이동 후 위치 제한 함수 추가
         def limit_position():
-            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 120))
-            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 120))
+            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 240))
+            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 240))
+
+        current_time = pygame.time.get_ticks()
 
         if self.boss_move_phase == 1:
-            # 중앙으로 이동
-            target_pos = [640 - 60, 360 - 60]
-            direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
-            length = math.hypot(direction[0], direction[1])
-            if length > self.boss_speed:
-                direction = [direction[0] / length, direction[1] / length]
-                self.boss_pos[0] += direction[0] * self.boss_speed
-                self.boss_pos[1] += direction[1] * self.boss_speed
-            else:
-                self.boss_pos = target_pos
+            # 1단계: 보스가 화면 상단에서 등장 후 1초 대기
+            if not hasattr(self, 'phase_start_time'):
+                self.phase_start_time = current_time  # 현재 시간을 저장
+            elif current_time - self.phase_start_time >= 1000:  # 1초 대기
                 self.boss_move_phase = 2
         elif self.boss_move_phase == 2:
-            # 좌우 이동
+            # 2단계: 화면 상단에서 좌우로만 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
+            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 240:
                 self.boss_direction_x *= -1  # 방향 전환
-            if self.boss_hp <= self.max_boss_hp / 2:
-                self.boss_move_phase = 3
-        elif self.boss_move_phase == 3:
-            # 좌우 및 상하 이동
-            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            self.boss_pos[1] += self.boss_speed * self.boss_direction_y
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
-                self.boss_direction_x *= -1  # 좌우 방향 전환
-            if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 120:
-                self.boss_direction_y *= -1  # 상하 방향 전환
+            # 보스의 Y 위치를 상단으로 고정
+            self.boss_pos[1] = 0
 
         # 위치 제한 적용
         limit_position()
@@ -253,7 +241,7 @@ class Stage1Boss:
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
-        player_width, player_height = 40, 40  # 플레이어 크기
+        player_width, player_height = 50, 50  # 플레이어 크기
         if px < bx < px + player_width and py < by < py + player_height:
             return True
         return False
