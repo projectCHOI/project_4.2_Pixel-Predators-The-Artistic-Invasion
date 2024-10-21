@@ -22,9 +22,9 @@ class Stage3Boss:
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage3.png", size=(240, 240))
         self.boss_attack_images = {
-            "down": load_image("boss_skilles", "boss_stage2_a.png", size=(40, 40)),
-            "up": load_image("boss_skilles", "boss_stage2_b.png", size=(40, 40)),
-            "right": load_image("boss_skilles", "boss_stage2_c.png", size=(40, 40)),
-            "left": load_image("boss_skilles", "boss_stage2_d.png", size=(40, 40))
+            "down": load_image("boss_skilles", "boss_stage3_a.png", size=(40, 40)),
+            "up": load_image("boss_skilles", "boss_stage3_b.png", size=(40, 40)),
+            "right": load_image("boss_skilles", "boss_stage3_c.png", size=(40, 40)),
+            "left": load_image("boss_skilles", "boss_stage3_d.png", size=(40, 40))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_2.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_3.png", size=(40, 40))
