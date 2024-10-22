@@ -19,7 +19,7 @@ def load_image(*path_parts, size=None):
 class Stage1Boss:
     def __init__(self):
         # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage1.png", size=(240, 240))
+        self.boss_image = load_image("bosses", "boss_stage1.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
@@ -194,7 +194,7 @@ class Stage1Boss:
 
         for attack in attacks:
             attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
                 self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
