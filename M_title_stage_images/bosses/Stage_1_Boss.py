@@ -1,7 +1,6 @@
 import pygame
 import os
 import math
-import random
 
 # BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,12 +20,7 @@ class Stage1Boss:
     def __init__(self):
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage1.png", size=(240, 240))
-        self.boss_attack_images = {
-            "down": load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40)),
-            "up": load_image("boss_skilles", "boss_stage1_b.png", size=(40, 40)),
-            "right": load_image("boss_skilles", "boss_stage1_c.png", size=(40, 40)),
-            "left": load_image("boss_skilles", "boss_stage1_d.png", size=(40, 40))
-        }
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
@@ -34,9 +28,8 @@ class Stage1Boss:
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
         self.boss_speed = 5  # 보스의 이동 속도
-        self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
+        self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
-        self.boss_direction_y = 1  # 보스의 상하 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
@@ -55,7 +48,7 @@ class Stage1Boss:
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
-            self.boss_pos = [640 - 60, 0]
+            self.boss_pos = [640 - 120, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
@@ -88,52 +81,50 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-            possible_directions = []
+            attack_angles = []
 
-            # 보스의 체력에 따른 공격 방향 설정
+            # 보스의 체력에 따른 공격 각도 설정
             if self.boss_hp > self.max_boss_hp * 0.75:
-                possible_directions = ["down"]
+                # 체력 > 75%: 아래쪽으로만 공격 (에너지 볼 1개)
+                attack_angles = [90]
             elif self.boss_hp > self.max_boss_hp * 0.5:
-                possible_directions = ["down", "up"]
+                # 체력 > 50%: 아래쪽 + 좌우 5도 공격 (에너지 볼 3개)
+                attack_angles = [85, 90, 95]
             elif self.boss_hp > self.max_boss_hp * 0.25:
-                possible_directions = ["down", "up", "right"]
+                # 체력 > 25%: 아래쪽 + 좌우 5도, 10도 공격 (에너지 볼 5개)
+                attack_angles = [80, 85, 90, 95, 100]
             else:
-                possible_directions = ["down", "up", "right", "left"]
+                # 그 이하: 기존 공격 + 좌우 15도 공격 추가 (에너지 볼 7개)
+                attack_angles = [75, 80, 85, 90, 95, 100, 105]
 
-            attack_direction = random.choice(possible_directions)
-            attack_start_pos = self.get_attack_start_pos(attack_direction)
-            self.boss_attacks.append([attack_start_pos[0], attack_start_pos[1], attack_direction])
+            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 240]  # 보스 아래 중앙 위치
 
-    def get_attack_start_pos(self, direction):
-        if direction == "down":
-            return [self.boss_pos[0] + 40, self.boss_pos[1] + 120]
-        elif direction == "up":
-            return [self.boss_pos[0] + 40, self.boss_pos[1]]
-        elif direction == "right":
-            return [self.boss_pos[0] + 120, self.boss_pos[1] + 40]
-        elif direction == "left":
-            return [self.boss_pos[0], self.boss_pos[1] + 40]
+            # 각도에 따른 에너지 볼 생성
+            for angle in attack_angles:
+                radian = math.radians(angle)
+                dx = math.cos(radian) * 10  # 속도 조절
+                dy = math.sin(radian) * 10
+                self.boss_attacks.append({
+                    'pos': [attack_start_pos[0], attack_start_pos[1]],
+                    'dir': [dx, dy],
+                    'angle': angle
+                })
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
-            if attack[2] == "down":
-                attack[1] += 10
-            elif attack[2] == "up":
-                attack[1] -= 10
-            elif attack[2] == "right":
-                attack[0] += 10
-            elif attack[2] == "left":
-                attack[0] -= 10
+            # 에너지 볼 이동
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1]
 
-            if 0 <= attack[0] <= 1280 and 0 <= attack[1] <= 720:
-                if self.check_energy_ball_collision((attack[0], attack[1]), player_pos):
+            bx, by = attack['pos']
+            if 0 <= bx <= 1280 and 0 <= by <= 720:
+                if self.check_energy_ball_collision((bx, by), player_pos):
                     player_hit = True  # 플레이어에게 맞음
                 else:
                     new_boss_attacks.append(attack)
-            else:
-                pass  # 공격이 화면 밖으로 나가면 제거
+            # 화면 밖으로 나가면 공격 제거
         self.boss_attacks = new_boss_attacks
         return player_hit
 
@@ -153,7 +144,10 @@ class Stage1Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            win.blit(self.boss_attack_images[attack[2]], (attack[0], attack[1]))
+            angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
+            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            rect = rotated_image.get_rect(center=attack['pos'])
+            win.blit(rotated_image, rect)
 
     def draw_gem(self, win):
         if self.gem_active:
@@ -200,7 +194,7 @@ class Stage1Boss:
 
         for attack in attacks:
             attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
                 self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
@@ -208,7 +202,7 @@ class Stage1Boss:
                 self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
                 if self.boss_hp <= 0:
                     self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
                     self.gem_active = True
                     self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
@@ -228,7 +222,7 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 60, 0]
+        self.boss_pos = [640 - 120, 0]
         self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
