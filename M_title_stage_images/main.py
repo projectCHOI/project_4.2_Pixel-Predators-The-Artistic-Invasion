@@ -144,9 +144,12 @@ def initialize_boss(level):
         return Stage1Boss()
     elif level == 2:
         return Stage2Boss()
-    # 추가적인 레벨에 대한 보스 클래스를 여기에 추가합니다.
+    elif level == 3:
+        return Stage3Boss()  
+    elif level == 4:
+        return Stage4Boss()
     else:
-        return None  # 해당 레벨에 보스가 없을 경우
+        return None
 
 # 처음에는 보스가 없을 수 있으므로 None으로 초기화합니다.
 boss = initialize_boss(level)
