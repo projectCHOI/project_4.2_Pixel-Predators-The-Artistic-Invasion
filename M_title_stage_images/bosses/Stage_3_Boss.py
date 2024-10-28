@@ -42,6 +42,9 @@ class Stage3Boss:
         self.gem_pos = None
         self.gem_active = False
         self.stage_cleared = False
+        self.invincible = False
+        self.invincible_duration = 500  # 무적 상태 지속 시간 (밀리초)
+        self.last_hit_time = 0
 
     def check_appear(self, seconds, current_level):
         if current_level == 3 and not self.boss_active and seconds >= 20:  # 예시: 20초 이후 등장
@@ -90,18 +93,45 @@ class Stage3Boss:
         self.boss_attacks = new_attacks
         return player_hit
 
+    def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        if self.invincible and current_time - self.last_hit_time < self.invincible_duration:
+            return
+
+        for attack in attacks:
+            attack_start, attack_end, thickness = attack
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
+                self.boss_hp -= 1  # 데미지 적용
+                self.invincible = True
+                self.last_hit_time = current_time
+                if self.boss_hp <= 0:
+                    self.boss_active = False
+                    self.gem_pos = [self.boss_pos[0] + 95, self.boss_pos[1] + 95]
+                    self.gem_active = True
+                    self.stage_cleared = True
+                break
+
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            win.blit(self.boss_attack_images["down"], (attack[0], attack[1]))  # 기본 방향으로 공격 이미지 설정
+            win.blit(self.boss_attack_images["down"], (attack[0], attack[1]))
 
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
         player_width, player_height = 50, 50
         return px < bx < px + player_width and py < by < py + player_height
+
+    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
+        ex, ey = boss_pos
+        sx, sy = attack_start
+        ex2, ey2 = ex + boss_size, ey + boss_size
+
+        rect = pygame.Rect(ex, ey, boss_size, boss_size)
+        line = (sx, sy), attack_end
+        return rect.clipline(line)
 
     def reset(self):
         self.boss_active = False
@@ -111,3 +141,4 @@ class Stage3Boss:
         self.boss_attacks = []
         self.gem_active = False
         self.stage_cleared = False
+        self.invincible = False
