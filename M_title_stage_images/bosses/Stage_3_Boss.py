@@ -130,6 +130,31 @@ class Stage3Boss:
         for attack in self.boss_attacks:
             win.blit(self.boss_attack_images["down"], (attack[0], attack[1]))
 
+    def draw_health_bar(self, win, font):
+        if self.boss_active and self.boss_hp > 0:
+            boss_text = font.render("BOSS", True, (255, 255, 255))
+            text_x = 10
+            text_y = 680
+            win.blit(boss_text, (text_x, text_y))
+
+            health_bar_x = text_x + boss_text.get_width() + 10
+            health_bar_y = 680
+            health_bar_width = 200
+            health_bar_height = 30
+            health_ratio = self.boss_hp / self.max_boss_hp
+            current_health_width = int(health_bar_width * health_ratio)
+
+            pygame.draw.rect(win, (50, 50, 50), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
+            pygame.draw.rect(win, (210, 20, 4), (health_bar_x, health_bar_y, current_health_width, health_bar_height))
+            pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
+        elif self.boss_hp <= 0 and self.stage_cleared:
+            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
+            win.blit(defeated_text, (10, 680))
+
+    def draw_gem(self, win):
+        if self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
+
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
