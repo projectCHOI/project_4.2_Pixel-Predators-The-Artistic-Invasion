@@ -141,7 +141,7 @@ invincible_duration = 3000  # 무적 시간 (밀리초)
 # 보스 초기화 함수 정의
 def initialize_boss(level):
     if level == 1:
-        return Stage1Boss()a
+        return Stage1Boss()
     elif level == 2:
         return Stage2Boss()
     elif level == 3:
@@ -150,7 +150,7 @@ def initialize_boss(level):
         return Stage4Boss()
     else:
         return None
-aaa
+
 # 처음에는 보스가 없을 수 있으므로 None으로 초기화합니다.
 boss = initialize_boss(level)
 

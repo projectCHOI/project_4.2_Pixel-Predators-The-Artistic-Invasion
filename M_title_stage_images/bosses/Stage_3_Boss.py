@@ -111,6 +111,18 @@ class Stage3Boss:
                     self.stage_cleared = True
                 break
 
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
+            px, py = player_pos
+            gx, gy = self.gem_pos
+            player_width, player_height = 50, 50  # Adjusted player size
+            gem_size = 40  # Gem size
+            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+                self.gem_active = False
+                self.stage_cleared = True  # Mark the stage as cleared
+                return True
+        return False
+
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
 
