@@ -28,6 +28,7 @@ class Stage3Boss:
             "left": load_image("boss_skilles", "boss_stage3_d.png", size=(40, 40))
         }
         self.gem_image = load_image("items", "mob_Jewelry_3.png", size=(40, 40))
+        
         # 보스 속성 초기화
         self.max_boss_hp = 20
         self.boss_hp = self.max_boss_hp
@@ -41,15 +42,19 @@ class Stage3Boss:
         self.attack_interval = 1000  # 방향 전환 시마다 공격
         self.gem_pos = None
         self.gem_active = False
+        self.boss_defeated = False  # 보스 패배 상태
+        self.boss_appeared = False  # 보스가 이미 등장했는지 여부
         self.stage_cleared = False
         self.invincible = False
         self.invincible_duration = 500  # 무적 상태 지속 시간 (밀리초)
         self.last_hit_time = 0
 
     def check_appear(self, seconds, current_level):
-        if current_level == 3 and not self.boss_active and seconds >= 10:  # 예시: 20초 이후 등장
+        if current_level == 3 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 120, 0]
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
 
     def move(self):
         # 화면에서 바운스하는 대각선 이동
@@ -72,12 +77,12 @@ class Stage3Boss:
             # 플레이어를 향해 발사할 단일 타겟 샷 수 결정
             num_shots = 1 + (self.max_boss_hp - self.boss_hp) // 5  # 체력 감소 시 공격 횟수 증가
             for _ in range(num_shots):
-                target_x, target_y = random.randint(100, 1180), random.randint(100, 620)  # 플레이어의 예측 위치 설정
+                target_x, target_y = random.randint(100, 1180), random.randint(100, 620)
                 dx, dy = target_x - self.boss_pos[0], target_y - self.boss_pos[1]
                 length = math.hypot(dx, dy)
                 if length > 0:
                     direction = (dx / length, dy / length)
-                    self.boss_attacks.append([self.boss_pos[0] + 120, self.boss_pos[1] + 120, direction])
+                    self.boss_attacks.append([self.boss_pos[0] + 60, self.boss_pos[1] + 60, direction])
 
     def update_attacks(self, player_pos):
         new_attacks = []
@@ -94,32 +99,48 @@ class Stage3Boss:
         return player_hit
 
     def check_hit(self, attacks):
+        # 무적 상태일 때는 공격을 무시
         current_time = pygame.time.get_ticks()
-        if self.invincible and current_time - self.last_hit_time < self.invincible_duration:
+        if self.invincible and (current_time - self.last_hit_time) < self.invincible_duration:
             return
 
         for attack in attacks:
             attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
-                self.boss_hp -= 1  # 데미지 적용
+            if self.check_attack_collision(attack_start, attack_end):
+                self.boss_hp -= 1
                 self.invincible = True
                 self.last_hit_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 95, self.boss_pos[1] + 95]
+                    self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
                     self.gem_active = True
-                    self.stage_cleared = True
+                    self.boss_defeated = True
                 break
+
+    def check_attack_collision(self, attack_start, attack_end):
+        # 사각형 충돌을 통해 보스와 공격의 충돌 여부 체크
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 120, 120)
+        attack_line = (attack_start, attack_end)
+        return boss_rect.clipline(attack_line)
+
+    def check_energy_ball_collision(self, ball_pos, player_pos):
+        bx, by = ball_pos
+        ball_rect = pygame.Rect(bx, by, 10, 10)  # 에너지 볼의 크기를 가정하여 설정 (10x10 예시)
+        px, py = player_pos
+        player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
+
+        return player_rect.colliderect(ball_rect)
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
             px, py = player_pos
+            player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
             gx, gy = self.gem_pos
-            player_width, player_height = 50, 50  # Adjusted player size
-            gem_size = 40  # Gem size
-            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+            gem_rect = pygame.Rect(gx, gy, 40, 40)  # 보석 크기 (40x40)
+
+            if player_rect.colliderect(gem_rect):
                 self.gem_active = False
-                self.stage_cleared = True  # Mark the stage as cleared
+                self.stage_cleared = True
                 return True
         return False
 
@@ -155,27 +176,12 @@ class Stage3Boss:
         if self.gem_active:
             win.blit(self.gem_image, self.gem_pos)
 
-    def check_energy_ball_collision(self, ball_pos, player_pos):
-        bx, by = ball_pos
-        px, py = player_pos
-        player_width, player_height = 50, 50
-        return px < bx < px + player_width and py < by < py + player_height
-
-    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
-        ex, ey = boss_pos
-        sx, sy = attack_start
-        ex2, ey2 = ex + boss_size, ey + boss_size
-
-        rect = pygame.Rect(ex, ey, boss_size, boss_size)
-        line = (sx, sy), attack_end
-        return rect.clipline(line)
-
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 120, 0]
-        self.boss_direction = [1, 1]
-        self.boss_attacks = []
+        self.boss_defeated = False
+        self.boss_appeared = False
         self.gem_active = False
+        self.gem_pos = None
         self.stage_cleared = False
-        self.invincible = False
