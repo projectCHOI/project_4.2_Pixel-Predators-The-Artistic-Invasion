@@ -20,7 +20,7 @@ def load_image(*path_parts, size=None):
 class Stage3Boss:
     def __init__(self):
         # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage3.png", size=(240, 240))
+        self.boss_image = load_image("bosses", "boss_stage3.png", size=(120, 120))
         self.boss_attack_images = {
             "down": load_image("boss_skilles", "boss_stage3_a.png", size=(40, 40)),
             "up": load_image("boss_skilles", "boss_stage3_b.png", size=(40, 40)),
@@ -32,7 +32,7 @@ class Stage3Boss:
         self.max_boss_hp = 20
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
-        self.boss_speed = 7
+        self.boss_speed = 5
         self.boss_pos = [640 - 120, 0]
         self.boss_direction = [1, 1]  # 대각선 이동
         self.boss_active = False
@@ -47,7 +47,7 @@ class Stage3Boss:
         self.last_hit_time = 0
 
     def check_appear(self, seconds, current_level):
-        if current_level == 3 and not self.boss_active and seconds >= 20:  # 예시: 20초 이후 등장
+        if current_level == 3 and not self.boss_active and seconds >= 10:  # 예시: 20초 이후 등장
             self.boss_active = True
             self.boss_pos = [640 - 120, 0]
 
