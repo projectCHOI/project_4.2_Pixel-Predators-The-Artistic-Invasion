@@ -58,7 +58,20 @@ class Stage4Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
-    def move(self):
+    def move(self, player_pos):
+        # 플레이어와 보스 사이의 각도를 계산
+        px, py = player_pos
+        bx, by = self.boss_pos
+        angle_to_player = math.atan2(py - by, px - bx)
+
+        # 나선형 이동 패턴
+        spiral_speed = 2  # 나선형 이동 속도
+        self.boss_pos[0] += self.boss_speed * math.cos(angle_to_player + spiral_speed)
+        self.boss_pos[1] += self.boss_speed * math.sin(angle_to_player + spiral_speed)
+
+        # 불규칙한 방향 변화
+        if random.random() < 0.05:  # 5% 확률로 방향 전환
+            self.boss_speed *= -1
 
     def attack(self):
         
