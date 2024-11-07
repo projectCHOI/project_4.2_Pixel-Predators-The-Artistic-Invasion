@@ -74,6 +74,26 @@ class Stage4Boss:
             self.boss_speed *= -1
 
     def attack(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.boss_last_attack_time >= self.boss_attack_cooldown:
+            # 보스의 총알을 나선형으로 발사
+            bullets = 10  # 총알 개수
+            angle_offset = 0
+            angle_increase = 360 / bullets
+
+            for i in range(bullets):
+                angle = math.radians(angle_offset + i * angle_increase)
+                dx = math.cos(angle) * 5
+                dy = math.sin(angle) * 5
+                self.boss_attacks.append({
+                    'pos': self.boss_pos[:],
+                    'dir': [dx, dy],
+                    'angle': angle_offset + i * angle_increase
+                })
+
+            # 체력이 줄어들수록 더 자주 발사
+            self.boss_attack_cooldown = max(200, 1000 - (self.max_boss_hp - self.boss_hp) * 80)
+            self.boss_last_attack_time = current_time
         
 
     def update_attacks(self, player_pos):
