@@ -21,12 +21,7 @@ class Stage3Boss:
     def __init__(self):
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage3.png", size=(120, 120))
-        self.boss_attack_images = {
-            "down": load_image("boss_skilles", "boss_stage3_a.png", size=(40, 40)),
-            "up": load_image("boss_skilles", "boss_stage3_b.png", size=(40, 40)),
-            "right": load_image("boss_skilles", "boss_stage3_c.png", size=(40, 40)),
-            "left": load_image("boss_skilles", "boss_stage3_d.png", size=(40, 40))
-        }
+        self.boss_attack_images = load_image("boss_skilles", "boss_stage3_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_3.png", size=(40, 40))
         
         # 보스 속성 초기화
@@ -149,7 +144,7 @@ class Stage3Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            win.blit(self.boss_attack_images["down"], (attack[0], attack[1]))
+            win.blit(self.boss_attack_images, (attack[0], attack[1]))
 
     def draw_health_bar(self, win, font):
         if self.boss_active and self.boss_hp > 0:
