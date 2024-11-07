@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random
 
 # BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
