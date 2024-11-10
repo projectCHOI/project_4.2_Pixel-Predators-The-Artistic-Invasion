@@ -203,17 +203,7 @@ def get_stage_duration(level):
     reduction = (level - 1) * 5  # 레벨당 5초 감소
     return max(300, base_duration - reduction)  # 최소 300초
 
-# [기본코드]적과 플레이어의 충돌 체크 함수
-# def check_collision(player_pos, enemies):
-#     for enemy in enemies:
-#         enemy_pos, enemy_size, enemy_type = enemy[:3]
-#         if (player_pos[0] < enemy_pos[0] + enemy_size and player_pos[0] + player_width > enemy_pos[0] and
-#             player_pos[1] < enemy_pos[1] + enemy_size and player_pos[1] + player_height > enemy_pos[1]):
-#             if enemy_type == "bomb":
-#                 return "bomb"  # bomb 충돌 시
-#             return True
-#     return False
-# [임시코드]충돌 체크 함수 수정
+# 적과 플레이어의 충돌 체크 함수
 def check_collision(player_pos, enemies):
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type = enemy[:3]
@@ -675,29 +665,29 @@ while run:
             collision = check_collision(player_pos, enemies)
             if collision:
                 if collision == "bomb":  # bomb 충돌 시 즉시 사망
-# [기본코드]                    current_health = 0
+                    current_health = 0
                     collision_image = collision_images[1]["image"]
                     collision_effect_duration = collision_images[1]["duration"]
-# [기본코드]                    game_active = False
-# [기본코드]                    game_over = True
-# [기본코드]                    game_over_reason = "game_over"
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
                 else:
-# [기본코드]                    current_health -= 1
+                    current_health -= 1
                     invincible = True
                     invincible_start_time = pygame.time.get_ticks()
-# [기본코드]                    collision_effect_start_time = pygame.time.get_ticks()
-# [기본코드]                    if current_health <= 0:
-# [기본코드]                        collision_image = collision_images[1]["image"]
-# [기본코드]                        collision_effect_duration = collision_images[1]["duration"]
-# [기본코드]                        game_active = False
-# [기본코드]                        game_over = True
-# [기본코드]                        game_over_reason = "game_over"
-# [기본코드]                    elif current_health == 2:
-# [기본코드]                        collision_image = collision_images[3]["image"]
-# [기본코드]                        collision_effect_duration = collision_images[3]["duration"]
-# [기본코드]                    elif current_health == 1:
-# [기본코드]                        collision_image = collision_images[2]["image"]
-# [기본코드]                        collision_effect_duration = collision_images[2]["duration"]
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    if current_health <= 0:
+                        collision_image = collision_images[1]["image"]
+                        collision_effect_duration = collision_images[1]["duration"]
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                    elif current_health == 2:
+                        collision_image = collision_images[3]["image"]
+                        collision_effect_duration = collision_images[3]["duration"]
+                    elif current_health == 1:
+                        collision_image = collision_images[2]["image"]
+                        collision_effect_duration = collision_images[2]["duration"]
 
         # 무적 시간 처리
         if invincible and pygame.time.get_ticks() - invincible_start_time > invincible_duration:
