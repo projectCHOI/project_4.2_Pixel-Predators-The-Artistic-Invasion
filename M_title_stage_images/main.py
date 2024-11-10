@@ -58,8 +58,8 @@ collision_images = {
 # Health 설정
 health_image = load_image("player", "mob_Life.png", size=image_size)
 #HP 임시수정
-max_health = 5
-current_health = 3
+max_health = 10
+current_health = 10
 
 # 스피드 아이템 설정
 speed_item_image = load_image("items", "mob_item_Slowly_2.PNG", size=image_size)
@@ -562,7 +562,7 @@ while run:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
-
+                        
             # 보스가 공격받았는지 체크
             boss.check_hit(attacks)
 
@@ -678,7 +678,8 @@ while run:
                     game_over = True
                     game_over_reason = "game_over"
                 else:
-                    current_health -= 1
+#                    current_health -= 1
+                    current_health -= 0                    
                     invincible = True
                     invincible_start_time = pygame.time.get_ticks()
                     collision_effect_start_time = pygame.time.get_ticks()

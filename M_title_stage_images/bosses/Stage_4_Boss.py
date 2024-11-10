@@ -20,6 +20,7 @@ def load_image(*path_parts, size=None):
 class Stage4Boss:
     def __init__(self):
         # 이미지 로드
+        self.screen_center = [640, 360]
         self.boss_image = load_image("bosses", "boss_stage4.png", size=(240, 240))
         self.boss_attack_images = {
             "down": load_image("boss_skilles", "boss_stage4_a.png", size=(40, 40)),
@@ -53,22 +54,20 @@ class Stage4Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 4 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 120, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
-    def move(self, player_pos):
-        # 플레이어와 보스 사이의 각도를 계산
-        px, py = player_pos
-        bx, by = self.boss_pos
-        angle_to_player = math.atan2(py - by, px - bx)
+    def move(self):
+        # 화면 중심에서 보스까지의 각도를 계산
+        angle_to_center = math.atan2(self.screen_center[1] - self.boss_pos[1], self.screen_center[0] - self.boss_pos[0])
+        spiral_radius = 50  # 나선의 초기 반경
 
-        # 나선형 이동 패턴
-        spiral_speed = 2  # 나선형 이동 속도
-        self.boss_pos[0] += self.boss_speed * math.cos(angle_to_player + spiral_speed)
-        self.boss_pos[1] += self.boss_speed * math.sin(angle_to_player + spiral_speed)
+        # 각도에 따라 나선형으로 이동
+        self.boss_pos[0] += self.boss_speed * math.cos(angle_to_center) + spiral_radius * math.cos(angle_to_center)
+        self.boss_pos[1] += self.boss_speed * math.sin(angle_to_center) + spiral_radius * math.sin(angle_to_center)
 
         # 불규칙한 방향 변화
         if random.random() < 0.05:  # 5% 확률로 방향 전환
@@ -132,7 +131,8 @@ class Stage4Boss:
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
-            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            direction = 'down'  # 기본 방향을 'down'으로 설정하거나 다른 조건에 따라 변경 가능
+            rotated_image = pygame.transform.rotate(self.boss_attack_images[direction], angle)
             rect = rotated_image.get_rect(center=attack['pos'])
             win.blit(rotated_image, rect)
 
