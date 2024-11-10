@@ -21,7 +21,7 @@ class Stage4Boss:
     def __init__(self):
         # 이미지 로드
         self.screen_center = [640, 360]
-        self.boss_image = load_image("bosses", "boss_stage4.png", size=(240, 240))
+        self.boss_image = load_image("bosses", "boss_stage4.png", size=(120, 120))
         self.boss_attack_images = {
             "down": load_image("boss_skilles", "boss_stage4_a.png", size=(40, 40)),
             "up": load_image("boss_skilles", "boss_stage4_b.png", size=(40, 40)),
@@ -35,7 +35,7 @@ class Stage4Boss:
         self.max_boss_hp = 10  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 5  # 보스의 이동 속도
+        self.boss_speed = 3  # 보스의 이동 속도
         self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_active = False  # 보스 활성화 상태
