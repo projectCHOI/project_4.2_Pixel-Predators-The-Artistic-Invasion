@@ -468,7 +468,10 @@ while run:
                         start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록 (게임 오버 시에만 초기화)
                     start_ticks = pygame.time.get_ticks()  # 게임 시작 시간 기록 (항상 초기화)
                     game_active = True  # 게임 시작
-                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]  # 플레이어 위치 초기화
+                    
+                    # 플레이어 위치 초기화 - 화면 중앙에 배치
+                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
+                    
                     enemies = []
                     stage_start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 기록
                     intro_screen(level)  # 스테이지 인트로 화면 표시
@@ -476,10 +479,12 @@ while run:
                     # 공격 및 에너지 볼 리스트 초기화
                     attacks = []
                     energy_balls = []
+                    
                     # 보스 초기화
                     boss = initialize_boss(level)
                     if boss:
                         boss.reset()
+                    
                     # 스테이지 시간 설정
                     stage_duration = get_stage_duration(level)
     else:
@@ -565,6 +570,7 @@ while run:
             if boss.gem_active:
                 if boss.check_gem_collision(player_pos):
                     level += 1  # 다음 스테이지로 이동
+                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                     boss = initialize_boss(level)  # 다음 레벨에 맞는 보스 초기화
                     if boss:
                         boss.reset()
