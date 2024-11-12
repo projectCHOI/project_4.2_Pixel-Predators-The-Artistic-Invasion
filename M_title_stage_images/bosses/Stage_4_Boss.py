@@ -52,6 +52,10 @@ class Stage4Boss:
         self.gem_active = False  # 보석 활성화 상태
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
+        
+        # 회전 각도 및 반지름 설정
+        self.angle = 0  # 초기 각도
+        self.radius = 100  # 초기 반지름 (최소값)
 
     def check_appear(self, seconds, current_level):
         if current_level == 4 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
@@ -60,41 +64,35 @@ class Stage4Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
-        def move(self):
-        # 원형 회전을 위한 각도 초기화
-            if not hasattr(self, 'angle'):
-                self.angle = 0  # 초기 각도
-                self.radius = 100  # 초기 반지름 설정 (최소값)
+    def move(self):
+        # 원형 경로를 따라 회전하기 위한 각도 증가
+        self.angle += 0.05  # 회전 속도 조절
 
-            # 원활한 원형 움직임을 위해 각도를 업데이트
-                self.angle += 0.05  # 회전 속도를 조정 (값을 작게 변경 가능)
+        # 반지름을 100~300 사이에서 오가도록 조정
+        self.radius += 0.5 if self.radius < 300 else -0.5
+        if self.radius < 100:
+            self.radius = 100  # 반지름이 100 이하로 내려가지 않도록 제한
 
-            # 반지름을 점차적으로 100~300 사이에서 변화
-                self.radius += 0.5 if self.radius < 300 else -0.5  # 반지름이 100~300 사이에서 오가도록
-            if self.radius < 100:
-                self.radius = 100  # 반지름이 100 이하로 내려가지 않도록 제한
+        # 각도와 반지름을 이용해 새로운 위치 계산
+        self.boss_pos[0] = self.screen_center[0] + self.radius * math.cos(self.angle)
+        self.boss_pos[1] = self.screen_center[1] + self.radius * math.sin(self.angle)
 
-            # 현재 각도와 반지름을 기반으로 새로운 위치 계산
-                self.boss_pos[0] = self.screen_center[0] + self.radius * math.cos(self.angle)
-                self.boss_pos[1] = self.screen_center[1] + self.radius * math.sin(self.angle)
-
-            # 랜덤하게 방향을 전환하여 예측 불가한 움직임을 추가
-            if random.random() < 0.05:
-                self.angle += math.pi  # 방향 반전
-
+        # 랜덤하게 방향을 바꾸어 움직임에 변화를 줌
+        if random.random() < 0.05:
+            self.angle += math.pi  # 방향 반전
 
     def attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time >= self.boss_attack_cooldown:
             # 보스의 총알을 나선형으로 발사
-            bullets = 10  # 총알 개수
+            bullets = 5  # 총알 개수
             angle_offset = 0
             angle_increase = 360 / bullets
 
             for i in range(bullets):
                 angle = math.radians(angle_offset + i * angle_increase)
-                dx = math.cos(angle) * 5
-                dy = math.sin(angle) * 5
+                dx = math.cos(angle) * 3 # 총알 속도(기본은 5)
+                dy = math.sin(angle) * 3 # 총알 속도(낮으면 느려짐)
                 self.boss_attacks.append({
                     'pos': self.boss_pos[:],
                     'dir': [dx, dy],
@@ -102,7 +100,8 @@ class Stage4Boss:
                 })
 
             # 체력이 줄어들수록 더 자주 발사
-            self.boss_attack_cooldown = max(200, 1000 - (self.max_boss_hp - self.boss_hp) * 80)
+            # 주요한 코드. 각 세부 기능을 확인하고 수정할 것.
+            self.boss_attack_cooldown = max(200, 3000 - (self.max_boss_hp - self.boss_hp) * 80)
             self.boss_last_attack_time = current_time
         
 
