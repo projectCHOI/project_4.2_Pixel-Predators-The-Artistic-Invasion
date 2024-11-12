@@ -60,18 +60,28 @@ class Stage4Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
-    def move(self):
-        # 화면 중심에서 보스까지의 각도를 계산
-        angle_to_center = math.atan2(self.screen_center[1] - self.boss_pos[1], self.screen_center[0] - self.boss_pos[0])
-        spiral_radius = 50  # 나선의 초기 반경
+        def move(self):
+        # 원형 회전을 위한 각도 초기화
+            if not hasattr(self, 'angle'):
+                self.angle = 0  # 초기 각도
+                self.radius = 100  # 초기 반지름 설정 (최소값)
 
-        # 각도에 따라 나선형으로 이동
-        self.boss_pos[0] += self.boss_speed * math.cos(angle_to_center) + spiral_radius * math.cos(angle_to_center)
-        self.boss_pos[1] += self.boss_speed * math.sin(angle_to_center) + spiral_radius * math.sin(angle_to_center)
+            # 원활한 원형 움직임을 위해 각도를 업데이트
+                self.angle += 0.05  # 회전 속도를 조정 (값을 작게 변경 가능)
 
-        # 불규칙한 방향 변화
-        if random.random() < 0.05:  # 5% 확률로 방향 전환
-            self.boss_speed *= -1
+            # 반지름을 점차적으로 100~300 사이에서 변화
+                self.radius += 0.5 if self.radius < 300 else -0.5  # 반지름이 100~300 사이에서 오가도록
+            if self.radius < 100:
+                self.radius = 100  # 반지름이 100 이하로 내려가지 않도록 제한
+
+            # 현재 각도와 반지름을 기반으로 새로운 위치 계산
+                self.boss_pos[0] = self.screen_center[0] + self.radius * math.cos(self.angle)
+                self.boss_pos[1] = self.screen_center[1] + self.radius * math.sin(self.angle)
+
+            # 랜덤하게 방향을 전환하여 예측 불가한 움직임을 추가
+            if random.random() < 0.05:
+                self.angle += math.pi  # 방향 반전
+
 
     def attack(self):
         current_time = pygame.time.get_ticks()
