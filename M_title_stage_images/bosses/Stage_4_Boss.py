@@ -66,19 +66,27 @@ class Stage4Boss:
 
     def move(self):
         # 원형 경로를 따라 회전하기 위한 각도 증가
-        self.angle += 0.05  # 회전 속도 조절
+        self.angle += 0.03  # 회전 속도 조절 (0.05 → 0.03)
 
         # 반지름을 100~300 사이에서 오가도록 조정
-        self.radius += 0.5 if self.radius < 300 else -0.5
-        if self.radius < 100:
-            self.radius = 100  # 반지름이 100 이하로 내려가지 않도록 제한
+        if self.radius < 300 and not hasattr(self, "increasing_radius"):
+            self.radius += 0.3  # 반지름 증가 속도 (0.5 → 0.3)
+        else:
+            self.radius -= 0.3  # 반지름 감소 속도
+            if self.radius <= 100:
+                self.radius = 100  # 반지름이 100 이하로 내려가지 않도록 제한
+                delattr(self, "increasing_radius")  # 반지름 증가로 전환
 
         # 각도와 반지름을 이용해 새로운 위치 계산
-        self.boss_pos[0] = self.screen_center[0] + self.radius * math.cos(self.angle)
-        self.boss_pos[1] = self.screen_center[1] + self.radius * math.sin(self.angle)
+        new_x = self.screen_center[0] + self.radius * math.cos(self.angle)
+        new_y = self.screen_center[1] + self.radius * math.sin(self.angle)
 
-        # 랜덤하게 방향을 바꾸어 움직임에 변화를 줌
-        if random.random() < 0.05:
+        # 보스의 새 위치를 화면 경계 내로 제한
+        self.boss_pos[0] = max(0, min(new_x, 1280 - 120))  # 화면 좌우 경계
+        self.boss_pos[1] = max(0, min(new_y, 720 - 120))   # 화면 상하 경계
+
+        # 랜덤하게 방향을 바꾸는 조건 완화
+        if random.random() < 0.01:  # 1% 확률로 방향 반전 (0.05 → 0.01)
             self.angle += math.pi  # 방향 반전
 
     def attack(self):
