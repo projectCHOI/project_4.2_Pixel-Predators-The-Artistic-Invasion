@@ -20,10 +20,10 @@ def load_image(*path_parts, size=None):
 class Stage5Boss:
     def __init__(self):
         # 이미지 로드 (총 3개 필요: 보스 이미지, 공격 이미지, 경고 이미지)
-        self.boss_image = None  # 보스 이미지
-        self.boss_attack_image = None  # 보스 공격 이미지
-        self.teleport_warning_image = None  # 텔레포트 경고 이미지
-        
+        self.boss_image = load_image("bosses", "boss_stage5.png", size=(120, 120))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
+        self.teleport_warning_image = load_image("effects", "teleport_warning.png", size=(60, 60))
+
         # 보스 속성 초기화
         self.max_boss_hp = 15
         self.boss_hp = self.max_boss_hp
@@ -43,6 +43,9 @@ class Stage5Boss:
         self.invincible = False
         self.invincible_duration = 500
         self.last_hit_time = 0
+        self.boss_hit = False
+        self.boss_hit_start_time = 0
+        self.boss_hit_duration = 100
 
     def check_appear(self, seconds, current_level):
         if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
@@ -53,11 +56,21 @@ class Stage5Boss:
     def move(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_teleport_time > self.teleport_interval:
+            # 텔레포트 경고 표시 (예: 500ms 동안)
+            self.show_teleport_warning(current_time)
+
             # 랜덤한 위치로 텔레포트
             self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
             self.last_teleport_time = current_time
             # 텔레포트 후 공격
             self.attack()
+
+    def show_teleport_warning(self, current_time):
+        # 텔레포트 전에 경고 이미지를 보여주는 로직 (예시)
+        warning_time = 500  # 500ms 동안 경고
+        if current_time - self.last_teleport_time < warning_time:
+            warning_pos = [self.boss_pos[0] + 30, self.boss_pos[1] + 30]  # 보스 위치에 경고 이미지 표시
+            # win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시할 때 사용
 
     def attack(self):
         current_time = pygame.time.get_ticks()
@@ -70,26 +83,27 @@ class Stage5Boss:
                 dx = math.cos(radian) * 5
                 dy = math.sin(radian) * 5
                 self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle])
-        def draw(self, win):
-            if self.boss_hp > 0:
-                current_time = pygame.time.get_ticks()
-                if self.boss_hit:
-                    if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
-                        self.boss_hit = False  # 무적 상태 및 깜박임 종료
-                        win.blit(self.boss_image, self.boss_pos)
-                    else:
-                        # 깜박임 효과
-                        if (current_time // self.boss_hit_duration) % 2 == 0:
-                            win.blit(self.boss_image, self.boss_pos)
-                else:
-                    win.blit(self.boss_image, self.boss_pos)
 
-        def draw_attacks(self, win):
-            for attack in self.boss_attacks:
-                angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
-                rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
-                rect = rotated_image.get_rect(center=attack['pos'])
-                win.blit(rotated_image, rect)
+    def draw(self, win):
+        if self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
+            if self.boss_hit:
+                if current_time - self.boss_hit_start_time >= self.invincible_duration:
+                    self.boss_hit = False  # 무적 상태 및 깜박임 종료
+                    win.blit(self.boss_image, self.boss_pos)
+                else:
+                    # 깜박임 효과
+                    if (current_time // self.boss_hit_duration) % 2 == 0:
+                        win.blit(self.boss_image, self.boss_pos)
+            else:
+                win.blit(self.boss_image, self.boss_pos)
+
+    def draw_attacks(self, win):
+        for attack in self.boss_attacks:
+            angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
+            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            rect = rotated_image.get_rect(center=attack[0])
+            win.blit(rotated_image, rect)
 
         def draw_gem(self, win):
             if self.gem_active:
