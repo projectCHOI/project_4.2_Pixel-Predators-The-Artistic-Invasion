@@ -37,9 +37,12 @@ class Stage3Boss:
         self.attack_interval = 1000  # 방향 전환 시마다 공격
         self.gem_pos = None
         self.gem_active = False
-        self.boss_defeated = False  # 보스 패배 상태
-        self.boss_appeared = False  # 보스가 이미 등장했는지 여부
+        self.boss_defeated = False
+        self.boss_appeared = False
         self.stage_cleared = False
+        
+        # 점멸 효과 및 무적 상태
+        self.boss_hit = False
         self.invincible = False
         self.invincible_duration = 500  # 무적 상태 지속 시간 (밀리초)
         self.last_hit_time = 0
@@ -104,6 +107,7 @@ class Stage3Boss:
             if self.check_attack_collision(attack_start, attack_end):
                 self.boss_hp -= 1
                 self.invincible = True
+                self.boss_hit = True  # 점멸 상태 활성화
                 self.last_hit_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
@@ -112,35 +116,19 @@ class Stage3Boss:
                     self.boss_defeated = True
                 break
 
-    def check_attack_collision(self, attack_start, attack_end):
-        # 사각형 충돌을 통해 보스와 공격의 충돌 여부 체크
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 120, 120)
-        attack_line = (attack_start, attack_end)
-        return boss_rect.clipline(attack_line)
-
-    def check_energy_ball_collision(self, ball_pos, player_pos):
-        bx, by = ball_pos
-        ball_rect = pygame.Rect(bx, by, 10, 10)  # 에너지 볼의 크기를 가정하여 설정 (10x10 예시)
-        px, py = player_pos
-        player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
-
-        return player_rect.colliderect(ball_rect)
-
-    def check_gem_collision(self, player_pos):
-        if self.gem_active:
-            px, py = player_pos
-            player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
-            gx, gy = self.gem_pos
-            gem_rect = pygame.Rect(gx, gy, 40, 40)  # 보석 크기 (40x40)
-
-            if player_rect.colliderect(gem_rect):
-                self.gem_active = False
-                self.stage_cleared = True
-                return True
-        return False
-
     def draw(self, win):
-        win.blit(self.boss_image, self.boss_pos)
+        if self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
+            if self.boss_hit:
+                if current_time - self.last_hit_time >= self.invincible_duration:
+                    self.boss_hit = False  # 무적 상태 및 깜박임 종료
+                    win.blit(self.boss_image, self.boss_pos)
+                else:
+                    # 깜박임 효과
+                    if (current_time // 100) % 2 == 0:  # 100ms 간격으로 깜박임
+                        win.blit(self.boss_image, self.boss_pos)
+            else:
+                win.blit(self.boss_image, self.boss_pos)
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
@@ -180,3 +168,30 @@ class Stage3Boss:
         self.gem_active = False
         self.gem_pos = None
         self.stage_cleared = False
+
+    def check_attack_collision(self, attack_start, attack_end):
+        # 사각형 충돌을 통해 보스와 공격의 충돌 여부 체크
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 120, 120)
+        attack_line = (attack_start, attack_end)
+        return boss_rect.clipline(attack_line)
+
+    def check_energy_ball_collision(self, ball_pos, player_pos):
+        bx, by = ball_pos
+        ball_rect = pygame.Rect(bx, by, 10, 10)  # 에너지 볼의 크기를 가정하여 설정 (10x10 예시)
+        px, py = player_pos
+        player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
+
+        return player_rect.colliderect(ball_rect)
+
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
+            px, py = player_pos
+            player_rect = pygame.Rect(px, py, 50, 50)  # 플레이어 크기 (50x50)
+            gx, gy = self.gem_pos
+            gem_rect = pygame.Rect(gx, gy, 40, 40)  # 보석 크기 (40x40)
+
+            if player_rect.colliderect(gem_rect):
+                self.gem_active = False
+                self.stage_cleared = True
+                return True
+        return False
