@@ -19,10 +19,15 @@ def load_image(*path_parts, size=None):
 
 class Stage5Boss:
     def __init__(self):
-        # 이미지 로드 (총 3개 필요: 보스 이미지, 공격 이미지, 경고 이미지)
+        # 이미지 로드 (총 4개 필요: 보스 이미지, 공격 이미지 3개, 경고 이미지)
         self.boss_image = load_image("bosses", "boss_stage5.png", size=(120, 120))
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
-        self.teleport_warning_image = load_image("effects", "teleport_warning.png", size=(60, 60))
+        self.boss_attack_images = {
+            "high": load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40)),
+            "medium": load_image("boss_skilles", "boss_stage5_b.png", size=(40, 40)),
+            "low": load_image("boss_skilles", "boss_stage5_c.png", size=(40, 40))
+        }
+        self.teleport_warning_image = load_image("stages", "Stage18_mist.png", size=(60, 60))
+        self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.max_boss_hp = 15
@@ -53,11 +58,11 @@ class Stage5Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
-    def move(self, win):
+    def move(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_teleport_time > self.teleport_interval:
-            # 텔레포트 경고 표시
-            self.show_teleport_warning(win, current_time)
+            # 텔레포트 경고 표시 (예: 500ms 동안)
+            self.show_teleport_warning(current_time)
 
             # 랜덤한 위치로 텔레포트
             self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
@@ -65,12 +70,12 @@ class Stage5Boss:
             # 텔레포트 후 공격
             self.attack()
 
-    def show_teleport_warning(self, win, current_time):
-        # 텔레포트 전에 경고 이미지를 보여주는 로직 (500ms 동안)
+    def show_teleport_warning(self, current_time):
+        # 텔레포트 전에 경고 이미지를 보여주는 로직 (예시)
         warning_time = 500  # 500ms 동안 경고
         if current_time - self.last_teleport_time < warning_time:
             warning_pos = [self.boss_pos[0] + 30, self.boss_pos[1] + 30]  # 보스 위치에 경고 이미지 표시
-            win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시
+            # win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시할 때 사용
 
     def attack(self):
         current_time = pygame.time.get_ticks()
@@ -82,7 +87,17 @@ class Stage5Boss:
                 radian = math.radians(angle)
                 dx = math.cos(radian) * 5
                 dy = math.sin(radian) * 5
-                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle])
+                attack_type = self.get_attack_type()
+                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
+
+    def get_attack_type(self):
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "high"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "low"
 
     def draw(self, win):
         if self.boss_hp > 0:
@@ -101,7 +116,8 @@ class Stage5Boss:
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
-            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            attack_type = attack[3]
+            rotated_image = pygame.transform.rotate(self.boss_attack_images[attack_type], angle)
             rect = rotated_image.get_rect(center=attack[0])
             win.blit(rotated_image, rect)
 
@@ -139,71 +155,70 @@ class Stage5Boss:
             # 보스가 제거되었을 때 메시지 표시 (옵션)
             defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
             win.blit(defeated_text, (10, 680))
-            
-        def check_hit(self, attacks):
-            current_time = pygame.time.get_ticks()
-            if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
-                # 보스가 무적 상태일 때는 공격을 무시합니다.
-                return
-            else:
-                self.boss_hit = False  # 무적 상태 해제
 
-            for attack in attacks:
-                attack_start, attack_end, thickness = attack
-                if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
-                    self.boss_hp -= 1  # 데미지 적용
-                    if self.boss_hp < 0:
-                        self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                    self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                    self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
-                    if self.boss_hp <= 0:
-                        self.boss_active = False
-                        self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
-                        self.gem_active = True
-                        self.boss_defeated = True
-                    break  # 한 번에 하나의 공격만 처리
+    def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
+            # 보스가 무적 상태일 때는 공격을 무시합니다.
+            return
+        else:
+            self.boss_hit = False  # 무적 상태 해제
 
-        def check_gem_collision(self, player_pos):
-            if self.gem_active:
-                px, py = player_pos
-                gx, gy = self.gem_pos
-                player_width, player_height = 40, 40  # 플레이어 크기
-                gem_size = 40  # 보석 크기
-                if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
-                    self.gem_active = False
-                    self.stage_cleared = True  # 스테이지 클리어
-                    return True
-            return False
+        for attack in attacks:
+            attack_start, attack_end, thickness = attack
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
+                self.boss_hp -= 1  # 데미지 적용
+                if self.boss_hp < 0:
+                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
+                self.boss_hit = True  # 보스가 공격을 받았음을 표시
+                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+                if self.boss_hp <= 0:
+                    self.boss_active = False
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
+                    self.gem_active = True
+                    self.boss_defeated = True
+                break  # 한 번에 하나의 공격만 처리
 
-        def reset(self):
-            self.boss_active = False
-            self.boss_hp = self.max_boss_hp
-            self.boss_pos = [640 - 120, 0]
-            self.boss_defeated = False
-            self.boss_appeared = False  # 보스 등장 여부 재설정
-            self.boss_attacks = []
-            self.gem_active = False
-            self.gem_pos = None
-            self.boss_move_phase = 1
-            self.boss_hit = False
-            self.stage_cleared = False
-
-        def check_energy_ball_collision(self, ball_pos, player_pos):
-            bx, by = ball_pos
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
             px, py = player_pos
-            player_width, player_height = 50, 50  # 플레이어 크기
-            if px < bx < px + player_width and py < by < py + player_height:
+            gx, gy = self.gem_pos
+            player_width, player_height = 40, 40  # 플레이어 크기
+            gem_size = 40  # 보석 크기
+            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+                self.gem_active = False
+                self.stage_cleared = True  # 스테이지 클리어
                 return True
-            return False
+        return False
 
-        def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
-            ex, ey = boss_pos
-            sx, sy = attack_start
-            ex2, ey2 = ex + boss_size, ey + boss_size
+    def reset(self):
+        self.boss_active = False
+        self.boss_hp = self.max_boss_hp
+        self.boss_pos = [640 - 120, 0]
+        self.boss_defeated = False
+        self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_attacks = []
+        self.gem_active = False
+        self.gem_pos = None
+        self.boss_hit = False
+        self.stage_cleared = False
 
-            # 공격 선분과 보스 사각형의 충돌 검사
-            rect = pygame.Rect(ex, ey, boss_size, boss_size)
-            line = (sx, sy), attack_end
-            if rect.clipline(line):
-                return True
-            return False
+    def check_energy_ball_collision(self, ball_pos, player_pos):
+        bx, by = ball_pos
+        px, py = player_pos
+        player_width, player_height = 50, 50  # 플레이어 크기
+        if px < bx < px + player_width and py < by < py + player_height:
+            return True
+        return False
+
+    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
+        ex, ey = boss_pos
+        sx, sy = attack_start
+        ex2, ey2 = ex + boss_size, ey + boss_size
+
+        # 공격 선분과 보스 사각형의 충돌 검사
+        rect = pygame.Rect(ex, ey, boss_size, boss_size)
+        line = (sx, sy), attack_end
+        if rect.clipline(line):
+            return True
+        return False
