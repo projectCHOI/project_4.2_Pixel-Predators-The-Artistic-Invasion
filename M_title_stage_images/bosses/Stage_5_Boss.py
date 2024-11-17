@@ -53,11 +53,11 @@ class Stage5Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
-    def move(self):
+    def move(self, win):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_teleport_time > self.teleport_interval:
-            # 텔레포트 경고 표시 (예: 500ms 동안)
-            self.show_teleport_warning(current_time)
+            # 텔레포트 경고 표시
+            self.show_teleport_warning(win, current_time)
 
             # 랜덤한 위치로 텔레포트
             self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
@@ -65,12 +65,12 @@ class Stage5Boss:
             # 텔레포트 후 공격
             self.attack()
 
-    def show_teleport_warning(self, current_time):
-        # 텔레포트 전에 경고 이미지를 보여주는 로직 (예시)
+    def show_teleport_warning(self, win, current_time):
+        # 텔레포트 전에 경고 이미지를 보여주는 로직 (500ms 동안)
         warning_time = 500  # 500ms 동안 경고
         if current_time - self.last_teleport_time < warning_time:
             warning_pos = [self.boss_pos[0] + 30, self.boss_pos[1] + 30]  # 보스 위치에 경고 이미지 표시
-            # win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시할 때 사용
+            win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시
 
     def attack(self):
         current_time = pygame.time.get_ticks()
@@ -105,41 +105,41 @@ class Stage5Boss:
             rect = rotated_image.get_rect(center=attack[0])
             win.blit(rotated_image, rect)
 
-        def draw_gem(self, win):
-            if self.gem_active:
-                win.blit(self.gem_image, self.gem_pos)
+    def draw_gem(self, win):
+        if self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
 
-        def draw_health_bar(self, win, font):
-            if self.boss_active and self.boss_hp > 0:
-                # "BOSS" 문자열 그리기
-                boss_text = font.render("BOSS", True, (255, 255, 255))
-                text_x = 10
-                text_y = 680
-                win.blit(boss_text, (text_x, text_y))
+    def draw_health_bar(self, win, font):
+        if self.boss_active and self.boss_hp > 0:
+            # "BOSS" 문자열 그리기
+            boss_text = font.render("BOSS", True, (255, 255, 255))
+            text_x = 10
+            text_y = 680
+            win.blit(boss_text, (text_x, text_y))
 
-                # 체력 바 설정
-                health_bar_x = text_x + boss_text.get_width() + 10
-                health_bar_y = 680
-                health_bar_width = 200  # 체력 바의 총 너비를 200으로 설정
-                health_bar_height = 30
+            # 체력 바 설정
+            health_bar_x = text_x + boss_text.get_width() + 10
+            health_bar_y = 680
+            health_bar_width = 200  # 체력 바의 총 너비를 200으로 설정
+            health_bar_height = 30
 
-                # 체력 비율 계산
-                health_ratio = self.boss_hp / self.max_boss_hp
-                current_health_width = int(health_bar_width * health_ratio)
+            # 체력 비율 계산
+            health_ratio = self.boss_hp / self.max_boss_hp
+            current_health_width = int(health_bar_width * health_ratio)
 
-                # 체력 바 배경 그리기
-                pygame.draw.rect(win, (50, 50, 50), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
+            # 체력 바 배경 그리기
+            pygame.draw.rect(win, (50, 50, 50), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
 
-                # 현재 체력 바 그리기
-                pygame.draw.rect(win, (210, 20, 4), (health_bar_x, health_bar_y, current_health_width, health_bar_height))
+            # 현재 체력 바 그리기
+            pygame.draw.rect(win, (210, 20, 4), (health_bar_x, health_bar_y, current_health_width, health_bar_height))
 
-                # 체력 바 테두리 그리기
-                pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
-            elif self.boss_hp <= 0 and self.boss_defeated:
-                # 보스가 제거되었을 때 메시지 표시 (옵션)
-                defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
-                win.blit(defeated_text, (10, 680))
-
+            # 체력 바 테두리 그리기
+            pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
+        elif self.boss_hp <= 0 and self.boss_defeated:
+            # 보스가 제거되었을 때 메시지 표시 (옵션)
+            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
+            win.blit(defeated_text, (10, 680))
+            
         def check_hit(self, attacks):
             current_time = pygame.time.get_ticks()
             if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
