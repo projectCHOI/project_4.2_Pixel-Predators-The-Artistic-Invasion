@@ -1,3 +1,4 @@
+# boss5.py
 import pygame
 import os
 import random
@@ -98,6 +99,24 @@ class Stage5Boss:
             return "medium"
         else:
             return "low"
+
+    def update_attacks(self, player_pos):
+        new_attacks = []
+        player_hit = False
+        for attack in self.boss_attacks:
+            # Update attack position
+            attack[0][0] += attack[1][0]  # Update x position
+            attack[0][1] += attack[1][1]  # Update y position
+
+            # Check if attack is still on screen
+            if 0 <= attack[0][0] <= 1280 and 0 <= attack[0][1] <= 720:
+                # Check if the attack hits the player
+                if self.check_energy_ball_collision(attack[0], player_pos):
+                    player_hit = True  # Player was hit
+                else:
+                    new_attacks.append(attack)
+        self.boss_attacks = new_attacks
+        return player_hit
 
     def draw(self, win):
         if self.boss_hp > 0:
