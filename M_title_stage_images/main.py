@@ -151,23 +151,23 @@ def initialize_boss(level):
     elif level == 4:
         return Stage4Boss()
     elif level == 5:
-        return Stage4Boss()
+        return Stage5Boss()
     # elif level == 6:
-    #     return Stage2Boss()
+    #     return Stage6Boss()
     # elif level == 7:
-    #     return Stage3Boss()  
+    #     return Stage7Boss()  
     # elif level == 8:
-    #     return Stage4Boss()
+    #     return Stage8Boss()
     # elif level == 9:
-    #     return Stage4Boss()
+    #     return Stage9Boss()
     # elif level == 10:
-    #     return Stage4Boss()
+    #     return Stage10Boss()
     # elif level == 11:
-    #     return Stage4Boss()
+    #     return Stage11Boss()
     # elif level == 12:
-    #     return Stage4Boss()
+    #     return Stage12Boss()
     # elif level == 13:
-    #     return Stage4Boss()
+    #     return Stage13Boss()
     else:
         return None
 
@@ -296,8 +296,12 @@ def generate_enemies(level):
         num_enemies = random.randint(3, 8)
     elif level == 5:
         speed = random.randint(10, 12)
-        directions = [(1, 0), (-1, 0)]
-        sizes = [20, 40]
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+    # elif level == 5:
+    #     speed = random.randint(10, 12)
+    #     directions = [(1, 0), (-1, 0)]
+    #     sizes = [20, 40]
         num_enemies = random.randint(6, 16)
     elif level == 6:
         speed = random.randint(10, 14)
