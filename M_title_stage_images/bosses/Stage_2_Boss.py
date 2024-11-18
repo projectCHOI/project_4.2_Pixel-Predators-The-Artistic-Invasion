@@ -54,10 +54,15 @@ class Stage2Boss:
 
     def check_appear(self, seconds, current_level):
         if current_level == 2 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+            # 보스 등장 시 초기화
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
+            self.gem_active = False  # 보석을 비활성화 상태로 초기화
+            self.gem_pos = None
+            self.boss_defeated = False  # 보스가 등장하면 패배 상태를 False로 설정
+            self.stage_cleared = False
 
     def move(self):
         # 이동 후 위치 제한 함수 추가
@@ -220,9 +225,9 @@ class Stage2Boss:
                 self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
                 if self.boss_hp <= 0:
                     self.boss_active = False
+                    self.boss_defeated = True  # 보스가 패배했음을 표시
                     self.gem_pos = [self.boss_pos[0] + 95, self.boss_pos[1] + 95]
                     self.gem_active = True
-                    self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
 
     def check_gem_collision(self, player_pos):
@@ -238,13 +243,14 @@ class Stage2Boss:
         return False
 
     def reset(self):
+        # 보스 초기화 로직 추가
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 120, 0]
         self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
-        self.gem_active = False
+        self.gem_active = False  # 보석 비활성화
         self.gem_pos = None
         self.boss_move_phase = 1
         self.boss_hit = False
