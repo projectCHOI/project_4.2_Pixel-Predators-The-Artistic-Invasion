@@ -29,7 +29,7 @@ class Stage2Boss:
         }
         self.gem_image = load_image("items", "mob_Jewelry_2.png", size=(40, 40))
         # 보스 속성 초기화
-        self.boss_appear_time = 20  # 보스 등장 시간 (초)
+        self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 20  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
