@@ -19,9 +19,13 @@ def load_image(*path_parts, size=None):
 
 class Stage6Boss:
     def __init__(self):
-        # 이미지 로드 (총 2개 필요: 보스 이미지, 공격 이미지)
+        # 이미지 로드 (총 4개 필요: 보스 이미지, 공격 이미지 3개, 보석 이미지)
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage6_attack.png", size=(30, 30))
+        self.boss_attack_images = {
+            "high": load_image("boss_skilles", "boss_stage6_a.png", size=(30, 30)),
+            "medium": load_image("boss_skilles", "boss_stage6_b.png", size=(30, 30)),
+            "low": load_image("boss_skilles", "boss_stage6_c.png", size=(30, 30))
+        }
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
 
         # 보스 속성 초기화
@@ -80,7 +84,17 @@ class Stage6Boss:
                 radian = math.radians(angle)
                 dx = math.cos(radian) * 6
                 dy = math.sin(radian) * 6
-                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle])
+                attack_type = self.get_attack_type()
+                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
+
+    def get_attack_type(self):
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "high"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "low"
 
     def draw(self, win):
         if self.boss_hp > 0:
@@ -99,7 +113,8 @@ class Stage6Boss:
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
-            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            attack_type = attack[3]
+            rotated_image = pygame.transform.rotate(self.boss_attack_images[attack_type], angle)
             rect = rotated_image.get_rect(center=attack[0])
             win.blit(rotated_image, rect)
 
