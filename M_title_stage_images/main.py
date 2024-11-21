@@ -9,7 +9,7 @@ from bosses.Stage_2_Boss import Stage2Boss
 from bosses.Stage_3_Boss import Stage3Boss
 from bosses.Stage_4_Boss import Stage4Boss
 from bosses.Stage_5_Boss import Stage5Boss
-from bosses.Stage_5_Boss import Stage6Boss
+from bosses.Stage_6_Boss import Stage6Boss
 
 pygame.init()
 
