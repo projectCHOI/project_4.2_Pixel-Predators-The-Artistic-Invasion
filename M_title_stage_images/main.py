@@ -9,6 +9,7 @@ from bosses.Stage_2_Boss import Stage2Boss
 from bosses.Stage_3_Boss import Stage3Boss
 from bosses.Stage_4_Boss import Stage4Boss
 from bosses.Stage_5_Boss import Stage5Boss
+from bosses.Stage_5_Boss import Stage6Boss
 
 pygame.init()
 
@@ -152,8 +153,8 @@ def initialize_boss(level):
         return Stage4Boss()
     elif level == 5:
         return Stage5Boss()
-    # elif level == 6:
-    #     return Stage6Boss()
+    elif level == 6:
+        return Stage6Boss()
     # elif level == 7:
     #     return Stage7Boss()  
     # elif level == 8:
@@ -299,16 +300,21 @@ def generate_enemies(level):
         directions = [(0, 1)]
         sizes = [40]
         num_enemies = random.randint(1, 2)
+    elif level == 6:
+        speed = 10
+        directions = [(0, 1)]
+        sizes = [40]
+        num_enemies = random.randint(1, 2)
     # elif level == 5:
     #     speed = random.randint(10, 12)
     #     directions = [(1, 0), (-1, 0)]
     #     sizes = [20, 40]
     #    num_enemies = random.randint(6, 16)
-    elif level == 6:
-        speed = random.randint(10, 14)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40]
-        num_enemies = random.randint(6, 20)
+    # elif level == 6:
+    #     speed = random.randint(10, 14)
+    #     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+    #     sizes = [20, 40]
+    #     num_enemies = random.randint(6, 20)
     elif level == 7:
         speed = random.randint(10, 16)
         directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
