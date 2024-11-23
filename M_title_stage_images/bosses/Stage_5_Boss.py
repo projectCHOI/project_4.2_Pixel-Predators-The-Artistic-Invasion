@@ -39,7 +39,7 @@ class Stage5Boss:
         self.boss_attacks = []
         self.boss_last_attack_time = 0
         self.attack_interval = 1000
-        self.teleport_interval = 2000
+        self.teleport_interval = 4000
         self.last_teleport_time = 0
         self.gem_pos = None
         self.gem_active = False
