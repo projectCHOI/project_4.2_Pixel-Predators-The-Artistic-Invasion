@@ -73,7 +73,7 @@ class Stage5Boss:
 
     def show_teleport_warning(self, current_time):
         # 텔레포트 전에 경고 이미지를 보여주는 로직 (예시)
-        warning_time = 500  # 500ms 동안 경고
+        warning_time = 3000  # 500ms 동안 경고
         if current_time - self.last_teleport_time < warning_time:
             warning_pos = [self.boss_pos[0] + 30, self.boss_pos[1] + 30]  # 보스 위치에 경고 이미지 표시
             # win.blit(self.teleport_warning_image, warning_pos)  # 실제 화면에 표시할 때 사용
