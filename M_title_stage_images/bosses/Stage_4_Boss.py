@@ -62,8 +62,8 @@ class Stage4Boss:
 
     def move(self):
         if self.boss_move_phase == 1:
-            # 보스 출연 후 이동
-            target_pos = [640 - 60, 360 - 120]
+            # 보스가 화면 상단에서 중앙으로 이동
+            target_pos = [640 - 60, 300 - 60]  # 화면 중앙보다 약간 위로 이동
             direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
             length = math.hypot(direction[0], direction[1])
             if length > self.boss_speed:
@@ -73,6 +73,11 @@ class Stage4Boss:
             else:
                 self.boss_pos = target_pos
                 self.boss_move_phase = 2
+        elif self.boss_move_phase == 2:
+            # 화면 중앙을 기준으로 원 운동 시작
+            self.angle += 0.02  # 각도 증가 (회전 속도 조절)
+            self.boss_pos[0] = 640 - 60 + self.radius * math.cos(self.angle)
+            self.boss_pos[1] = 360 - 60 + self.radius * math.sin(self.angle)
 
     def attack(self):
         current_time = pygame.time.get_ticks()
