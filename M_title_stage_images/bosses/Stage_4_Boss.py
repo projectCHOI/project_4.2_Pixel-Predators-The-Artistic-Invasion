@@ -52,6 +52,8 @@ class Stage4Boss:
         self.gem_active = False  # 보석 활성화 상태
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
+        self.angle = 0  # 원 운동을 위한 초기 각도
+        self.radius = 100  # 원 운동 반지름
         
     def check_appear(self, seconds, current_level):
         if current_level == 4 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
