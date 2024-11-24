@@ -75,7 +75,12 @@ class Stage4Boss:
                 self.boss_move_phase = 2
         elif self.boss_move_phase == 2:
             # 화면 중앙을 기준으로 원 운동 시작
-            self.angle += 0.02  # 각도 증가 (회전 속도 조절)
+            if self.boss_hp > self.max_boss_hp * 0.6:
+                self.angle += 0.05
+            elif self.boss_hp > self.max_boss_hp * 0.3:
+                self.angle += 0.07
+            else:
+                self.angle += 0.09
             self.boss_pos[0] = 640 - 60 + self.radius * math.cos(self.angle)
             self.boss_pos[1] = 360 - 60 + self.radius * math.sin(self.angle)
 
