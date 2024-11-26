@@ -155,8 +155,8 @@ def initialize_boss(level):
         return Stage5Boss()
     elif level == 6:
         return Stage6Boss()
-    # elif level == 7:
-    #     return Stage7Boss()  
+    elif level == 7:
+        return Stage7Boss()  
     # elif level == 8:
     #     return Stage8Boss()
     # elif level == 9:
