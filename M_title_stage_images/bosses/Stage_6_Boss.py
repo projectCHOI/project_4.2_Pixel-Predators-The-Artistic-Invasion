@@ -74,6 +74,23 @@ class Stage6Boss:
             self.direction[1] *= -1
             self.current_speed = self.boss_speed  # 방향 전환 시 속도 초기화
 
+    def update_attacks(self, player_pos):
+        for attack in self.boss_attacks:
+            # 공격의 위치 업데이트
+            attack[0][0] += attack[1][0]
+            attack[0][1] += attack[1][1]
+
+            # 공격이 화면 밖으로 나갔는지 확인하고 필요하면 제거
+            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
+                self.boss_attacks.remove(attack)
+            else:
+                player_width, player_height = 40, 40  # 플레이어 크기
+                if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
+                        player_pos[1] < attack[0][1] < player_pos[1] + player_height):
+                    return True  # 충돌 감지됨
+
+        return False  # 충돌 없음
+
     def attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
