@@ -44,64 +44,59 @@ class Stage1Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        if current_leve7 == 7 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 7 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 120, 0]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
     def move(self):
-        # 이동 후 위치 제한 함수 추가
-        def limit_position():
-            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 240))
-            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 240))
-
         current_time = pygame.time.get_ticks()
 
-        if self.boss_move_phase == 1:
-            # 1단계: 보스가 화면 상단에서 등장 후 1초 대기
-            if not hasattr(self, 'phase_start_time'):
-                self.phase_start_time = current_time  # 현재 시간을 저장
-            elif current_time - self.phase_start_time >= 1000:  # 1초 대기
-                self.boss_move_phase = 2
-        elif self.boss_move_phase == 2:
-            # 2단계: 화면 상단에서 좌우로만 이동
-            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 240:
-                self.boss_direction_x *= -1  # 방향 전환
-            # 보스의 Y 위치를 상단으로 고정
-            self.boss_pos[1] = 0
+        # 초기 시간 설정 (한 번만 실행)
+        if not hasattr(self, 'move_start_time'):
+            self.move_start_time = current_time
 
-        # 위치 제한 적용
-        limit_position()
+        # 시간 경과 계산
+        elapsed_time = (current_time - self.move_start_time) / 1000  # 초 단위
+
+        # 진폭과 주기 계산
+        amplitude = 100 + 50 * math.sin(elapsed_time / 5)  # 진폭이 천천히 변동
+        frequency = 2 * math.pi / 3  # 주기 설정
+
+        # Sine-wave 기반 이동
+        self.boss_pos[0] = 640 + amplitude * math.sin(frequency * elapsed_time)
+        self.boss_pos[1] = 100 + 50 * math.cos(frequency * elapsed_time / 2)  # Y축 움직임 추가
+
+        # 화면 밖으로 나가지 않도록 제한
+        self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 240))
+        self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 240))
 
     def attack(self):
         current_time = pygame.time.get_ticks()
+
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-            attack_angles = []
 
-            # 보스의 체력에 따른 공격 각도 설정
+            # 보스의 체력에 따라 웨이브 크기 설정
             if self.boss_hp > self.max_boss_hp * 0.75:
-                # 체력 > 75%: 아래쪽으로만 공격 (에너지 볼 1개)
-                attack_angles = [90]
+                wave_size = 5  # 체력 > 75%
             elif self.boss_hp > self.max_boss_hp * 0.5:
-                # 체력 > 50%: 아래쪽 + 좌우 5도 공격 (에너지 볼 3개)
-                attack_angles = [85, 90, 95]
+                wave_size = 10  # 체력 > 50%
             elif self.boss_hp > self.max_boss_hp * 0.25:
-                # 체력 > 25%: 아래쪽 + 좌우 5도, 10도 공격 (에너지 볼 5개)
-                attack_angles = [80, 85, 90, 95, 100]
+                wave_size = 15  # 체력 > 25%
             else:
-                # 그 이하: 기존 공격 + 좌우 15도 공격 추가 (에너지 볼 7개)
-                attack_angles = [75, 80, 85, 90, 95, 100, 105]
+                wave_size = 20  # 체력 <= 25%
 
-            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 240]  # 보스 아래 중앙 위치
+            # 공격 시작 위치
+            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 240]  # 보스 아래 중앙
 
-            # 각도에 따른 에너지 볼 생성
-            for angle in attack_angles:
+            # 웨이브 패턴으로 에너지 볼 생성
+            for i in range(wave_size):
+                angle = i * (360 / wave_size)  # 웨이브 형태의 각도 계산
                 radian = math.radians(angle)
-                dx = math.cos(radian) * 10  # 속도 조절
-                dy = math.sin(radian) * 10
+                dx = math.cos(radian) * 3  # 속도 조절
+                dy = math.sin(radian) * 3
                 self.boss_attacks.append({
                     'pos': [attack_start_pos[0], attack_start_pos[1]],
                     'dir': [dx, dy],
