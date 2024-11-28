@@ -10,6 +10,7 @@ from bosses.Stage_3_Boss import Stage3Boss
 from bosses.Stage_4_Boss import Stage4Boss
 from bosses.Stage_5_Boss import Stage5Boss
 from bosses.Stage_6_Boss import Stage6Boss
+from bosses.Stage_7_Boss import Stage7Boss
 
 pygame.init()
 
@@ -155,8 +156,8 @@ def initialize_boss(level):
         return Stage5Boss()
     elif level == 6:
         return Stage6Boss()
-    # elif level == 7:
-    #     return Stage7Boss()  
+    elif level == 7:
+        return Stage7Boss()
     # elif level == 8:
     #     return Stage8Boss()
     # elif level == 9:
