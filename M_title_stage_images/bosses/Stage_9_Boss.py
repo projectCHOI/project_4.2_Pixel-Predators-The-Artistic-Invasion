@@ -7,15 +7,21 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
 def load_image(*path_parts, size=None):
-    # 이미지 로드 부분은 공백으로 비워둠
-    return None
+    path = os.path.join(BASE_IMAGE_PATH, *path_parts)
+    try:
+        image = pygame.image.load(path).convert_alpha()
+    except pygame.error as e:
+        raise SystemExit(f"Cannot load image: {path}\n{e}")
+    if size:
+        image = pygame.transform.scale(image, size)
+    return image
 
 class Stage9Boss:
     def __init__(self):
-        # 이미지 로드 (공백)
-        self.boss_image = load_image("bosses", "")
-        self.boss_attack_image = load_image("boss_skilles", "")
-        self.gem_image = load_image("items", "")
+        # 이미지 로드
+        self.boss_image = load_image("bosses", "boss_stage9.png")
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage9_a.png")
+        self.gem_image = load_image("items", "mob_Jewelry_9.png")
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 20  # 보스의 최대 체력 (Stage 1보다 더 높은 체력 설정)
