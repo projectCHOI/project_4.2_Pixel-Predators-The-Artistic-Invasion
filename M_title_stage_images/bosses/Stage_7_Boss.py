@@ -18,7 +18,10 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        # 이미지 로드
+        self.boss_image = load_image("bosses", "boss_stage7.png")
+        self.boss_attack_image1 = load_image("boss_skilles", "boss_stage7_a.png")
+        self.boss_attack_image2 = load_image("boss_skilles", "boss_stage7_b.png")
+        self.gem_image = load_image("items", "mob_Jewelry_7.png")
 
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
