@@ -20,8 +20,8 @@ class Stage8Boss:
     def __init__(self):
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage8.png", size=(120, 120))
-        self.boss_attack_image = load_image("boss_skilles", "Mob_Boss_H_c.png", size=(40, 40))
-        self.gem_image = load_image("boss_skilles", "Mob_Boss_H_a.png", size=(40, 40))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40))
+        self.gem_image = load_image("boss_skilles", "boss_stage8_b.png", size=(40, 40))
         self.shield_drone_image = load_image("items", "mob_Jewelry_8.png", size=(40, 40))
 
         # 보스 속성 초기화
