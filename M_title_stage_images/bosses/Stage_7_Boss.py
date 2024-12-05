@@ -18,10 +18,10 @@ def load_image(*path_parts, size=None):
 
 class Stage7Boss:
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage7.png")
-        self.boss_attack_image1 = load_image("boss_skilles", "boss_stage7_a.png")
-        self.boss_attack_image2 = load_image("boss_skilles", "boss_stage7_b.png")
-        self.gem_image = load_image("items", "mob_Jewelry_7.png")
+        self.boss_image = load_image("bosses", "boss_stage7.png", size=(120, 120))
+        self.boss_attack_image1 = load_image("boss_skilles", "boss_stage7_a.png", size=(40, 40))
+        self.boss_attack_image2 = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_7.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
@@ -100,10 +100,12 @@ class Stage7Boss:
                 radian = math.radians(angle)
                 dx = math.cos(radian) * 3  # 속도 조절
                 dy = math.sin(radian) * 3
+                attack_image = self.boss_attack_image1 if dx < 0 else self.boss_attack_image2
                 self.boss_attacks.append({
                     'pos': [attack_start_pos[0], attack_start_pos[1]],
                     'dir': [dx, dy],
-                    'angle': angle
+                    'angle': angle,
+                    'image': attack_image
                 })
 
     def update_attacks(self, player_pos):
@@ -141,7 +143,7 @@ class Stage7Boss:
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
-            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            rotated_image = pygame.transform.rotate(attack['image'], angle)
             rect = rotated_image.get_rect(center=attack['pos'])
             win.blit(rotated_image, rect)
 
