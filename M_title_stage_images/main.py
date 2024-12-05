@@ -298,60 +298,50 @@ def generate_enemies(level):
         sizes = [40, 60]
         num_enemies = random.randint(1, 4)
     elif level == 4:
-        speed = random.randint(10, 12)
+        speed = 10
         directions = [(0, 1), (0, -1)]
         sizes = [40, 60]
-        num_enemies = random.randint(3, 8)
+        num_enemies = random.randint(1, 4)
     elif level == 5:
         speed = 10
-        directions = [(0, 1)]
-        sizes = [40]
-        num_enemies = random.randint(1, 2)
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 6:
         speed = 10
-        directions = [(0, 1)]
-        sizes = [40]
-        num_enemies = random.randint(1, 2)
-    # elif level == 5:
-    #     speed = random.randint(10, 12)
-    #     directions = [(1, 0), (-1, 0)]
-    #     sizes = [20, 40]
-    #    num_enemies = random.randint(6, 16)
-    # elif level == 6:
-    #     speed = random.randint(10, 14)
-    #     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-    #     sizes = [20, 40]
-    #     num_enemies = random.randint(6, 20)
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 7:
-        speed = random.randint(10, 16)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 24)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 8:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 26)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 9:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 10:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 11:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(10, 32)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
     elif level == 12:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(15, 32)
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
 
     enemies = []
 
