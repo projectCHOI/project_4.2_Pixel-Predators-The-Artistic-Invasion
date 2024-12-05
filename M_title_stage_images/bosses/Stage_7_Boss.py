@@ -16,7 +16,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Stage1Boss:
+class Stage7Boss:
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage7.png")
         self.boss_attack_image1 = load_image("boss_skilles", "boss_stage7_a.png")
