@@ -36,12 +36,12 @@ class Stage4Boss:
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
         self.boss_speed = 3  # 보스의 이동 속도
-        self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
+        self.boss_pos = [640 - 60, 300 - 60]  # 보스의 초기 위치 (화면 중앙)
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
-        self.boss_move_phase = 1  # 보스의 이동 단계
+        self.boss_move_phase = 2  # 보스의 이동 단계 (바로 원형 운동 시작)
         self.boss_hit = False  # 보스 피격 상태
         self.boss_hit_start_time = 0  # 보스 피격 시점
         self.boss_hit_duration = 100  # 보스 피격 효과 지속 시간 (밀리초)
@@ -54,28 +54,18 @@ class Stage4Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
         self.angle = 0  # 원 운동을 위한 초기 각도
         self.radius = 100  # 원 운동 반지름
-        
+        self.radius_change_direction = 1  # 반지름 증가/감소 방향
+        self.radius_change_speed = 0.2  # 반지름 변화 속도
+
     def check_appear(self, seconds, current_level):
         if current_level == 4 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
-            self.boss_pos = [640 - 120, 0]
+            self.boss_pos = [640 - 60, 300 - 60]
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True  # 보스가 등장했음을 표시
 
     def move(self):
-        if self.boss_move_phase == 1:
-            # 보스가 화면 상단에서 중앙으로 이동
-            target_pos = [640 - 60, 300 - 60]  # 화면 중앙보다 약간 위로 이동
-            direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
-            length = math.hypot(direction[0], direction[1])
-            if length > self.boss_speed:
-                direction = [direction[0] / length, direction[1] / length]
-                self.boss_pos[0] += direction[0] * self.boss_speed
-                self.boss_pos[1] += direction[1] * self.boss_speed
-            else:
-                self.boss_pos = target_pos
-                self.boss_move_phase = 2
-        elif self.boss_move_phase == 2:
+        if self.boss_move_phase == 2:
             # 화면 중앙을 기준으로 원 운동 시작
             if self.boss_hp > self.max_boss_hp * 0.6:
                 self.angle += 0.05
@@ -83,6 +73,12 @@ class Stage4Boss:
                 self.angle += 0.07
             else:
                 self.angle += 0.09
+
+            # 반지름 동적 변화
+            self.radius += self.radius_change_direction * self.radius_change_speed
+            if self.radius >= 150 or self.radius <= 50:  # 반지름의 범위 제한
+                self.radius_change_direction *= -1
+
             self.boss_pos[0] = 640 - 60 + self.radius * math.cos(self.angle)
             self.boss_pos[1] = 360 - 60 + self.radius * math.sin(self.angle)
 
@@ -107,7 +103,6 @@ class Stage4Boss:
             # 체력이 줄어들수록 더 자주 발사
             self.boss_attack_cooldown = max(200, 3000 - (self.max_boss_hp - self.boss_hp) * 80)
             self.boss_last_attack_time = current_time
-        
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
@@ -222,13 +217,13 @@ class Stage4Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 120, 0]
+        self.boss_pos = [640 - 60, 300 - 60]
         self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
-        self.boss_move_phase = 1
+        self.boss_move_phase = 2
         self.boss_hit = False
         self.stage_cleared = False
 
