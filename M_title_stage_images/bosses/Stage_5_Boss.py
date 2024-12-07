@@ -63,6 +63,20 @@ class Stage5Boss:
             self.invincible = True  # 출연 시 무적 상태 활성화
             self.invincible_start_time = pygame.time.get_ticks()  # 무적 상태 시작 시간 기록
     
+    def update_invincibility(self):
+        if self.invincible:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.invincible_start_time >= self.invincible_duration:
+                self.invincible = False  # 무적 상태 해제
+
+    def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        self.update_invincibility()  # 무적 상태 업데이트
+
+        if self.invincible:
+            # 무적 상태일 때는 공격을 무시
+            return
+
     def move(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_teleport_time > self.teleport_interval:
