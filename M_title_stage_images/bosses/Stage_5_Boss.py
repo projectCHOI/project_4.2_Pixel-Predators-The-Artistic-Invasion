@@ -35,7 +35,7 @@ class Stage5Boss:
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
         self.boss_pos = [640 - 60, 360 - 60]  # 화면 정중앙
-        self.boss_active = False
+        self.boss_active = False#
         self.boss_attacks = []
         self.boss_last_attack_time = 0
         self.attack_interval = 1000
@@ -44,9 +44,11 @@ class Stage5Boss:
         self.gem_pos = None
         self.gem_active = False
         self.boss_defeated = False
-        self.boss_appeared = False
+        self.boss_appeared = False#
         self.stage_cleared = False
-        self.invincible = False
+        self.invincible = False#
+        self.invincible_start_time = 0  # 무적 상태 시작 시간
+        self.invincible_duration = 10000  # 무적 상태 지속 시간 (10초)
         self.invincible_duration = 500
         self.last_hit_time = 0
         self.boss_hit = False
@@ -58,7 +60,9 @@ class Stage5Boss:
             self.boss_active = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
-
+            self.invincible = True  # 출연 시 무적 상태 활성화
+            self.invincible_start_time = pygame.time.get_ticks()  # 무적 상태 시작 시간 기록
+    
     def move(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_teleport_time > self.teleport_interval:
