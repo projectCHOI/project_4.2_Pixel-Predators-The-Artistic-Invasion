@@ -107,6 +107,18 @@ class Stage5Boss:
                 attack_type = self.get_attack_type()
                 self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
 
+    def get_attack_type(self):
+        """
+        보스의 체력 상태에 따라 공격 유형을 반환합니다.
+        """
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "high"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "low"
+
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
