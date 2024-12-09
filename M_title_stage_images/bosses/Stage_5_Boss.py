@@ -159,3 +159,21 @@ class Stage5Boss:
         if rect.clipline(line):
             return True
         return False
+    
+    def update_attacks(self, player_pos):
+        new_attacks = []
+        player_hit = False
+        for attack in self.boss_attacks:
+            # 공격 위치 업데이트
+            attack[0][0] += attack[1][0]  # x 좌표 업데이트
+            attack[0][1] += attack[1][1]  # y 좌표 업데이트
+
+            # 공격이 화면 안에 있는지 확인
+            if 0 <= attack[0][0] <= 1280 and 0 <= attack[0][1] <= 720:
+                # 플레이어와 충돌 확인
+                if self.check_energy_ball_collision(attack[0], player_pos):
+                    player_hit = True  # 플레이어가 공격에 맞음
+                else:
+                    new_attacks.append(attack)
+        self.boss_attacks = new_attacks
+        return player_hit
