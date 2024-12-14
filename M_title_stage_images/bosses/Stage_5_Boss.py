@@ -60,14 +60,19 @@ class Stage5Boss:
 
     def move(self):
         current_time = pygame.time.get_ticks()
+        
+        # 경고 표시 시간 (텔레포트 전)
+        warning_time = 500
+        
+        if current_time - self.last_teleport_time > self.teleport_interval - warning_time:
+            warning_pos = [self.boss_pos[0] + 30, self.boss_pos[1] + 30]
+            win.blit(self.teleport_warning_image, warning_pos)
+            pygame.display.update()  # 경고 이미지 표시
+        
+        # 텔레포트 실행
         if current_time - self.last_teleport_time > self.teleport_interval:
-            # 텔레포트 경고 표시 (예: 500ms 동안)
-            self.show_teleport_warning(current_time)
-
-            # 랜덤한 위치로 텔레포트
             self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
             self.last_teleport_time = current_time
-            # 텔레포트 후 공격
             self.attack()
 
     def show_teleport_warning(self, current_time):
