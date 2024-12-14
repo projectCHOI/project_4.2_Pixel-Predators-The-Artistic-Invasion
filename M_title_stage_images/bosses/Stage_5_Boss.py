@@ -58,38 +58,14 @@ class Stage5Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
-    def move(self, win):
+    def move(self):
         current_time = pygame.time.get_ticks()
-
-        # 텔레포트 전 경고 표시
-        warning_time = 2000  # 2초 동안 경고 표시
-        if current_time - self.last_teleport_time < warning_time:
-            self.show_teleport_warning(win, current_time)
-            return  # 경고 표시 중에는 텔레포트하지 않음
-
-        # 텔레포트 실행
         if current_time - self.last_teleport_time > self.teleport_interval:
+            # 랜덤한 위치로 텔레포트
             self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
             self.last_teleport_time = current_time
+            # 텔레포트 후 공격
             self.attack()
-        
-        # 텔레포트 실행
-        if current_time - self.last_teleport_time > self.teleport_interval:
-            self.boss_pos = [random.randint(0, 1280 - 120), random.randint(0, 720 - 120)]
-            self.last_teleport_time = current_time
-            self.attack()
-
-    def show_teleport_warning(self):
-        warning_duration = 2000  # 경고 시간: 2초 (2000ms)
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_teleport_time < warning_duration:
-            # 화면 전체에 경고 이미지 표시
-            win = pygame.display.get_surface()  # 현재 Pygame 디스플레이 객체 가져오기
-            warning_overlay = pygame.Surface((1280, 720))  # 화면 크기만큼 Surface 생성
-            warning_overlay.fill((255, 0, 0))  # 빨간색으로 채우기
-            warning_overlay.set_alpha(128)  # 투명도 설정 (0~255, 128은 반투명)
-            win.blit(warning_overlay, (0, 0))  # 화면 전체에 경고 이미지 블리팅
-            pygame.display.update()  # 화면 갱신
 
     def attack(self):
         current_time = pygame.time.get_ticks()
