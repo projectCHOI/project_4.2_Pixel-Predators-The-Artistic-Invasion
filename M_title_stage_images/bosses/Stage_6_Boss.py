@@ -48,12 +48,35 @@ class Stage6Boss:
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
+        self.boss_speed = 2
+        self.acceleration = 0.1
+        self.max_speed = 8
+        self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
     def check_appear(self, seconds, current_level):
         if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
+
+    def move(self):
+        # 보스가 시간에 따라 가속하며 이동
+        self.boss_speed = min(self.boss_speed + self.acceleration, self.max_speed)
+        self.boss_pos[0] += self.direction[0] * self.boss_speed
+        self.boss_pos[1] += self.direction[1] * self.boss_speed
+
+        # 벽에 부딪히면 방향 전환
+        if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 150:
+            angle = math.radians(110)
+            self.direction[0] = math.cos(angle) * -self.direction[0]
+            self.direction[1] = math.sin(angle) * self.direction[1]
+            self.boss_speed = 2  # 속도 초기화
+
+        if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 150:
+            angle = math.radians(110)
+            self.direction[0] = math.cos(angle) * self.direction[0]
+            self.direction[1] = math.sin(angle) * -self.direction[1]
+            self.boss_speed = 2  # 속도 초기화
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
