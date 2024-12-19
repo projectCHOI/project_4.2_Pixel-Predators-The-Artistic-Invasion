@@ -26,6 +26,7 @@ class Stage6Boss:
             "medium": load_image("boss_skilles", "boss_stage6_b.png", size=(30, 30)),
             "low": load_image("boss_skilles", "boss_stage6_c.png", size=(30, 30))
         }
+        self.obstacle_image = load_image("boss_skilles", "boss_stage6_d.png", size=(50, 50))
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
 
         # 보스 속성 초기화
@@ -53,6 +54,11 @@ class Stage6Boss:
         self.max_speed = 8
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
+        # 장애물 속성
+        self.obstacle_active = True
+        self.obstacle_timer = 0
+        self.obstacle_duration = 2000  # 2초간 사라졌다가 나타남
+
     def check_appear(self, seconds, current_level):
         if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
@@ -77,6 +83,32 @@ class Stage6Boss:
             self.direction[0] = math.cos(angle) * self.direction[0]
             self.direction[1] = math.sin(angle) * -self.direction[1]
             self.boss_speed = 2  # 속도 초기화
+
+    def check_obstacle_collision(self):
+        if not self.obstacle_active:
+            return
+
+        obstacle_rect = pygame.Rect(640 - 25, 360 - 25, 50, 50)
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 150, 150)
+
+        if boss_rect.colliderect(obstacle_rect):
+            angle = math.radians(110)
+            self.direction[0] = math.cos(angle) * -self.direction[0]
+            self.direction[1] = math.sin(angle) * self.direction[1]
+            self.boss_speed = 2  # 속도 초기화
+            self.obstacle_active = False
+            self.obstacle_timer = pygame.time.get_ticks()
+
+    def update_obstacle(self):
+        if not self.obstacle_active:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.obstacle_timer >= self.obstacle_duration:
+                self.obstacle_active = True
+
+    def draw_obstacle(self, win):
+        if self.obstacle_active:
+            obstacle_pos = [640 - 25, 360 - 25]
+            win.blit(self.obstacle_image, obstacle_pos)
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
