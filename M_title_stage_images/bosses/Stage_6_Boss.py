@@ -84,6 +84,9 @@ class Stage6Boss:
             self.direction[1] = math.sin(angle) * -self.direction[1]
             self.boss_speed = 2  # 속도 초기화
 
+        # 장애물 충돌 처리 호출
+        self.check_obstacle_collision()
+
     def check_obstacle_collision(self):
         if not self.obstacle_active:
             return
