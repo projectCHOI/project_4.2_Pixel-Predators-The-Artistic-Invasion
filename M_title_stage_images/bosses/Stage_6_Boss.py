@@ -19,15 +19,16 @@ def load_image(*path_parts, size=None):
 
 class Stage6Boss:
     def __init__(self):
-        # 이미지 로드 (필요 이미지: 보스, 공격, 보석)
-        self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
+        # 이미지 로드 (필요 이미지: 보스, 장애물, 보석)
+        self.boss_image = load_image("bosses", "boss_stage6.png", size=(120, 120))
+        self.obstacle_image = load_image("boss_skilles", "boss_stage6_d.png", size=(50, 50))
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.max_boss_hp = 18
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
-        self.boss_pos = [640 - 75, 360 - 75]  # 화면 중앙
+        self.boss_pos = None  # 처음에는 None으로 설정
         self.boss_active = False
         self.gem_pos = None
         self.gem_active = False
@@ -35,15 +36,36 @@ class Stage6Boss:
         self.boss_appeared = False
         self.stage_cleared = False
 
+        # 장애물 속성 초기화
+        self.obstacles = []
+        self.obstacle_active = False
+
     def check_appear(self, seconds, current_level):
         if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
+            self.boss_pos = [640 - 60, 360 - 60]  # 보스는 화면 정중앙에 나타남
+            self.spawn_obstacles()
+
+    def spawn_obstacles(self):
+        # 화면 테두리에 장애물 생성
+        self.obstacles = [
+            [0, 0],  # 왼쪽 상단
+            [0, 720 - 50],  # 왼쪽 하단
+            [1280 - 50, 0],  # 오른쪽 상단
+            [1280 - 50, 720 - 50]  # 오른쪽 하단
+        ]
+        self.obstacle_active = True
 
     def draw(self, win):
         if self.boss_active and self.boss_hp > 0:
             win.blit(self.boss_image, self.boss_pos)
+
+    def draw_obstacles(self, win):
+        if self.obstacle_active:
+            for obstacle_pos in self.obstacles:
+                win.blit(self.obstacle_image, obstacle_pos)
 
     def draw_gem(self, win):
         if self.gem_active:
@@ -74,7 +96,7 @@ class Stage6Boss:
     def check_hit(self, attacks):
         for attack in attacks:
             attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 150):
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
                 self.boss_hp -= 1
                 if self.boss_hp < 0:
                     self.boss_hp = 0
@@ -100,12 +122,14 @@ class Stage6Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 75, 360 - 75]
+        self.boss_pos = None
         self.boss_defeated = False
         self.boss_appeared = False
         self.gem_active = False
         self.gem_pos = None
         self.stage_cleared = False
+        self.obstacles = []
+        self.obstacle_active = False
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
