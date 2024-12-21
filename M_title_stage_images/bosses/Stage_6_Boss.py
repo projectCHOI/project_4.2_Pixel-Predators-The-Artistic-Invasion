@@ -26,6 +26,7 @@ class Stage6Boss:
             "medium": load_image("boss_skilles", "boss_stage6_b.png", size=(30, 30)),
             "low": load_image("boss_skilles", "boss_stage6_c.png", size=(30, 30))
         }
+        self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.max_boss_hp = 18
@@ -39,6 +40,8 @@ class Stage6Boss:
         self.boss_defeated = False
         self.boss_appeared = False
         self.stage_cleared = False
+        self.gem_active = False
+        self.gem_pos = None
         self.invincible = False
         self.invincible_duration = 500
         self.last_hit_time = 0
@@ -138,6 +141,10 @@ class Stage6Boss:
             rect = rotated_image.get_rect(center=attack[0])
             win.blit(rotated_image, rect)
 
+    def draw_gem(self, win):
+        if self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
+
     def draw_health_bar(self, win, font):
         if self.boss_active and self.boss_hp > 0:
             # "BOSS" 문자열 그림
@@ -187,8 +194,22 @@ class Stage6Boss:
                 self.boss_hit_start_time = current_time  # 공격받은 시간 기록
                 if self.boss_hp <= 0:
                     self.boss_active = False
+                    self.gem_active = True
+                    self.gem_pos = [self.boss_pos[0] + 50, self.boss_pos[1] + 50]
                     self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
+
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
+            px, py = player_pos
+            gx, gy = self.gem_pos
+            player_width, player_height = 40, 40  # 플레이어 크기
+            gem_size = 40  # 보석 크기
+            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+                self.gem_active = False
+                self.stage_cleared = True  # 스테이지 클리어
+                return True
+        return False
 
     def reset(self):
         self.boss_active = False
@@ -199,6 +220,8 @@ class Stage6Boss:
         self.boss_attacks = []
         self.boss_hit = False
         self.stage_cleared = False
+        self.gem_active = False
+        self.gem_pos = None
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
