@@ -48,9 +48,9 @@ class Stage6Boss:
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
-        self.boss_speed = 2
-        self.acceleration = 0.1
-        self.max_speed = 8
+        self.boss_speed = 4
+        self.acceleration = 0.3
+        self.max_speed = 12
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
     def check_appear(self, seconds, current_level):
