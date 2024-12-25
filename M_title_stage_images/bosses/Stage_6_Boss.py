@@ -64,7 +64,9 @@ class Stage6Boss:
         self.boss_speed = min(self.boss_speed + self.acceleration, self.max_speed)
         self.boss_pos[0] += self.direction[0] * self.boss_speed
         self.boss_pos[1] += self.direction[1] * self.boss_speed
-
+        # 화면 밖으로 나가지 않도록 제한
+        self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
+        self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
         # 벽에 부딪히면 난반사 방향 전환
         if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 150:
             random_angle = random.uniform(20, 160) if self.direction[1] > 0 else random.uniform(200, 340)

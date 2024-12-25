@@ -72,8 +72,8 @@ class Stage7Boss:
         self.boss_pos[0] = center_x + 100 * math.sin(elapsed_time / 2)  # X축 움직임
         self.boss_pos[1] = center_y
         # 화면 밖으로 나가지 않도록 제한
-        self.boss_pos[0] = max(560, min(self.boss_pos[0], 900))
-        self.boss_pos[1] = max(50, min(self.boss_pos[1], 150))
+        self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
+        self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
 
     def attack(self):
         current_time = pygame.time.get_ticks()
