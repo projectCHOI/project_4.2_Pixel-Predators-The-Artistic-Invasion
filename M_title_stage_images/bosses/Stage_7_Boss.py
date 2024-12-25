@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random
 
 # BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -55,23 +56,19 @@ class Stage7Boss:
 
     def move(self):
         current_time = pygame.time.get_ticks()
-        # 초기 시간 설정 (한 번만 실행)
         if not hasattr(self, 'move_start_time'):
             self.move_start_time = current_time
-        # 시간 경과 계산
         elapsed_time = (current_time - self.move_start_time) / 1000  # 초 단위
-        # X축 이동 범위와 패턴 설정 (화면을 3등분하여 추가)
-        if elapsed_time % 9 < 3:  # 첫 1/3 시간 동안 560 ~ 730 사이 이동
+        if elapsed_time % 9 < 3:  
             center_x = 645
-        elif elapsed_time % 9 < 6:  # 다음 1/3 시간 동안 730 ~ 900 사이 이동
+        elif elapsed_time % 9 < 6:  
             center_x = 815
-        else:  # 마지막 1/3 시간 동안 560 ~ 900 사이 랜덤 이동
+        else:  
             center_x = random.randint(560, 900)
-        # Y축 이동 범위 설정
-        amplitude_y = 50  # Y축 진폭
-        frequency_y = 2 * math.pi / 6  # 주기 설정
+        amplitude_y = 50  
+        frequency_y = 2 * math.pi / 6  
         center_y = 100 + amplitude_y * math.sin(frequency_y * elapsed_time)
-        # 보스 위치 업데이트
+        
         self.boss_pos[0] = center_x + 100 * math.sin(elapsed_time / 2)  # X축 움직임
         self.boss_pos[1] = center_y
         # 화면 밖으로 나가지 않도록 제한
