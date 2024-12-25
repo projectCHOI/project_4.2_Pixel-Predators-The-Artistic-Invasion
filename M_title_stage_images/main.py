@@ -802,5 +802,5 @@ while run:
         # 프레임 설정
         clock.tick(30)
 
-# 게임 종료
+
 pygame.quit()

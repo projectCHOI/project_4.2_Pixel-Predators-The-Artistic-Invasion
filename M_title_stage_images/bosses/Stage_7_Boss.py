@@ -91,8 +91,11 @@ class Stage7Boss:
             else:
                 wave_size = 20  # 체력 <= 25%
 
-            # 공격 시작 위치
-            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 240]  # 보스 아래 중앙
+            # 공격 시작 위치: 보스 중앙
+            attack_start_pos = [
+                self.boss_pos[0] + self.boss_image.get_width() // 2,
+                self.boss_pos[1] + self.boss_image.get_height() // 2
+            ]
 
             # 웨이브 패턴으로 에너지 볼 생성
             for i in range(wave_size):
