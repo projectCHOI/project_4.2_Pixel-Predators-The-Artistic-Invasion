@@ -48,9 +48,9 @@ class Stage6Boss:
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
-        self.boss_speed = 4
-        self.acceleration = 0.3
-        self.max_speed = 12
+        self.boss_speed = 2
+        self.acceleration = 0.1
+        self.max_speed = 8
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
     def check_appear(self, seconds, current_level):
@@ -64,23 +64,16 @@ class Stage6Boss:
         self.boss_speed = min(self.boss_speed + self.acceleration, self.max_speed)
         self.boss_pos[0] += self.direction[0] * self.boss_speed
         self.boss_pos[1] += self.direction[1] * self.boss_speed
-        # 화면 밖으로 나가지 않도록 제한
+
+        # 화면 범위에 부딪혔을 때 방향 전환
+        if self.boss_pos[0] <= 38 or self.boss_pos[0] >= 1242:
+            self.direction[0] = -self.direction[0]  # X축 방향 반전
+        if self.boss_pos[1] <= 38 or self.boss_pos[1] >= 682:
+            self.direction[1] = -self.direction[1]  # Y축 방향 반전
+
+        # 화면 범위 내로 위치 제한
         self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
         self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
-        # 벽에 부딪히면 난반사 방향 전환
-        if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 150:
-            random_angle = random.uniform(20, 160) if self.direction[1] > 0 else random.uniform(200, 340)
-            radian = math.radians(random_angle)
-            self.direction[0] = math.cos(radian)
-            self.direction[1] = math.sin(radian)
-            self.boss_speed = 2  # 속도 초기화
-
-        if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 150:
-            random_angle = random.uniform(110, 250) if self.direction[0] > 0 else random.uniform(-70, 70)
-            radian = math.radians(random_angle)
-            self.direction[0] = math.cos(radian)
-            self.direction[1] = math.sin(radian)
-            self.boss_speed = 2  # 속도 초기화
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
