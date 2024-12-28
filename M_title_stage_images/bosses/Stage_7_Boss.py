@@ -31,77 +31,63 @@ class Stage7Boss:
         self.boss_damage = 2  # 보스의 공격력
         self.boss_speed = 5  # 보스의 이동 속도
         self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
-        self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
         self.boss_move_phase = 1  # 보스의 이동 단계
         self.boss_hit = False  # 보스 피격 상태
-        self.boss_hit_start_time = 0  # 보스 피격 시점
-        self.boss_hit_duration = 100  # 보스 피격 효과 지속 시간 (밀리초)
         self.boss_attacks = []  # 보스의 공격 리스트
         self.boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
         self.boss_last_attack_time = 0  # 마지막 공격 시점
-        self.gem_pos = None  # 보석의 위치
         self.gem_active = False  # 보석 활성화 상태
         self.stage_cleared = False  # 스테이지 클리어 여부
-        self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
+        self.move_start_time = pygame.time.get_ticks()
+        self.move_phase = 0  # 이동 단계 초기화
+        self.move_positions = [640, 213, 640, 1066, 640, 213]  # 반복 이동 좌표
 
     def check_appear(self, seconds, current_level):
         if current_level == 7 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 120, 0]
             self.boss_hp = self.max_boss_hp
-            self.boss_appeared = True  # 보스가 등장했음을 표시
+            self.boss_appeared = True
 
     def move(self):
         current_time = pygame.time.get_ticks()
-        if not hasattr(self, 'move_start_time'):
-            self.move_start_time = current_time
         elapsed_time = (current_time - self.move_start_time) / 1000  # 초 단위
-        if elapsed_time % 9 < 3:  
-            center_x = 645
-        elif elapsed_time % 9 < 6:  
-            center_x = 815
-        else:  
-            center_x = random.randint(560, 900)
-        amplitude_y = 50  
-        frequency_y = 2 * math.pi / 6  
-        center_y = 100 + amplitude_y * math.sin(frequency_y * elapsed_time)
-        
-        self.boss_pos[0] = center_x + 100 * math.sin(elapsed_time / 2)  # X축 움직임
-        self.boss_pos[1] = center_y
-        # 화면 밖으로 나가지 않도록 제한
-        self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
-        self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
+        move_duration = 10  # 이동 시간 (초)
+
+        # 현재 단계 설정
+        phase_index = self.move_phase % len(self.move_positions)
+        next_phase_index = (self.move_phase + 1) % len(self.move_positions)
+        start_x = self.move_positions[phase_index]
+        end_x = self.move_positions[next_phase_index]
+
+        # 보스 이동 중에는 공격 중단
+        if elapsed_time < move_duration:
+            t = elapsed_time / move_duration
+            self.boss_pos[0] = start_x + (end_x - start_x) * t
+        else:
+            # 이동 완료 후 다음 단계로 전환
+            self.move_phase += 1
+            self.move_start_time = current_time
 
     def attack(self):
-        current_time = pygame.time.get_ticks()
+        # 보스가 이동 중이면 공격 중단
+        if (pygame.time.get_ticks() - self.move_start_time) / 1000 < 10:
+            return
 
+        current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-
-            # 보스의 체력에 따라 웨이브 크기 설정
-            if self.boss_hp > self.max_boss_hp * 0.75:
-                wave_size = 5  # 체력 > 75%
-            elif self.boss_hp > self.max_boss_hp * 0.5:
-                wave_size = 10  # 체력 > 50%
-            elif self.boss_hp > self.max_boss_hp * 0.25:
-                wave_size = 15  # 체력 > 25%
-            else:
-                wave_size = 20  # 체력 <= 25%
-
-            # 공격 시작 위치: 보스 중앙
             attack_start_pos = [
                 self.boss_pos[0] + self.boss_image.get_width() // 2,
                 self.boss_pos[1] + self.boss_image.get_height() // 2
             ]
-
-            # 웨이브 패턴으로 에너지 볼 생성
-            for i in range(wave_size):
-                angle = i * (360 / wave_size)  # 웨이브 형태의 각도 계산
+            for i in range(10):
+                angle = i * (360 / 10)
                 radian = math.radians(angle)
-                dx = math.cos(radian) * 3  # 속도 조절
+                dx = math.cos(radian) * 3
                 dy = math.sin(radian) * 3
                 attack_image = self.boss_attack_image1 if dx < 0 else self.boss_attack_image2
                 self.boss_attacks.append({
