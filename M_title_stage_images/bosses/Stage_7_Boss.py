@@ -44,6 +44,8 @@ class Stage7Boss:
         self.move_start_time = pygame.time.get_ticks()
         self.move_phase = 0  # 이동 단계 초기화
         self.move_positions = [640, 213, 640, 1066, 640, 213]  # 반복 이동 좌표
+        self.boss_invincible_duration = 500  # 무적 상태 지속 시간 (밀리초)
+        self.boss_hit_duration = 100  # 보스 피격 효과 지속 시간 (밀리초)
 
     def check_appear(self, seconds, current_level):
         if current_level == 7 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
