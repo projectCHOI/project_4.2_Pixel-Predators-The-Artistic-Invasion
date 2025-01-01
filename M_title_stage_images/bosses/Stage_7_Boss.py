@@ -12,7 +12,8 @@ def load_image(*path_parts, size=None):
     try:
         image = pygame.image.load(path).convert_alpha()
     except pygame.error as e:
-        raise SystemExit(f"Cannot load image: {path}\n{e}")
+        print(f"이미지 로드 오류: {path}\n{e}")
+        raise SystemExit
     if size:
         image = pygame.transform.scale(image, size)
     return image
@@ -92,7 +93,7 @@ class Stage7Boss:
             attack['pos'][1] += attack['dir'][1]
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
-                if self.check_energy_ball_collision((bx, by), player_pos):
+                if self.check_energy_ball_collision(tuple(attack['pos']), player_pos):
                     player_hit = True
                 else:
                     new_boss_attacks.append(attack)
@@ -112,16 +113,6 @@ class Stage7Boss:
             pygame.draw.rect(win, (50, 50, 50), (80, 680, 200, 30))
             pygame.draw.rect(win, (210, 20, 4), (80, 680, int(200 * health_ratio), 30))
             pygame.draw.rect(win, (255, 255, 255), (80, 680, 200, 30), 2)
-    
-    def check_hit(self, attacks):
-        for attack in attacks:
-            if self.boss_pos[0] < attack[0] < self.boss_pos[0] + 120 and \
-            self.boss_pos[1] < attack[1] < self.boss_pos[1] + 120:
-                self.boss_hp -= 1  # 보스 체력 감소
-                if self.boss_hp <= 0:
-                    self.boss_defeated = True
-                return True
-        return False
 
     def reset(self):
         self.boss_active = False
@@ -132,9 +123,21 @@ class Stage7Boss:
         self.boss_attacks = []
         self.gem_active = False
         self.stage_cleared = False
-        self.boss_move_phase = 1
-        self.boss_hit = False
+        self.move_phase = 0
 
+    def check_hit(self, attacks):
+        for attack in attacks:
+            if isinstance(attack, dict):
+                ax, ay = attack['pos']
+            else:
+                ax, ay = attack
+            if self.boss_pos[0] < ax < self.boss_pos[0] + 120 and self.boss_pos[1] < ay < self.boss_pos[1] + 120:
+                self.boss_hp -= 1
+                if self.boss_hp <= 0:
+                    self.boss_defeated = True
+                return True
+        return False
+        
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
