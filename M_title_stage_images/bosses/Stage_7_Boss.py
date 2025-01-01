@@ -112,6 +112,16 @@ class Stage7Boss:
             pygame.draw.rect(win, (50, 50, 50), (80, 680, 200, 30))
             pygame.draw.rect(win, (210, 20, 4), (80, 680, int(200 * health_ratio), 30))
             pygame.draw.rect(win, (255, 255, 255), (80, 680, 200, 30), 2)
+    
+    def check_hit(self, attacks):
+        for attack in attacks:
+            if self.boss_pos[0] < attack[0] < self.boss_pos[0] + 120 and \
+            self.boss_pos[1] < attack[1] < self.boss_pos[1] + 120:
+                self.boss_hp -= 1  # 보스 체력 감소
+                if self.boss_hp <= 0:
+                    self.boss_defeated = True
+                return True
+        return False
 
     def reset(self):
         self.boss_active = False
