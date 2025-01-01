@@ -121,6 +121,8 @@ enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=image_size)
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255) 
+CYAN = (0, 255, 255)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
@@ -802,5 +804,90 @@ while run:
         # 프레임 설정
         clock.tick(30)
 
+
+# 관리자 화면
+def admin_screen():
+    win.fill(BLACK)  # 검은 배경
+    buttons = []  # 버튼 저장 리스트
+    rows, cols = 5, 3  # 버튼 배열 (5x3)
+    button_width, button_height = 200, 100
+    gap = 20
+    start_x = (win_width - (button_width + gap) * cols + gap) // 2
+    start_y = (win_height - (button_height + gap) * rows + gap) // 2
+
+    # 버튼 생성
+    for row in range(rows):
+        for col in range(cols):
+            stage = row * cols + col + 1
+            button_x = start_x + col * (button_width + gap)
+            button_y = start_y + row * (button_height + gap)
+            buttons.append((pygame.Rect(button_x, button_y, button_width, button_height), stage))
+
+    # 화면 업데이트 및 이벤트 처리
+    while True:
+        win.fill(BLACK)  # 검은 배경
+        for button, stage in buttons:
+            # 버튼 색상 설정 (마우스 오버 시 강조)
+            color = CYAN if button.collidepoint(pygame.mouse.get_pos()) else BLUE
+            pygame.draw.rect(win, color, button)
+            text = font.render(f"Stage_{stage}", True, WHITE)
+            text_rect = text.get_rect(center=button.center)
+            win.blit(text, text_rect)
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            # 키 이벤트 처리
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F10:  # 관리자 화면 복귀
+                    return admin_screen()
+                elif event.key == pygame.K_F11:  # 메인 화면으로 복귀
+                    global game_active
+                    game_active = False
+                    return None
+
+            # 마우스 클릭 처리
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for button, stage in buttons:
+                    if button.collidepoint(event.pos):
+                        if stage > max_level:  # 해당 스테이지 없음
+                            # 오류 메시지 표시
+                            win.fill(BLACK)
+                            error_text = font.render("[NO_Stage]", True, RED)
+                            win.blit(error_text, error_text.get_rect(center=(win_width // 2, win_height // 2)))
+                            pygame.display.update()
+                            pygame.time.wait(2000)
+                            return admin_screen()  # 관리자 화면 복귀
+                        return stage  # 선택한 스테이지로 이동
+
+# 게임 루프
+boss = initialize_boss(level)
+
+while run:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False  # 게임 종료
+
+        # 관리자 치트키 처리
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F9:  # F9로 관리자 화면 이동
+                selected_stage = admin_screen()
+                if selected_stage:  # 선택한 스테이지로 이동
+                    level = selected_stage
+                    boss = initialize_boss(level)
+                    if boss:
+                        boss.reset()  # 보스 상태 초기화
+                    game_active = True  # 게임 활성화
+
+    if not game_active:
+        # 메인 화면 상태
+        win.fill(BLACK)
+        text = font.render("Press F9 for Admin Menu", True, WHITE)
+        win.blit(text, (win_width // 2 - text.get_width() // 2, win_height // 2 - text.get_height() // 2))
+        pygame.display.update()
 
 pygame.quit()
