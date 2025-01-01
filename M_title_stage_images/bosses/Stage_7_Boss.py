@@ -12,7 +12,8 @@ def load_image(*path_parts, size=None):
     try:
         image = pygame.image.load(path).convert_alpha()
     except pygame.error as e:
-        raise SystemExit(f"Cannot load image: {path}\n{e}")
+        print(f"이미지 로드 오류: {path}\n{e}")
+        raise SystemExit
     if size:
         image = pygame.transform.scale(image, size)
     return image
@@ -120,7 +121,7 @@ class Stage7Boss:
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
-                    player_hit = True  # 플레이어에게 맞음
+                    player_hit = True
                 else:
                     new_boss_attacks.append(attack)
             # 화면 밖으로 나가면 공격 제거
@@ -168,53 +169,17 @@ class Stage7Boss:
 
             # 체력 비율 계산
             health_ratio = self.boss_hp / self.max_boss_hp
-            current_health_width = int(health_bar_width * health_ratio)
-
-            # 체력 바 배경 그리기
-            pygame.draw.rect(win, (50, 50, 50), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
-
-            # 현재 체력 바 그리기
-            pygame.draw.rect(win, (210, 20, 4), (health_bar_x, health_bar_y, current_health_width, health_bar_height))
-
-            # 체력 바 테두리 그리기
-            pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
-        elif self.boss_hp <= 0 and self.boss_defeated:
-            # 보스가 제거되었을 때 메시지 표시 (옵션)
-            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
-            win.blit(defeated_text, (10, 680))
-
+            pygame.draw.rect(win, (50, 50, 50), (80, 680, 200, 30))
+            pygame.draw.rect(win, (210, 20, 4), (80, 680, int(200 * health_ratio), 30))
+            pygame.draw.rect(win, (255, 255, 255), (80, 680, 200, 30), 2)
+    
     def check_hit(self, attacks):
-        current_time = pygame.time.get_ticks()
-        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
-            # 보스가 무적 상태일 때는 공격을 무시합니다.
-            return
-        else:
-            self.boss_hit = False  # 무적 상태 해제
-
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
-                self.boss_hp -= 1  # 데미지 적용
-                if self.boss_hp < 0:
-                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+            if self.boss_pos[0] < attack[0] < self.boss_pos[0] + 120 and \
+            self.boss_pos[1] < attack[1] < self.boss_pos[1] + 120:
+                self.boss_hp -= 1  # 보스 체력 감소
                 if self.boss_hp <= 0:
-                    self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
-                    self.gem_active = True
                     self.boss_defeated = True
-                break  # 한 번에 하나의 공격만 처리
-
-    def check_gem_collision(self, player_pos):
-        if self.gem_active:
-            px, py = player_pos
-            gx, gy = self.gem_pos
-            player_width, player_height = 40, 40  # 플레이어 크기
-            gem_size = 40  # 보석 크기
-            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
-                self.gem_active = False
-                self.stage_cleared = True  # 스테이지 클리어
                 return True
         return False
 
@@ -226,10 +191,9 @@ class Stage7Boss:
         self.boss_appeared = False  # 보스 등장 여부 재설정
         self.boss_attacks = []
         self.gem_active = False
-        self.gem_pos = None
+        self.stage_cleared = False
         self.boss_move_phase = 1
         self.boss_hit = False
-        self.stage_cleared = False
 
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
