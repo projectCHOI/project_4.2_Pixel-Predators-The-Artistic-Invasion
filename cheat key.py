@@ -1,6 +1,7 @@
 import pygame
 import sys
 import os
+import subprocess
 
 # Pygame 초기화
 pygame.init()
@@ -41,6 +42,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_F11:
+                # F11을 누르면 main.py 실행
+                subprocess.run(["python", "C:\\Users\\boss3\\OneDrive\\바탕 화면\\GitHub\\project_4.2_Pixel-Predators-The-Artistic-Invasion\\M_title_stage_images\\main.py"])
 
     # 화면 채워기
     screen.fill(BLACK)
