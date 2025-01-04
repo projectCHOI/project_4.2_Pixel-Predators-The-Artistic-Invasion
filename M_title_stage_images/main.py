@@ -3,14 +3,6 @@ import random
 import math
 import os
 
-import sys
-# key 임포트
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CHEAT_KEY_PATH = os.path.join(BASE_DIR, 'M_title_stage_images')
-sys.path.append(CHEAT_KEY_PATH)
-
-from cheat_key import handle_debug_mode
-
 # 필요한 보스 클래스를 모두 임포트합니다.
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
@@ -134,12 +126,6 @@ CYAN = (0, 255, 255)
 YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
-
-# Monochrome 색상 상수 정의
-MONOCHROME_COLOR = (100, 100, 100)  # RGB 값으로 회색 정의
-# 디버그 모드에서 Monochrome 색상 적용
-if debug_mode:
-    win.fill(MONOCHROME_COLOR)  # Monochrome 화면 배경 적용
 
 # 플레이어 설정
 player_speed = 10  # 속도 조정
