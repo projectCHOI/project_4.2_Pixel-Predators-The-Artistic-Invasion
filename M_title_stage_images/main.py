@@ -135,6 +135,12 @@ YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
+# Monochrome 색상 상수 정의
+MONOCHROME_COLOR = (100, 100, 100)  # RGB 값으로 회색 정의
+# 디버그 모드에서 Monochrome 색상 적용
+if debug_mode:
+    win.fill(MONOCHROME_COLOR)  # Monochrome 화면 배경 적용
+
 # 플레이어 설정
 player_speed = 10  # 속도 조정
 original_player_speed = player_speed
