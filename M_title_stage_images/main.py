@@ -151,7 +151,7 @@ except FileNotFoundError:
 
 # 게임 변수 초기화
 level = 1
-max_level = 12
+max_level = 13
 run = True
 game_active = False
 invincible = False
