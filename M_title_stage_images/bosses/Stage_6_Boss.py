@@ -108,11 +108,11 @@ class Stage6Boss:
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
         if health_ratio > 0.6:
-            return "high"
+            return "low"
         elif health_ratio > 0.3:
             return "medium"
         else:
-            return "low"
+            return "high"
 
     def draw(self, win):
         if self.boss_hp > 0:
