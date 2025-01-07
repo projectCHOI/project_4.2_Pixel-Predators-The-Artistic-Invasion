@@ -19,6 +19,7 @@ def load_image(*path_parts, size=None):
 
 class Stage6Boss:
     def __init__(self):
+        # 이미지 로드 (보스 이미지, 공격 이미지 3개)
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
         self.boss_attack_images = {
             "high": load_image("boss_skilles", "boss_stage6_a.png", size=(30, 30)),
@@ -50,14 +51,7 @@ class Stage6Boss:
         self.boss_speed = 2
         self.acceleration = 0.1
         self.max_speed = 8
-        self.move_pattern = 0
-        self.pause_timer = 0
-        self.pause_duration = 500
-        self.direction_index = 0
-        self.pattern_points = [
-            [(640, 360), (840, 360), (840, 560), (640, 560)],  # 사각형 패턴
-            [(640, 360), (740, 460), (640, 560)]  # 삼각형 패턴
-        ]
+        self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
     def check_appear(self, seconds, current_level):
         if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
