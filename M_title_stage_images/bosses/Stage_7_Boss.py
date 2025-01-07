@@ -59,18 +59,17 @@ class Stage7Boss:
         if not hasattr(self, 'move_start_time'):
             self.move_start_time = current_time
         elapsed_time = (current_time - self.move_start_time) / 1000  # 초 단위
-        if elapsed_time % 9 < 3:  
-            center_x = 645
-        elif elapsed_time % 9 < 6:  
-            center_x = 815
-        else:  
-            center_x = random.randint(560, 900)
-        amplitude_y = 50  
-        frequency_y = 2 * math.pi / 6  
-        center_y = 100 + amplitude_y * math.sin(frequency_y * elapsed_time)
 
-        self.boss_pos[0] = center_x + 100 * math.sin(elapsed_time / 2)  # X축 움직임
-        self.boss_pos[1] = center_y
+        # 8자(lemniscate) 곡선으로 움직임
+        a = 150  # 8자 곡선의 크기 조절 변수
+        b = 75
+        x = a * math.sin(elapsed_time)
+        y = b * math.sin(2 * elapsed_time) / 2
+
+        self.boss_pos[0] = 640 + x  # 중앙 기준 X 이동
+        self.boss_pos[1] = 300 + y  # 중앙 기준 Y 이동
+
+        # 경계 제한 설정
         self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
         self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
 
