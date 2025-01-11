@@ -74,48 +74,61 @@ class Stage8Boss:
                 drone_pos = [self.boss_pos[0] + 60 + dx, self.boss_pos[1] + 60 + dy]
                 self.shield_drones.append(drone_pos)
 
-    def attack(self):
+    def attack(self, player_pos):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-            attack_angles = []
+            attack_speed = 5 + (self.max_boss_hp - self.boss_hp) * 0.3  # 체력에 따라 속도 증가
 
-            if self.boss_hp > self.max_boss_hp * 0.70:
-                # 체력 > 70%: 높은 데미지의 투사체를 드물게 발사 (에너지 볼 1개)
-                attack_angles = [90]
-            else:
-                # 체력 <= 70%: 방어막 해제, 360도 전방위 공격
-                self.shields_active = False
-                attack_angles = [i for i in range(0, 360, 30)]  # 30도 간격으로 360도 공격
+            if self.boss_hp > self.max_boss_hp * 0.75:
+                # 체력 > 75%: 단일 유도탄 발사
+                dx = player_pos[0] - (self.boss_pos[0] + 60)  # 보스 중심에서 플레이어로의 x 거리
+                dy = player_pos[1] - (self.boss_pos[1] + 60)  # 보스 중심에서 플레이어로의 y 거리
+                distance = math.sqrt(dx ** 2 + dy ** 2)
 
-            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 120]  # 보스 중앙 위치
+                # 단위 벡터로 방향 설정
+                dx /= distance
+                dy /= distance
 
-            # 각도에 따른 에너지 볼 생성
-            for angle in attack_angles:
-                radian = math.radians(angle)
-                dx = math.cos(radian) * 10  # 속도 조절
-                dy = math.sin(radian) * 10
+                # 투사체 추가
                 self.boss_attacks.append({
-                    'pos': [attack_start_pos[0], attack_start_pos[1]],
-                    'dir': [dx, dy],
-                    'angle': angle
+                    'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],  # 보스 중심 위치에서 발사
+                    'dir': [dx * attack_speed, dy * attack_speed],  # 방향과 속도
+                    'angle': math.degrees(math.atan2(-dy, dx))  # 투사체 각도 계산
                 })
 
+            else:
+                # 체력 <= 75%: 방어막 해제 후 360도 전방위 유도탄 발사
+                self.shields_active = False
+                num_shots = 8  # 8개의 투사체 생성
+                for i in range(num_shots):
+                    angle = i * (360 / num_shots)
+                    radian = math.radians(angle)
+                    dx = math.cos(radian)
+                    dy = math.sin(radian)
+                    self.boss_attacks.append({
+                        'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],
+                        'dir': [dx * attack_speed, dy * attack_speed],
+                        'angle': angle
+                    })
+
+# 투사체 이동 업데이트
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
-            # 에너지 볼 이동
+            # 투사체 이동
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
 
+            # 화면 밖으로 나간 투사체 제거
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
-                    player_hit = True  # 플레이어에게 맞음
+                    player_hit = True  # 플레이어가 피격됨
                 else:
                     new_boss_attacks.append(attack)
-        # 화면 밖으로 나가면 공격 제거
+        
         self.boss_attacks = new_boss_attacks
         return player_hit
 
