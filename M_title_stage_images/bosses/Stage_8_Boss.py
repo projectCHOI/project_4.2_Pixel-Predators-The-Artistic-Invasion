@@ -21,8 +21,8 @@ class Stage8Boss:
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage8.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage8_b.png", size=(40, 40))
-        self.gem_image = load_image("items", "mob_Jewelry_8.png", size=(40, 40))
         self.shield_drone_image = load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_8.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
@@ -80,11 +80,11 @@ class Stage8Boss:
             self.boss_last_attack_time = current_time
             attack_angles = []
 
-            if self.boss_hp > self.max_boss_hp * 0.25:
-                # 체력 > 25%: 높은 데미지의 투사체를 드물게 발사 (에너지 볼 1개)
+            if self.boss_hp > self.max_boss_hp * 0.70:
+                # 체력 > 70%: 높은 데미지의 투사체를 드물게 발사 (에너지 볼 1개)
                 attack_angles = [90]
             else:
-                # 체력 <= 25%: 방어막 해제, 360도 전방위 공격
+                # 체력 <= 70%: 방어막 해제, 360도 전방위 공격
                 self.shields_active = False
                 attack_angles = [i for i in range(0, 360, 30)]  # 30도 간격으로 360도 공격
 
