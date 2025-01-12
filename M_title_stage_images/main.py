@@ -582,7 +582,8 @@ while run:
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
                 boss.move()  # 보스 이동
-                boss.attack()  # 보스 공격
+                # boss.attack()  # 보스 공격
+                boss.attack(player_pos) # 플레이어 위치 전달
                 if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
                     current_health -= boss.boss_damage
                     if current_health <= 0:
