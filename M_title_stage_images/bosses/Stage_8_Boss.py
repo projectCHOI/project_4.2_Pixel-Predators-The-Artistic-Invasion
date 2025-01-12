@@ -18,6 +18,11 @@ def load_image(*path_parts, size=None):
 
 class Stage8Boss:
     def __init__(self):
+        # 플레이어 위치를 저장할 속성
+        self.player_pos = None
+        # 플레이어 위치 업데이트 메서드 추가
+        def update_player_position(self, player_pos):
+            self.player_pos = player_pos
         # 이미지 로드
         self.boss_image = load_image("bosses", "boss_stage8.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage8_b.png", size=(40, 40))
@@ -74,41 +79,43 @@ class Stage8Boss:
                 drone_pos = [self.boss_pos[0] + 60 + dx, self.boss_pos[1] + 60 + dy]
                 self.shield_drones.append(drone_pos)
 
-    def attack(self, player_pos):
+    def attack(self):
+        # player_pos를 self.player_pos에서 참조하도록 수정
+        if self.player_pos is None:
+            return  # 플레이어 위치가 없는 경우 공격하지 않음
+        
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-            attack_speed = 5 + (self.max_boss_hp - self.boss_hp) * 0.3  # 체력에 따라 속도 증가
+            attack_speed = 5 + (self.max_boss_hp - self.boss_hp) * 0.3
 
             # 항상 단일 투사체 발사
-            dx = player_pos[0] - (self.boss_pos[0] + 60)  # 보스 중심에서 플레이어로의 x 거리
-            dy = player_pos[1] - (self.boss_pos[1] + 60)  # 보스 중심에서 플레이어로의 y 거리
+            dx = self.player_pos[0] - (self.boss_pos[0] + 60)
+            dy = self.player_pos[1] - (self.boss_pos[1] + 60)
             distance = math.sqrt(dx ** 2 + dy ** 2)
 
-            # 단위 벡터로 방향 설정
             dx /= distance
             dy /= distance
 
-            # 단일 유도 투사체 생성
             self.boss_attacks.append({
-                'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],  # 보스 중심 위치
-                'dir': [dx * attack_speed, dy * attack_speed],  # 방향과 속도
-                'angle': math.degrees(math.atan2(-dy, dx))  # 투사체 각도 계산
+                'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],
+                'dir': [dx * attack_speed, dy * attack_speed],
+                'angle': math.degrees(math.atan2(-dy, dx))
             })
 
             # 체력이 25% 이하일 경우 추가 패턴 발사
             if self.boss_hp <= self.max_boss_hp * 0.65:
-                self.shields_active = False  # 방어막 비활성화
-                num_shots = 12  # 12개의 추가 투사체 생성
+                self.shields_active = False
+                num_shots = 12
                 for i in range(num_shots):
                     angle = i * (360 / num_shots)
                     radian = math.radians(angle)
                     dx = math.cos(radian)
                     dy = math.sin(radian)
                     self.boss_attacks.append({
-                        'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],  # 보스 중심 위치
-                        'dir': [dx * attack_speed, dy * attack_speed],  # 방향과 속도
-                        'angle': angle  # 투사체 각도
+                        'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],
+                        'dir': [dx * attack_speed, dy * attack_speed],
+                        'angle': angle
                     })
 
 # 투사체 이동 업데이트
