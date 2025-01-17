@@ -144,10 +144,9 @@ class Stage1Boss:
             current_time = pygame.time.get_ticks()
             if self.boss_hit:
                 if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
-                    self.boss_hit = False  # 무적 상태 및 깜박임 종료
+                    self.boss_hit = False
                     win.blit(self.boss_image, self.boss_pos)
                 else:
-                    # 깜박임 효과
                     if (current_time // self.boss_hit_duration) % 2 == 0:
                         win.blit(self.boss_image, self.boss_pos)
             else:
@@ -233,9 +232,9 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 120, 0]
+        self.boss_pos = [640 - 60, 0]
         self.boss_defeated = False
-        self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_appeared = False
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
