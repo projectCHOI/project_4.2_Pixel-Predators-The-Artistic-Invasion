@@ -54,28 +54,38 @@ class Stage1Boss:
             self.boss_appeared = True
 
     def move(self):
-        # 이동 후 위치 제한 함수 추가
         def limit_position():
-            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 240))
-            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 240))
-
-        current_time = pygame.time.get_ticks()
+            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 120))
+            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 120))
 
         if self.boss_move_phase == 1:
-            # 1단계: 보스가 화면 상단에서 등장 후 1초 대기
-            if not hasattr(self, 'phase_start_time'):
-                self.phase_start_time = current_time  # 현재 시간을 저장
-            elif current_time - self.phase_start_time >= 1000:  # 1초 대기
+            # 중앙으로 이동
+            target_pos = [640 - 60, 360 - 60]
+            direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
+            length = math.hypot(direction[0], direction[1])
+            if length > self.boss_speed:
+                direction = [direction[0] / length, direction[1] / length]
+                self.boss_pos[0] += direction[0] * self.boss_speed
+                self.boss_pos[1] += direction[1] * self.boss_speed
+            else:
+                self.boss_pos = target_pos
                 self.boss_move_phase = 2
         elif self.boss_move_phase == 2:
-            # 2단계: 화면 상단에서 좌우로만 이동
+            # 좌우 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 240:
-                self.boss_direction_x *= -1  # 방향 전환
-            # 보스의 Y 위치를 상단으로 고정
-            self.boss_pos[1] = 0
+            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
+                self.boss_direction_x *= -1
+            if self.boss_hp <= self.max_boss_hp / 2:
+                self.boss_move_phase = 3
+        elif self.boss_move_phase == 3:
+            # 좌우 및 상하 이동
+            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
+            self.boss_pos[1] += self.boss_speed * self.boss_direction_y
+            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
+                self.boss_direction_x *= -1
+            if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 120:
+                self.boss_direction_y *= -1
 
-        # 위치 제한 적용
         limit_position()
 
     def attack(self):
