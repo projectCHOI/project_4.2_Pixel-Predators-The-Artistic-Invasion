@@ -47,7 +47,7 @@ class Stage1Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        if current_level == 3 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
