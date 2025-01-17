@@ -24,12 +24,13 @@ class Stage1Boss:
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
-        self.max_boss_hp = 10  # 보스의 최대 체력
+        self.max_boss_hp = 15  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 5  # 보스의 이동 속도
-        self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
+        self.boss_speed = 6  # 보스의 이동 속도
+        self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
+        self.boss_direction_y = 1  # 보스의 상하 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
@@ -46,11 +47,11 @@ class Stage1Boss:
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
     def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 3 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
-            self.boss_pos = [640 - 120, 0]
+            self.boss_pos = [640 - 60, 0]
             self.boss_hp = self.max_boss_hp
-            self.boss_appeared = True  # 보스가 등장했음을 표시
+            self.boss_appeared = True
 
     def move(self):
         # 이동 후 위치 제한 함수 추가
