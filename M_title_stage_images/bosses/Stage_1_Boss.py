@@ -49,7 +49,7 @@ class Stage1Boss:
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
-            self.boss_pos = [640 - 60, 0]
+            self.boss_pos = [640 - 60, 0]  # (640, 0)에서 등장
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
@@ -58,19 +58,7 @@ class Stage1Boss:
             self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 120))
             self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 120))
 
-        if self.boss_move_phase == 1:
-            # 중앙으로 이동
-            target_pos = [640 - 60, 360 - 60]
-            direction = [target_pos[0] - self.boss_pos[0], target_pos[1] - self.boss_pos[1]]
-            length = math.hypot(direction[0], direction[1])
-            if length > self.boss_speed:
-                direction = [direction[0] / length, direction[1] / length]
-                self.boss_pos[0] += direction[0] * self.boss_speed
-                self.boss_pos[1] += direction[1] * self.boss_speed
-            else:
-                self.boss_pos = target_pos
-                self.boss_move_phase = 2
-        elif self.boss_move_phase == 2:
+        if self.boss_move_phase == 2:
             # 좌우 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
             if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
