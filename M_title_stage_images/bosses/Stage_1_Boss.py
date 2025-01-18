@@ -51,6 +51,7 @@ class Stage1Boss:
             self.boss_active = True
             self.boss_pos = [640 - 60, 0]  # (640, 0)에서 등장
             self.boss_hp = self.max_boss_hp
+            self.boss_move_phase = 2
             self.boss_appeared = True
 
     def move(self):
