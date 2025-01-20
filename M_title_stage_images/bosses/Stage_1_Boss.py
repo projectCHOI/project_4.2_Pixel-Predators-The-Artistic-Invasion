@@ -58,7 +58,7 @@ class Stage1Boss:
     def move(self):
         def limit_position():
             self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 140))  # 보스1의 x, y 좌표 제한
-            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 140))
+            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 540))
 
         if self.boss_move_phase == 2:
             # 좌우 이동
@@ -76,7 +76,7 @@ class Stage1Boss:
             self.boss_pos[1] += self.boss_speed * self.boss_direction_y
             if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:
                 self.boss_direction_x *= -1
-            if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 140:
+            if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 540:
                 self.boss_direction_y *= -1
 
         limit_position()
