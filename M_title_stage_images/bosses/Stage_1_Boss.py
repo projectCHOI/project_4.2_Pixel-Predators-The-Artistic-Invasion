@@ -22,14 +22,6 @@ class Stage1Boss:
         self.boss_image = load_image("bosses", "boss_stage1.png", size=(140, 140))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
-        self.boss2_image = load_image("bosses", "boss_stage2.png", size=(80, 80))
-
-        # 보스2 관련 초기화
-        self.boss2_left_pos = [640 - 120, 0]  # 보스1 왼쪽
-        self.boss2_right_pos = [640 + 0, 0]  # 보스1 오른쪽
-        self.boss2_active = False  # 보스2의 활성화 상태
-        self.boss2_left_active = False  # 왼쪽 보스2 활성화 상태
-        self.boss2_right_active = False  # 오른쪽 보스2 활성화 상태
 
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
@@ -67,14 +59,6 @@ class Stage1Boss:
         def limit_position():
             self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 140))  # 보스1의 x, y 좌표 제한
             self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 140))
-
-            # 보스2의 위치가 보스1의 위치를 따라가게 한다
-            if self.boss2_left_active:
-                self.boss2_left_pos[1] = self.boss_pos[1]
-                self.boss2_left_pos[0] = self.boss_pos[0] - 100
-            if self.boss2_right_active:
-                self.boss2_right_pos[1] = self.boss_pos[1]
-                self.boss2_right_pos[0] = self.boss_pos[0] + 100
 
         if self.boss_move_phase == 2:
             # 좌우 이동
@@ -160,12 +144,6 @@ class Stage1Boss:
                         win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
-
-        # 보스2 그리기 (두 개의 보스2가 각각 왼쪽과 오른쪽에 등장)
-        if self.boss2_left_active:
-            win.blit(self.boss2_image, self.boss2_left_pos)
-        if self.boss2_right_active:
-            win.blit(self.boss2_image, self.boss2_right_pos)        
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
