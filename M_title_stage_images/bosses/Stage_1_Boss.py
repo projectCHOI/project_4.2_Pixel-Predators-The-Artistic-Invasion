@@ -22,6 +22,8 @@ class Stage1Boss:
         self.boss_image = load_image("bosses", "boss_stage1.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
+        self.boss2_image = load_image("bosses", "boss_stage2.png", size=(80, 80))
+        self.boss2_active = False
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 15  # 보스의 최대 체력
@@ -64,8 +66,8 @@ class Stage1Boss:
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
             if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 120:
                 self.boss_direction_x *= -1
-            if self.boss_hp <= self.max_boss_hp / 2:
-                self.boss_move_phase = 3
+            if self.boss_hp <= self.max_boss_hp * 0.6 and not self.boss2_active:
+                self.boss2_active = True  # 보스2가 등장
         elif self.boss_move_phase == 3:
             # 좌우 및 상하 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
@@ -140,6 +142,8 @@ class Stage1Boss:
                         win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
+        if self.boss2_active:
+            win.blit(self.boss2_image, [640 - 60, 0])        
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
