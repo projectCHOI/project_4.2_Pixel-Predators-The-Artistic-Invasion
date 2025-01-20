@@ -25,8 +25,8 @@ class Stage1Boss:
         self.boss2_image = load_image("bosses", "boss_stage2.png", size=(80, 80))
 
         # 보스2 관련 초기화
-        self.boss2_left_pos = [640 - 100, 0]  # 보스1 왼쪽
-        self.boss2_right_pos = [640 - 20, 0]  # 보스1 오른쪽
+        self.boss2_left_pos = [640 - 120, 0]  # 보스1 왼쪽
+        self.boss2_right_pos = [640 + 0, 0]  # 보스1 오른쪽
         self.boss2_active = False  # 보스2의 활성화 상태
         self.boss2_left_active = False  # 왼쪽 보스2 활성화 상태
         self.boss2_right_active = False  # 오른쪽 보스2 활성화 상태
@@ -65,28 +65,32 @@ class Stage1Boss:
 
     def move(self):
         def limit_position():
-            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 140))
+            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 140))  # 보스1의 x, y 좌표 제한
             self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 140))
-            # 보스 2의 위치도 보스1의 위치를 따라 움직이게 한다
+
+            # 보스2의 위치가 보스1의 위치를 따라가게 한다
             if self.boss2_left_active:
                 self.boss2_left_pos[1] = self.boss_pos[1]
+                self.boss2_left_pos[0] = self.boss_pos[0] - 100
             if self.boss2_right_active:
                 self.boss2_right_pos[1] = self.boss_pos[1]
+                self.boss2_right_pos[0] = self.boss_pos[0] + 100
 
         if self.boss_move_phase == 2:
             # 좌우 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:  # 보스 크기 변경
+            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:
                 self.boss_direction_x *= -1
-            if self.boss_hp <= self.max_boss_hp * 0.6 and not self.boss2_active:
-                self.boss2_active = True  # 보스2가 등장
-                self.boss2_left_active = True  # 왼쪽 보스2 활성화
-                self.boss2_right_active = True  # 오른쪽 보스2 활성화
+
+            # 체력 조건 충족 시 상하 이동 활성화
+            if self.boss_hp <= self.max_boss_hp * 0.5:
+                self.boss_move_phase = 3
+
         elif self.boss_move_phase == 3:
             # 좌우 및 상하 이동
             self.boss_pos[0] += self.boss_speed * self.boss_direction_x
             self.boss_pos[1] += self.boss_speed * self.boss_direction_y
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:  # 보스 크기 변경
+            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:
                 self.boss_direction_x *= -1
             if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 140:
                 self.boss_direction_y *= -1
