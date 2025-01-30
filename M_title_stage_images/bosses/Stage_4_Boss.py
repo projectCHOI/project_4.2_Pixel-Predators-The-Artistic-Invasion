@@ -17,7 +17,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Stage6Boss:
+class Stage4Boss:
     def __init__(self):
         # 이미지 로드 (보스 이미지, 공격 이미지 3개)
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
@@ -54,7 +54,7 @@ class Stage6Boss:
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
     def check_appear(self, seconds, current_level):
-        if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+        if current_level == 4 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
