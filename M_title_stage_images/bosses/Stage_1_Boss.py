@@ -8,7 +8,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
 def load_image(*path_parts, size=None):
-    """이미지 로드 함수"""
     path = os.path.join(BASE_IMAGE_PATH, *path_parts)
     try:
         image = pygame.image.load(path).convert_alpha()
@@ -20,7 +19,7 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        # 보스 속성
+        # 보스 속성 초기화
         self.boss_image = load_image("bosses", "boss_stage5.png", size=(120, 120))
         self.max_boss_hp = 15
         self.boss_hp = self.max_boss_hp
@@ -31,6 +30,12 @@ class Stage1Boss:
         self.invincible_duration = 500
         self.last_hit_time = 0
         self.gem_active = False
+
+    def check_appear(self, seconds, current_level):
+        if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
 
         # 공격 관련 속성
         self.bullets = []
@@ -60,7 +65,6 @@ class Stage1Boss:
         self.unit_attack_interval = 500  # 0.5초 간격 공격
 
     def attack(self, player_pos):
-        """패턴 1: 보스 직접 공격 - 에너지 볼 발사"""
         if not self.boss_active:
             return
         
@@ -86,7 +90,6 @@ class Stage1Boss:
         })
     
     def summon_units(self):
-        """패턴 2: 유닛 소환 (6초마다 4마리)"""
         current_time = pygame.time.get_ticks()
         if current_time - self.last_summon_time < 6000:
             return  # 6초가 지나지 않았다면 소환하지 않음
@@ -113,7 +116,6 @@ class Stage1Boss:
             })
 
     def update_units(self, player_pos):
-        """유닛이 플레이어를 향해 공격"""
         current_time = pygame.time.get_ticks()
         for unit in self.units:
             if current_time - unit["last_attack_time"] >= self.unit_attack_interval:
@@ -133,13 +135,12 @@ class Stage1Boss:
                     "image": self.unit_attack_image
                 })
 
+        # 보스 등장
     def move(self):
-        """천천히 위로 이동하여 등장"""
         if self.boss_pos[1] > 360:
             self.boss_pos[1] -= 1
 
     def draw(self, win):
-        """보스 및 공격 그리기"""
         if self.boss_hp > 0:
             win.blit(self.boss_image, self.boss_pos)
         
@@ -158,7 +159,6 @@ class Stage1Boss:
                 win.blit(attack["image"], (attack["x"], attack["y"]))
 
     def reset(self):
-        """보스 리셋"""
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [1280 - 120, 720]
