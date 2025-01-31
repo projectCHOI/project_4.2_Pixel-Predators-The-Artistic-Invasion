@@ -24,7 +24,7 @@ class Stage5Boss:
         # 보스 속성 초기화
         self.max_boss_hp = 15
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 60, 360 - 60]  # 화면 정중앙
+        self.boss_pos = [1280 - 120, 720]  # 화면 우측 하단에서 시작
         self.boss_active = False
         self.boss_appeared = False
 
@@ -34,6 +34,11 @@ class Stage5Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
+    def move(self):
+        # 천천히 위로 이동하여 등장
+        if self.boss_pos[1] > 360:  # 목표 위치까지 이동
+            self.boss_pos[1] -= 1
+
     def draw(self, win):
         if self.boss_hp > 0:
             win.blit(self.boss_image, self.boss_pos)
@@ -41,5 +46,5 @@ class Stage5Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 120, 0]
+        self.boss_pos = [1280 - 120, 720]  # 화면 우측 하단에서 시작
         self.boss_appeared = False
