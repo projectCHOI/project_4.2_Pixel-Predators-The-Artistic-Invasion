@@ -27,26 +27,9 @@ class Stage1Boss:
         self.boss_active = False
         self.boss_appeared = False
         self.invincible = False
-        self.invincible_duration = 500
+        self.invincible_duration = 500  # 무적 시간 (밀리초)
         self.last_hit_time = 0
         self.gem_active = False
-        self.bullets = []  # 보스가 발사하는 탄환 리스트
-        self.units = []  # 소환된 유닛 리스트
-
-    def reset(self):
-        self.boss_active = False
-        self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1280 - 120, 720]
-        self.boss_appeared = False
-        self.invincible = False
-        self.bullets.clear()  # 보스 공격 초기화
-        self.units.clear()  # 소환된 유닛 초기화
-
-    def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
-            self.boss_active = True
-            self.boss_hp = self.max_boss_hp
-            self.boss_appeared = True
 
         # 공격 관련 속성
         self.bullets = []
@@ -75,105 +58,48 @@ class Stage1Boss:
         self.unit_attack_speed = 5
         self.unit_attack_interval = 500  # 0.5초 간격 공격
 
-    def attack(self, player_pos):
-        if not self.boss_active:
+    def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        
+        # 무적 상태라면 공격을 무시
+        if self.invincible and (current_time - self.last_hit_time) < self.invincible_duration:
             return
         
-        # 랜덤한 에너지 볼 선택
-        attack_type = random.choice(["a", "b", "c"])
-        attack_data = self.energy_balls[attack_type]
+        for attack in attacks:
+            attack_start, attack_end, thickness = attack
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
+                self.boss_hp -= 1
+                if self.boss_hp < 0:
+                    self.boss_hp = 0
+                self.invincible = True
+                self.last_hit_time = current_time
+                break
 
-        # 보스 중앙에서 발사
-        bullet_x = self.boss_pos[0] + 60  # 보스 중앙
-        bullet_y = self.boss_pos[1] + 120
-        target_x, target_y = player_pos
+    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
+        ex, ey = boss_pos
+        sx, sy = attack_start
+        ex2, ey2 = ex + boss_size, ey + boss_size
 
-        # 방향 계산
-        angle = math.atan2(target_y - bullet_y, target_x - bullet_x)
-        speed_x = math.cos(angle) * attack_data["speed"]
-        speed_y = math.sin(angle) * attack_data["speed"]
+        # 공격 선분과 보스 사각형의 충돌 검사
+        rect = pygame.Rect(ex, ey, boss_size, boss_size)
+        line = (sx, sy), attack_end
+        return rect.clipline(line)
 
-        # 탄환 추가
-        self.bullets.append({
-            "x": bullet_x, "y": bullet_y,
-            "speed_x": speed_x, "speed_y": speed_y,
-            "image": attack_data["image"]
-        })
-    
-    def summon_units(self):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_summon_time < 6000:
-            return  # 6초가 지나지 않았다면 소환하지 않음
-
-        self.last_summon_time = current_time
-        unit_positions = []
-
-        while len(unit_positions) < 4:
-            # 랜덤한 위치 생성
-            unit_x = random.randint(100, 1180)
-            unit_y = random.randint(100, 600)
-
-            # 겹치는지 확인
-            overlap = any(math.dist((unit_x, unit_y), pos) < 50 for pos in unit_positions)
-            if not overlap:
-                unit_positions.append((unit_x, unit_y))
-
-        # 유닛 리스트에 추가
-        for pos in unit_positions:
-            self.units.append({
-                "x": pos[0], "y": pos[1],
-                "attacks": [],  # 유닛이 발사하는 탄환 리스트
-                "last_attack_time": pygame.time.get_ticks()
-            })
-
-    def update_units(self, player_pos):
-        current_time = pygame.time.get_ticks()
-        for unit in self.units:
-            if current_time - unit["last_attack_time"] >= self.unit_attack_interval:
-                unit["last_attack_time"] = current_time
-                unit_x, unit_y = unit["x"], unit["y"]
-                target_x, target_y = player_pos
-
-                # 방향 계산
-                angle = math.atan2(target_y - unit_y, target_x - unit_x)
-                speed_x = math.cos(angle) * self.unit_attack_speed
-                speed_y = math.sin(angle) * self.unit_attack_speed
-
-                # 유닛 탄환 추가
-                unit["attacks"].append({
-                    "x": unit_x, "y": unit_y,
-                    "speed_x": speed_x, "speed_y": speed_y,
-                    "image": self.unit_attack_image
-                })
-
-        # 보스 등장
-    def move(self):
-        if self.boss_pos[1] > 360:
-            self.boss_pos[1] -= 1
-
-    def draw(self, win):
-        if self.boss_hp > 0:
-            win.blit(self.boss_image, self.boss_pos)
-        
-        # 보스 탄환 그리기
-        for bullet in self.bullets:
-            bullet["x"] += bullet["speed_x"]
-            bullet["y"] += bullet["speed_y"]
-            win.blit(bullet["image"], (bullet["x"], bullet["y"]))
-
-        # 유닛 그리기
-        for unit in self.units:
-            win.blit(self.unit_image, (unit["x"], unit["y"]))
-            for attack in unit["attacks"]:
-                attack["x"] += attack["speed_x"]
-                attack["y"] += attack["speed_y"]
-                win.blit(attack["image"], (attack["x"], attack["y"]))
+    def check_appear(self, seconds, current_level):
+        if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
 
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1280 - 120, 720]
-        self.boss_appeared = False
-        self.invincible = False
-        self.bullets.clear()
-        self.units.clear()
+        self.boss_pos = [1200, 700]  # 다시 우측 하단에서 등장하도록 설정
+        self.boss_appearing = True  # 다시 등장 애니메이션 활성화
+        self.boss_defeated = False
+        self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_attacks = []
+        self.boss_hit = False
+        self.stage_cleared = False
+        self.gem_active = False
+        self.gem_pos = None
