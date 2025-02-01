@@ -30,6 +30,17 @@ class Stage1Boss:
         self.invincible_duration = 500
         self.last_hit_time = 0
         self.gem_active = False
+        self.bullets = []  # 보스가 발사하는 탄환 리스트
+        self.units = []  # 소환된 유닛 리스트
+
+    def reset(self):
+        self.boss_active = False
+        self.boss_hp = self.max_boss_hp
+        self.boss_pos = [1280 - 120, 720]
+        self.boss_appeared = False
+        self.invincible = False
+        self.bullets.clear()  # 보스 공격 초기화
+        self.units.clear()  # 소환된 유닛 초기화
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
