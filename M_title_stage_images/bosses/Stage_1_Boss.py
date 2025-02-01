@@ -32,7 +32,7 @@ class Stage1Boss:
         self.max_boss_hp = 18
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
-        self.boss_pos = [1200, 700]  # 우측 하단에서 등장
+        self.boss_pos = [1000, 700]  # 우측 하단에서 등장
         self.boss_active = False
         self.boss_appearing = False  # 등장 애니메이션 상태
         self.boss_attacks = []
@@ -216,7 +216,7 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1200, 700]  # 다시 우측 하단에서 등장하도록 설정
+        self.boss_pos = [1000, 700]  # 다시 우측 하단에서 등장하도록 설정
         self.boss_appearing = True  # 다시 등장 애니메이션 활성화
         self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
