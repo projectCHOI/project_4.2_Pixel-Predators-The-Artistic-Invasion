@@ -35,6 +35,11 @@ class Stage1Boss:
         self.boss_pos = [1000, 700]  # 우측 하단에서 등장
         self.boss_active = False
         self.boss_appearing = False  # 등장 애니메이션 상태
+        self.boss_waiting = False  # 대기 상태
+        self.boss_disappearing = False  # 사라지는 상태
+        self.boss_appeared = False
+        self.boss_speed = 2
+        self.wait_time = 0
         self.boss_attacks = []
         self.boss_last_attack_time = 0
         self.attack_interval = 1200
