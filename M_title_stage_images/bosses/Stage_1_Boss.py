@@ -66,22 +66,22 @@ class Stage1Boss:
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
-        def move(self):
-            if self.boss_appearing:
-                self.boss_pos[1] -= self.boss_speed  # 위로 천천히 이동
-                if self.boss_pos[1] <= 400:  # 특정 위치에 도달하면 대기 상태로 변경
-                    self.boss_appearing = False
-                    self.boss_waiting = True
-                    self.wait_time = pygame.time.get_ticks()
-            elif self.boss_waiting:
-                if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후 사라짐
-                    self.boss_waiting = False
-                    self.boss_disappearing = True
-            elif self.boss_disappearing:
-                self.boss_pos[1] += self.boss_speed  # 아래로 천천히 이동
-                if self.boss_pos[1] >= 700:  # 완전히 사라지면 다시 등장 준비
-                    self.boss_disappearing = False
-                    self.boss_appearing = True
+    def move(self):
+        if self.boss_appearing:
+            self.boss_pos[1] -= self.boss_speed  # 위로 천천히 이동
+            if self.boss_pos[1] <= 400:  # 특정 위치에 도달하면 대기 상태로 변경
+                self.boss_appearing = False
+                self.boss_waiting = True
+                self.wait_time = pygame.time.get_ticks()
+        elif self.boss_waiting:
+            if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후 사라짐
+                self.boss_waiting = False
+                self.boss_disappearing = True
+        elif self.boss_disappearing:
+            self.boss_pos[1] += self.boss_speed  # 아래로 천천히 이동
+            if self.boss_pos[1] >= 700:  # 완전히 사라지면 다시 등장 준비
+                self.boss_disappearing = False
+                self.boss_appearing = True
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
