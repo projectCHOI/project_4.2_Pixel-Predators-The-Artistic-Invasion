@@ -220,6 +220,9 @@ class Stage1Boss:
         self.boss_appearing = True  # 다시 등장 애니메이션 활성화
         self.boss_defeated = False
         self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_waiting = False
+        self.boss_disappearing = False
+        self.boss_appeared = False
         self.boss_attacks = []
         self.boss_hit = False
         self.stage_cleared = False
