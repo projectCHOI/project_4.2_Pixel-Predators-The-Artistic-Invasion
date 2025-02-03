@@ -30,6 +30,19 @@ class Unit:
         self.attack_interval = 500
         self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
 
+    def attack(self, player_pos):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time > self.attack_interval:
+            self.last_attack_time = current_time
+            dx = (player_pos[0] - self.position[0]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
+            dy = (player_pos[1] - self.position[1]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
+            self.attacks.append([[self.position[0], self.position[1]], [dx, dy]])
+
+    def update_attacks(self):
+        for attack in self.attacks:
+            attack[0][0] += attack[1][0]
+            attack[0][1] += attack[1][1]
+            
 class Stage2Boss: 
     def __init__(self):
         # 이미지 로드
