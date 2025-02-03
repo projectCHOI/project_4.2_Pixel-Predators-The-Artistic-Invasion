@@ -1,9 +1,9 @@
 import pygame
 import os
-import math
 import random
+import math
 
-# BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
+# BASE_DIR 로드: 현재 파일의 부모 디렉토리를 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
@@ -16,6 +16,19 @@ def load_image(*path_parts, size=None):
     if size:
         image = pygame.transform.scale(image, size)
     return image
+
+class Unit:
+    def __init__(self, position, side):
+        self.image = load_image("bosses", "unit_image_Left.png" if side == "left" else "unit_image_Right.png", size=(120, 120))
+        self.position = position
+        self.health = 10
+        self.invincible = False
+        self.invincible_duration = 500
+        self.last_hit_time = 0
+        self.attacks = []
+        self.last_attack_time = 0
+        self.attack_interval = 500
+        self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
 
 class Stage2Boss: 
     def __init__(self):
