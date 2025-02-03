@@ -1,9 +1,9 @@
 import pygame
 import os
-import random
 import math
+import random
 
-# BASE_DIR 로드: 현재 파일의 부모 디렉토리를 기준으로 설정
+# BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
@@ -17,32 +17,6 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Unit:
-    def __init__(self, position, side):
-        self.image = load_image("bosses", "unit_image_Left.png" if side == "left" else "unit_image_Right.png", size=(120, 120))
-        self.position = position
-        self.health = 10
-        self.invincible = False
-        self.invincible_duration = 500
-        self.last_hit_time = 0
-        self.attacks = []
-        self.last_attack_time = 0
-        self.attack_interval = 500
-        self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
-
-    def attack(self, player_pos):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_attack_time > self.attack_interval:
-            self.last_attack_time = current_time
-            dx = (player_pos[0] - self.position[0]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
-            dy = (player_pos[1] - self.position[1]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
-            self.attacks.append([[self.position[0], self.position[1]], [dx, dy]])
-
-    def update_attacks(self):
-        for attack in self.attacks:
-            attack[0][0] += attack[1][0]
-            attack[0][1] += attack[1][1]
-            
 class Stage2Boss: 
     def __init__(self):
         # 이미지 로드
@@ -97,7 +71,7 @@ class Stage2Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
-
+            
             # 플레이어를 향해 발사할 단일 타겟 샷 수 결정
             num_shots = 1 + (self.max_boss_hp - self.boss_hp) // 5  # 체력 감소 시 공격 횟수 증가
             for _ in range(num_shots):
@@ -127,7 +101,7 @@ class Stage2Boss:
         current_time = pygame.time.get_ticks()
         if self.invincible and (current_time - self.last_hit_time) < self.invincible_duration:
             return
-
+        
         for attack in attacks:
             attack_start, attack_end, thickness = attack
             if self.check_attack_collision(attack_start, attack_end):
@@ -221,3 +195,4 @@ class Stage2Boss:
                 self.stage_cleared = True
                 return True
         return False
+    
