@@ -17,16 +17,41 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
+class Unit:
+    def __init__(self, position, side):
+        self.image = load_image("bosses", "unit_image_Left.png" if side == "left" else "unit_image_Right.png", size=(120, 120))
+        self.position = position
+        self.health = 10
+        self.invincible = False
+        self.invincible_duration = 500
+        self.last_hit_time = 0
+        self.attacks = []
+        self.last_attack_time = 0
+        self.attack_interval = 500
+        self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
+
+    def attack(self, player_pos):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time > self.attack_interval:
+            self.last_attack_time = current_time
+            dx = (player_pos[0] - self.position[0]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
+            dy = (player_pos[1] - self.position[1]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
+            self.attacks.append([[self.position[0], self.position[1]], [dx, dy]])
+
+    def update_attacks(self):
+        for attack in self.attacks:
+            attack[0][0] += attack[1][0]
+            attack[0][1] += attack[1][1]
+
 class Stage1Boss: 
     def __init__(self):
-        # 이미지 로드 (보스 이미지, 공격 이미지 3개)
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
+        self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
         self.boss_attack_images = {
             "high": load_image("boss_skilles", "boss_stage6_a.png", size=(30, 30)),
             "medium": load_image("boss_skilles", "boss_stage6_b.png", size=(30, 30)),
             "low": load_image("boss_skilles", "boss_stage6_c.png", size=(30, 30))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.max_boss_hp = 18
@@ -58,6 +83,7 @@ class Stage1Boss:
         self.acceleration = 0.1
         self.max_speed = 8
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
+        self.units = []
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
@@ -73,6 +99,7 @@ class Stage1Boss:
                 self.boss_appearing = False
                 self.boss_waiting = True
                 self.wait_time = pygame.time.get_ticks()
+                self.spawn_units()
         elif self.boss_waiting:
             if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후 사라짐
                 self.boss_waiting = False
@@ -82,6 +109,26 @@ class Stage1Boss:
             if self.boss_pos[1] >= 700:  # 완전히 사라지면 다시 등장 준비
                 self.boss_disappearing = False
                 self.boss_appearing = True
+
+    def spawn_units(self):
+        unit_count = 0
+        if self.boss_hp / self.max_boss_hp <= 0.7:
+            unit_count = 3
+        if self.boss_hp / self.max_boss_hp <= 0.5:
+            unit_count = 5
+        if self.boss_hp / self.max_boss_hp <= 0.3:
+            unit_count = 7
+
+        if unit_count > 0:
+            positions = []
+            for _ in range(unit_count):
+                while True:
+                    pos = [random.randint(100, 1180), random.randint(100, 620)]
+                    if not any(math.hypot(pos[0] - p[0], pos[1] - p[1]) < 120 for p in positions):
+                        positions.append(pos)
+                        break
+                side = "left" if pos[0] < 640 else "right"
+                self.units.append(Unit(pos, side))
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
@@ -229,6 +276,7 @@ class Stage1Boss:
         self.stage_cleared = False
         self.gem_active = False
         self.gem_pos = None
+        self.units = []
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
