@@ -174,14 +174,16 @@ class Stage1Boss:
             current_time = pygame.time.get_ticks()
             if self.boss_hit:
                 if current_time - self.boss_hit_start_time >= self.invincible_duration:
-                    self.boss_hit = False  # 무적 상태 해제
+                    self.boss_hit = False
                     win.blit(self.boss_image, self.boss_pos)
                 else:
-                    # 깜빡임 효과
                     if (current_time // self.boss_hit_duration) % 2 == 0:
                         win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
+
+        for unit in self.units:
+            win.blit(unit.image, unit.position)
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
