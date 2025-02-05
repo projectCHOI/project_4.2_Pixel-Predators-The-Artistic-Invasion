@@ -128,7 +128,8 @@ class Stage1Boss:
                         positions.append(pos)
                         break
                 side = "left" if pos[0] < 640 else "right"
-                self.units.append(Unit(pos, side))
+                unit = Unit(pos, side)  # 생성된 유닛 객체
+                self.units.append(unit)  # 리스트에 추가
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
