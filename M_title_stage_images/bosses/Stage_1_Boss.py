@@ -30,14 +30,6 @@ class Unit:
         self.attack_interval = 500
         self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
 
-    def attack(self, player_pos):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_attack_time > self.attack_interval:
-            self.last_attack_time = current_time
-            dx = (player_pos[0] - self.position[0]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
-            dy = (player_pos[1] - self.position[1]) / max(1, math.hypot(player_pos[0] - self.position[0], player_pos[1] - self.position[1])) * 5
-            self.attacks.append([[self.position[0], self.position[1]], [dx, dy]])
-
     def update_attacks(self):
         for attack in self.attacks:
             attack[0][0] += attack[1][0]
@@ -59,9 +51,9 @@ class Stage1Boss:
         self.boss_damage = 2
         self.boss_pos = [1000, 700]  # 우측 하단에서 등장
         self.boss_active = False
-        self.boss_appearing = False  # 등장 애니메이션 상태
-        self.boss_waiting = False  # 대기 상태
-        self.boss_disappearing = False  # 사라지는 상태
+        self.boss_appearing = False  
+        self.boss_waiting = False  
+        self.boss_disappearing = False  
         self.boss_appeared = False
         self.boss_speed = 2
         self.wait_time = 0
@@ -79,11 +71,8 @@ class Stage1Boss:
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
-        self.boss_speed = 2
-        self.acceleration = 0.1
-        self.max_speed = 8
-        self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
         self.units = []
+        self.units_spawned = False
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
@@ -94,23 +83,25 @@ class Stage1Boss:
 
     def move(self):
         if self.boss_appearing:
-            self.boss_pos[1] -= self.boss_speed  # 위로 천천히 이동
-            if self.boss_pos[1] <= 400:  # 특정 위치에 도달하면 대기 상태로 변경
+            self.boss_pos[1] -= self.boss_speed  
+            if self.boss_pos[1] <= 400:  
                 self.boss_appearing = False
                 self.boss_waiting = True
                 self.wait_time = pygame.time.get_ticks()
-                self.spawn_units()
         elif self.boss_waiting:
-            if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후 사라짐
+            if pygame.time.get_ticks() - self.wait_time >= 10000:  
                 self.boss_waiting = False
                 self.boss_disappearing = True
         elif self.boss_disappearing:
-            self.boss_pos[1] += self.boss_speed  # 아래로 천천히 이동
-            if self.boss_pos[1] >= 700:  # 완전히 사라지면 다시 등장 준비
+            self.boss_pos[1] += self.boss_speed  
+            if self.boss_pos[1] >= 700:  
                 self.boss_disappearing = False
                 self.boss_appearing = True
 
     def spawn_units(self):
+        if self.units_spawned:  
+            return  
+
         unit_count = 0
         if self.boss_hp / self.max_boss_hp <= 0.7:
             unit_count = 3
@@ -128,8 +119,10 @@ class Stage1Boss:
                         positions.append(pos)
                         break
                 side = "left" if pos[0] < 640 else "right"
-                unit = Unit(pos, side)  # 생성된 유닛 객체
-                self.units.append(unit)  # 리스트에 추가
+                unit = Unit(pos, side)  
+                self.units.append(unit)  
+        
+        self.units_spawned = True
 
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
@@ -152,7 +145,7 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
-            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4  # 체력 감소 시 공격 횟수 증가
+            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4  
             for i in range(num_shots):
                 angle = random.uniform(0, 360)
                 radian = math.radians(angle)
@@ -160,6 +153,8 @@ class Stage1Boss:
                 dy = math.sin(radian) * 6
                 attack_type = self.get_attack_type()
                 self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
+
+        self.spawn_units() 
 
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
@@ -175,7 +170,7 @@ class Stage1Boss:
             current_time = pygame.time.get_ticks()
             if self.boss_hit:
                 if current_time - self.boss_hit_start_time >= self.invincible_duration:
-                    self.boss_hit = False
+                    self.boss_hit = False  
                     win.blit(self.boss_image, self.boss_pos)
                 else:
                     if (current_time // self.boss_hit_duration) % 2 == 0:
@@ -232,25 +227,24 @@ class Stage1Boss:
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
-            # 보스가 무적 상태일 때는 공격을 무시합니다.
             return
         else:
-            self.boss_hit = False  # 무적 상태 해제
+            self.boss_hit = False # 무적 상태 해제
 
         for attack in attacks:
             attack_start, attack_end, thickness = attack
             if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 150):
-                self.boss_hp -= 1  # 데미지 적용
+                self.boss_hp -= 1
                 if self.boss_hp < 0:
-                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                self.boss_hit = True  # 보스가 공격받았음을 표시
-                self.boss_hit_start_time = current_time  # 공격받은 시간 기록
+                    self.boss_hp = 0
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
                     self.gem_active = True
                     self.gem_pos = [self.boss_pos[0] + 50, self.boss_pos[1] + 50]
                     self.boss_defeated = True
-                break  # 한 번에 하나의 공격만 처리
+                break
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
@@ -267,10 +261,10 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1000, 700]  # 다시 우측 하단에서 등장하도록 설정
-        self.boss_appearing = True  # 다시 등장 애니메이션 활성화
+        self.boss_pos = [1000, 700]  
+        self.boss_appearing = True  
         self.boss_defeated = False
-        self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_appeared = False  
         self.boss_waiting = False
         self.boss_disappearing = False
         self.boss_appeared = False
@@ -280,6 +274,7 @@ class Stage1Boss:
         self.gem_active = False
         self.gem_pos = None
         self.units = []
+        self.units_spawned = False
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
