@@ -99,20 +99,25 @@ class Stage1Boss:
                 self.boss_appearing = True
 
     def spawn_units(self):
-        if self.units_spawned:  
-            return  
+        # 현재 남아 있는 유닛 개수 확인
+        current_unit_count = len(self.units)
 
-        unit_count = 0
-        if self.boss_hp / self.max_boss_hp <= 0.7:
-            unit_count = 3
-        if self.boss_hp / self.max_boss_hp <= 0.5:
-            unit_count = 5
+        # 체력 비율에 따른 목표 유닛 수 설정
         if self.boss_hp / self.max_boss_hp <= 0.3:
-            unit_count = 7
+            target_unit_count = 7
+        elif self.boss_hp / self.max_boss_hp <= 0.5:
+            target_unit_count = 5
+        elif self.boss_hp / self.max_boss_hp <= 0.7:
+            target_unit_count = 3
+        else:
+            target_unit_count = 0
 
-        if unit_count > 0:
+        # 현재 유닛이 목표 수보다 적으면 추가 생성
+        if current_unit_count < target_unit_count:
+            units_to_spawn = target_unit_count - current_unit_count
+
             positions = []
-            for _ in range(unit_count):
+            for _ in range(units_to_spawn):
                 while True:
                     pos = [random.randint(100, 1180), random.randint(100, 620)]
                     if not any(math.hypot(pos[0] - p[0], pos[1] - p[1]) < 120 for p in positions):
@@ -153,7 +158,6 @@ class Stage1Boss:
                 dy = math.sin(radian) * 6
                 attack_type = self.get_attack_type()
                 self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
-
         self.spawn_units() 
 
     def get_attack_type(self):
@@ -183,11 +187,10 @@ class Stage1Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
-            attack_type = attack[3]
-            rotated_image = pygame.transform.rotate(self.boss_attack_images[attack_type], angle)
-            rect = rotated_image.get_rect(center=attack[0])
-            win.blit(rotated_image, rect)
+            ball_image = attack[2]
+            ball_size = attack[3]
+            rect = ball_image.get_rect(center=(attack[0][0], attack[0][1]))
+            win.blit(ball_image, rect)
 
     def draw_gem(self, win):
         if self.gem_active:
