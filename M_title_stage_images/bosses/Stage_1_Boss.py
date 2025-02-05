@@ -130,21 +130,23 @@ class Stage1Boss:
         self.units_spawned = True
 
     def update_attacks(self, player_pos):
+        new_attacks = []
         for attack in self.boss_attacks:
-            # 공격의 위치 업데이트
-            attack[0][0] += attack[1][0]
-            attack[0][1] += attack[1][1]
+            attack[0][0] += attack[1][0]  # X축 이동
+            attack[0][1] += attack[1][1]  # Y축 이동
 
-            # 공격이 화면 밖으로 나가는지 확인하고 필요하면 제거
-            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
-                self.boss_attacks.remove(attack)
-            else:
-                player_width, player_height = 40, 40  # 플레이어 크기
+            # 화면 밖으로 나가면 제거
+            if 0 <= attack[0][0] <= 1280 and 0 <= attack[0][1] <= 720:
+                new_attacks.append(attack)
+
+                # 플레이어와 충돌 감지
+                player_width, player_height = 40, 40
                 if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
                         player_pos[1] < attack[0][1] < player_pos[1] + player_height):
-                    return True  # 충돌 발생 시
+                    return True  # 플레이어가 맞았을 경우
 
-        return False  # 충돌 없음
+        self.boss_attacks = new_attacks
+        return False
 
     def attack(self):
         current_time = pygame.time.get_ticks()
