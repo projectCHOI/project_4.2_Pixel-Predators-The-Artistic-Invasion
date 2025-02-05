@@ -130,57 +130,35 @@ class Stage1Boss:
         self.units_spawned = True
 
     def update_attacks(self, player_pos):
-        new_attacks = []
         for attack in self.boss_attacks:
-            attack[0][0] += attack[1][0]  # X축 이동
-            attack[0][1] += attack[1][1]  # Y축 이동
+            # 공격의 위치 업데이트
+            attack[0][0] += attack[1][0]
+            attack[0][1] += attack[1][1]
 
-            # 화면 밖으로 나가면 제거
-            if 0 <= attack[0][0] <= 1280 and 0 <= attack[0][1] <= 720:
-                new_attacks.append(attack)
-
-                # 플레이어와 충돌 감지
-                player_width, player_height = 40, 40
+            # 공격이 화면 밖으로 나가는지 확인하고 필요하면 제거
+            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
+                self.boss_attacks.remove(attack)
+            else:
+                player_width, player_height = 40, 40  # 플레이어 크기
                 if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
                         player_pos[1] < attack[0][1] < player_pos[1] + player_height):
-                    return True  # 플레이어가 맞았을 경우
+                    return True  # 충돌 발생 시
 
-        self.boss_attacks = new_attacks
-        return False
+        return False  # 충돌 없음
 
-    def attack(self, player_pos):
+    def attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
-
-            # 보스의 중심 좌표
-            boss_center_x = self.boss_pos[0] + 75  # 150px 보스 크기의 중심
-            boss_center_y = self.boss_pos[1] + 75  
-
-            # 플레이어 위치를 향한 방향 벡터 계산
-            direction_x = player_pos[0] - boss_center_x
-            direction_y = player_pos[1] - boss_center_y
-            distance = math.hypot(direction_x, direction_y)
-
-            if distance != 0:  # 나누기 0 방지
-                direction_x /= distance
-                direction_y /= distance
-
-            # 에너지 볼 속성
-            energy_balls = [
-                {"image": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)), "speed": 5, "size": 40},
-                {"image": load_image("boss_skilles", "boss_stage9_b.png", size=(50, 50)), "speed": 6, "size": 50},
-                {"image": load_image("boss_skilles", "boss_stage9_c.png", size=(60, 60)), "speed": 7, "size": 60},
-            ]
-
-            # 각 에너지 볼을 발사
-            for ball in energy_balls:
-                self.boss_attacks.append([
-                    [boss_center_x, boss_center_y],  # 시작 위치
-                    [direction_x * ball["speed"], direction_y * ball["speed"]],  # 이동 속도
-                    ball["image"],  # 이미지
-                    ball["size"]  # 크기
-                ])
+            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4  
+            for i in range(num_shots):
+                angle = random.uniform(0, 360)
+                radian = math.radians(angle)
+                dx = math.cos(radian) * 6
+                dy = math.sin(radian) * 6
+                attack_type = self.get_attack_type()
+                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
+        self.spawn_units() 
 
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
@@ -209,10 +187,11 @@ class Stage1Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            ball_image = attack[2]
-            ball_size = attack[3]
-            rect = ball_image.get_rect(center=(attack[0][0], attack[0][1]))
-            win.blit(ball_image, rect)
+            angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
+            attack_type = attack[3]
+            rotated_image = pygame.transform.rotate(self.boss_attack_images[attack_type], angle)
+            rect = rotated_image.get_rect(center=attack[0])
+            win.blit(rotated_image, rect)
 
     def draw_gem(self, win):
         if self.gem_active:
