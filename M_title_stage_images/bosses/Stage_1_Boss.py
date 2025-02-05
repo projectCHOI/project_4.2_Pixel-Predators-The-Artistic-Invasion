@@ -148,19 +148,39 @@ class Stage1Boss:
         self.boss_attacks = new_attacks
         return False
 
-    def attack(self):
+    def attack(self, player_pos):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
-            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4  
-            for i in range(num_shots):
-                angle = random.uniform(0, 360)
-                radian = math.radians(angle)
-                dx = math.cos(radian) * 6
-                dy = math.sin(radian) * 6
-                attack_type = self.get_attack_type()
-                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
-        self.spawn_units() 
+
+            # 보스의 중심 좌표
+            boss_center_x = self.boss_pos[0] + 75  # 150px 보스 크기의 중심
+            boss_center_y = self.boss_pos[1] + 75  
+
+            # 플레이어 위치를 향한 방향 벡터 계산
+            direction_x = player_pos[0] - boss_center_x
+            direction_y = player_pos[1] - boss_center_y
+            distance = math.hypot(direction_x, direction_y)
+
+            if distance != 0:  # 나누기 0 방지
+                direction_x /= distance
+                direction_y /= distance
+
+            # 에너지 볼 속성
+            energy_balls = [
+                {"image": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)), "speed": 5, "size": 40},
+                {"image": load_image("boss_skilles", "boss_stage9_b.png", size=(50, 50)), "speed": 6, "size": 50},
+                {"image": load_image("boss_skilles", "boss_stage9_c.png", size=(60, 60)), "speed": 7, "size": 60},
+            ]
+
+            # 각 에너지 볼을 발사
+            for ball in energy_balls:
+                self.boss_attacks.append([
+                    [boss_center_x, boss_center_y],  # 시작 위치
+                    [direction_x * ball["speed"], direction_y * ball["speed"]],  # 이동 속도
+                    ball["image"],  # 이미지
+                    ball["size"]  # 크기
+                ])
 
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
