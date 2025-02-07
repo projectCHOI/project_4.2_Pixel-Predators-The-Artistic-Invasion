@@ -65,6 +65,9 @@ class Stage1Boss:
         self.boss_waiting = False  
         self.boss_disappearing = False  
         self.boss_appeared = False
+        self.boss_moving = False 
+        self.boss_returning = False
+        self.move_target = None
         self.boss_speed = 2
         self.wait_time = 0
         self.boss_attacks = []
@@ -185,6 +188,9 @@ class Stage1Boss:
         return False  # 충돌 없음
 
     def attack(self):
+        if not self.boss_moving and not self.boss_returning:
+            return  # 이동 중이 아닐 때는 공격하지 않음
+
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
@@ -209,7 +215,7 @@ class Stage1Boss:
                 size = 60
                 image = load_image("boss_skilles", "boss_stage9_c.png", size=(60, 60))
 
-            # 방사형으로 공격 발사 (360도 균등 배치)
+            # 360도 방향 공격
             angle_step = 360 / num_shots  
             for i in range(num_shots):
                 angle = angle_step * i
