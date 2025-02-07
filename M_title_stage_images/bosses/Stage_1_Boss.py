@@ -30,10 +30,20 @@ class Unit:
         self.attack_interval = 500
         self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
 
-    def update_attacks(self):
-        for attack in self.attacks:
-            attack[0][0] += attack[1][0]
-            attack[0][1] += attack[1][1]
+    def update_attacks(self, player_pos):
+        for attack in self.boss_attacks:
+            attack[0][0] += attack[1][0]  # X축 이동
+            attack[0][1] += attack[1][1]  # Y축 이동
+
+            # 화면 밖으로 나가면 제거
+            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
+                self.boss_attacks.remove(attack)
+            else:
+                player_width, player_height = 40, 40  # 플레이어 크기
+                if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
+                        player_pos[1] < attack[0][1] < player_pos[1] + player_height):
+                    return True  # 충돌 발생 시
+        return False
 
 class Stage1Boss: 
     def __init__(self):
