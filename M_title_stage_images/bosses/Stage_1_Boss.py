@@ -31,13 +31,13 @@ class Unit:
         self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
 
     def update_attacks(self, player_pos):
-        for attack in self.boss_attacks:
+        for attack in self.attacks:
             attack[0][0] += attack[1][0]  # X축 이동
             attack[0][1] += attack[1][1]  # Y축 이동
 
             # 화면 밖으로 나가면 제거
             if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
-                self.boss_attacks.remove(attack)
+                self.attacks.remove(attack)
             else:
                 player_width, player_height = 40, 40  # 플레이어 크기
                 if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
@@ -83,6 +83,16 @@ class Stage1Boss:
         self.boss_hit_duration = 100
         self.units = []
         self.units_spawned = False
+
+    def get_attack_type(self):
+        # 보스 체력 비율에 따라 공격 유형 결정
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "low"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "high"
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
@@ -253,7 +263,7 @@ class Stage1Boss:
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
             return
         else:
-            self.boss_hit = False # 무적 상태 해제
+            self.boss_hit = False
 
         for attack in attacks:
             attack_start, attack_end, thickness = attack
