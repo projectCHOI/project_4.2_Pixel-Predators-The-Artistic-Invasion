@@ -103,20 +103,38 @@ class Stage1Boss:
 
     def move(self):
         if self.boss_appearing:
-            self.boss_pos[1] -= self.boss_speed  
-            if self.boss_pos[1] <= 400:  
+            self.boss_pos[1] -= self.boss_speed  # 위로 이동
+            if self.boss_pos[1] <= 400:  # 특정 위치까지 올라가면
                 self.boss_appearing = False
                 self.boss_waiting = True
                 self.wait_time = pygame.time.get_ticks()
+
         elif self.boss_waiting:
-            if pygame.time.get_ticks() - self.wait_time >= 10000:  
+            if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후
                 self.boss_waiting = False
-                self.boss_disappearing = True
+                self.boss_moving = True  # 이동 시작
+                self.move_target = self.boss_pos[0] - 300  # 왼쪽으로 300 이동 목표
+
+        elif self.boss_moving:
+            if self.boss_pos[0] > self.move_target:
+                self.boss_pos[0] -= self.boss_speed  # 왼쪽으로 이동
+            else:
+                self.boss_moving = False
+                self.boss_returning = True  # 원래 위치로 복귀 시작
+
+        elif self.boss_returning:
+            if self.boss_pos[0] < 1000:  # 원래 위치(1000)로 돌아옴
+                self.boss_pos[0] += self.boss_speed
+            else:
+                self.boss_returning = False
+                self.boss_disappearing = True  # 복귀 후 퇴장 시작
+
         elif self.boss_disappearing:
-            self.boss_pos[1] += self.boss_speed  
-            if self.boss_pos[1] >= 700:  
+            self.boss_pos[1] += self.boss_speed  # 아래로 이동
+            if self.boss_pos[1] >= 700:  # 다시 원래 위치로 내려가면
                 self.boss_disappearing = False
-                self.boss_appearing = True
+                self.boss_appearing = True  # 다시 등장
+
 
     def spawn_units(self):
         # 현재 남아 있는 유닛 개수 확인
