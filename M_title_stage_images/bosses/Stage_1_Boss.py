@@ -150,24 +150,35 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.attack_interval:
             self.boss_last_attack_time = current_time
-            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4  
-            for i in range(num_shots):
-                angle = random.uniform(0, 360)
-                radian = math.radians(angle)
-                dx = math.cos(radian) * 6
-                dy = math.sin(radian) * 6
-                attack_type = self.get_attack_type()
-                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, attack_type])
-        self.spawn_units() 
 
-    def get_attack_type(self):
-        health_ratio = self.boss_hp / self.max_boss_hp
-        if health_ratio > 0.6:
-            return "low"
-        elif health_ratio > 0.3:
-            return "medium"
-        else:
-            return "high"
+            # 보스 체력에 따라 공격 유형 결정
+            attack_type = self.get_attack_type()
+
+            # 공격 속도, 개수, 크기 설정
+            if attack_type == "low":
+                num_shots = 12
+                speed = 5
+                size = 40
+                image = load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40))
+            elif attack_type == "medium":
+                num_shots = 24
+                speed = 6
+                size = 50
+                image = load_image("boss_skilles", "boss_stage9_b.png", size=(50, 50))
+            else:
+                num_shots = 36
+                speed = 7
+                size = 60
+                image = load_image("boss_skilles", "boss_stage9_c.png", size=(60, 60))
+
+            # 방사형으로 공격 발사 (360도 균등 배치)
+            angle_step = 360 / num_shots  
+            for i in range(num_shots):
+                angle = angle_step * i
+                radian = math.radians(angle)
+                dx = math.cos(radian) * speed
+                dy = math.sin(radian) * speed
+                self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, image])
 
     def draw(self, win):
         if self.boss_hp > 0:
