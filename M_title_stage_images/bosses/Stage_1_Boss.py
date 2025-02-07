@@ -208,11 +208,10 @@ class Stage1Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            angle = -attack[2] + 90  # 이미지 회전을 위해 각도 조정
-            attack_type = attack[3]
-            rotated_image = pygame.transform.rotate(self.boss_attack_images[attack_type], angle)
+            angle = -attack[2] + 90  # 회전 방향 조정
+            rotated_image = pygame.transform.rotate(attack[3], angle)  # 탄환 이미지 회전
             rect = rotated_image.get_rect(center=attack[0])
-            win.blit(rotated_image, rect)
+            win.blit(rotated_image, rect)  # 화면에 그리기
 
     def draw_gem(self, win):
         if self.gem_active:
