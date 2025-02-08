@@ -47,7 +47,7 @@ class Unit:
 
 class Stage1Boss: 
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
+        self.boss_image = load_image("bosses", "boss_stage6.png", size=(300, 300))
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
         self.boss_attack_images = {
             "high": load_image("boss_skilles", "boss_stage6_a.png", size=(30, 30)),
@@ -59,7 +59,7 @@ class Stage1Boss:
         self.max_boss_hp = 18
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
-        self.boss_pos = [1000, 700]  # 우측 하단에서 등장
+        self.boss_pos = [1000, 600]  # 우측 하단에서 등장
         self.boss_active = False
         self.boss_appearing = False  
         self.boss_waiting = False  
@@ -113,7 +113,7 @@ class Stage1Boss:
                 self.wait_time = pygame.time.get_ticks()
 
         elif self.boss_waiting:
-            if pygame.time.get_ticks() - self.wait_time >= 10000:  # 10초 대기 후
+            if pygame.time.get_ticks() - self.wait_time >= 3000:  # 3초 대기 후
                 self.boss_waiting = False
                 self.boss_moving = True  # 이동 시작
                 self.move_target = self.boss_pos[0] - 300  # 왼쪽으로 300 이동 목표
@@ -134,7 +134,7 @@ class Stage1Boss:
 
         elif self.boss_disappearing:
             self.boss_pos[1] += self.boss_speed  # 아래로 이동
-            if self.boss_pos[1] >= 700:  # 다시 원래 위치로 내려가면
+            if self.boss_pos[1] >= 600:  # 다시 원래 위치로 내려가면
                 self.boss_disappearing = False
                 self.boss_appearing = True  # 다시 등장
 
@@ -319,7 +319,7 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1000, 700]  
+        self.boss_pos = [1000, 600]  
         self.boss_appearing = True  
         self.boss_defeated = False
         self.boss_appeared = False  
