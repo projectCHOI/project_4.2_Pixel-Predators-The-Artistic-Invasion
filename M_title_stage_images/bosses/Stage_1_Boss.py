@@ -283,6 +283,9 @@ class Stage1Boss:
             win.blit(defeated_text, (10, 680))
 
     def check_hit(self, attacks):
+        if self.boss_disappearing:
+            return  # 보스가 퇴장 중이면 데미지를 받지 않음
+
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
             return
