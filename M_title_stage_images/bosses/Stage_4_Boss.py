@@ -20,13 +20,13 @@ def load_image(*path_parts, size=None):
 class Stage4Boss:
     def __init__(self):
         # 이미지 로드 (보스 이미지, 공격 이미지 3개)
-        self.boss_image = load_image("bosses", "boss_stage6.png", size=(150, 150))
+        self.boss_image = load_image("bosses", "boss_stage4.png", size=(150, 150))
         self.boss_attack_images = {
-            "high": load_image("boss_skilles", "boss_stage6_a.png", size=(30, 30)),
-            "medium": load_image("boss_skilles", "boss_stage6_b.png", size=(30, 30)),
-            "low": load_image("boss_skilles", "boss_stage6_c.png", size=(30, 30))
+            "high": load_image("boss_skilles", "boss_stage4_a.png", size=(30, 30)),
+            "medium": load_image("boss_skilles", "boss_stage4_b.png", size=(30, 30)),
+            "low": load_image("boss_skilles", "boss_stage4_c.png", size=(30, 30))
         }
-        self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_4.png", size=(40, 40))
 
         # 보스 속성 초기화
         self.max_boss_hp = 18
