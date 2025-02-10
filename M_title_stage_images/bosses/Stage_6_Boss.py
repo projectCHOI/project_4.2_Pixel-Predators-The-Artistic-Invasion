@@ -17,7 +17,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Stage1Boss: 
+class Stage6Boss: 
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(300, 300))
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
@@ -68,7 +68,7 @@ class Stage1Boss:
             return "high"
 
     def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
+        if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
             self.boss_active = True
             self.boss_appearing = True  # 등장 애니메이션 시작
             self.boss_hp = self.max_boss_hp
