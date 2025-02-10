@@ -322,20 +322,14 @@ class Stage1Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1000, 600]  
-        self.boss_appearing = True  
+        self.boss_pos = [1000, 600]
+        self.boss_appearing = True
         self.boss_defeated = False
-        self.boss_appeared = False  
-        self.boss_waiting = False
-        self.boss_disappearing = False
-        self.boss_appeared = False
         self.boss_attacks = []
         self.boss_hit = False
         self.stage_cleared = False
         self.gem_active = False
         self.gem_pos = None
-        self.units = []
-        self.units_spawned = False
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
