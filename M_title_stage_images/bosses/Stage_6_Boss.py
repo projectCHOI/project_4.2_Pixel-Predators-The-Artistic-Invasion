@@ -17,35 +17,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Unit:
-    def __init__(self, position, side):
-        self.image = load_image("bosses", "unit_image_Left.png" if side == "left" else "unit_image_Right.png", size=(120, 120))
-        self.position = position
-        self.health = 10
-        self.invincible = False
-        self.invincible_duration = 500
-        self.last_hit_time = 0
-        self.attacks = []
-        self.last_attack_time = 0
-        self.attack_interval = 500
-        self.attack_image = load_image("boss_skilles", "boss_stage10_a.png", size=(20, 20))
-
-    def update_attacks(self, player_pos):
-        for attack in self.attacks:
-            attack[0][0] += attack[1][0]  # X축 이동
-            attack[0][1] += attack[1][1]  # Y축 이동
-
-            # 화면 밖으로 나가면 제거
-            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
-                self.attacks.remove(attack)
-            else:
-                player_width, player_height = 40, 40  # 플레이어 크기
-                if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
-                        player_pos[1] < attack[0][1] < player_pos[1] + player_height):
-                    return True  # 충돌 발생 시
-        return False
-
-class Stage6Boss: 
+class Stage1Boss: 
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage6.png", size=(300, 300))
         self.gem_image = load_image("items", "mob_Jewelry_6.png", size=(40, 40))
@@ -84,8 +56,6 @@ class Stage6Boss:
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
-        self.units = []
-        self.units_spawned = False
 
     def get_attack_type(self):
         # 보스 체력 비율에 따라 공격 유형 결정
@@ -98,7 +68,7 @@ class Stage6Boss:
             return "high"
 
     def check_appear(self, seconds, current_level):
-        if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
+        if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared: 
             self.boss_active = True
             self.boss_appearing = True  # 등장 애니메이션 시작
             self.boss_hp = self.max_boss_hp
@@ -138,38 +108,6 @@ class Stage6Boss:
                 self.boss_disappearing = False
                 self.boss_appearing = True  # 다시 등장
 
-
-    def spawn_units(self):
-        # 현재 남아 있는 유닛 개수 확인
-        current_unit_count = len(self.units)
-
-        # 체력 비율에 따른 목표 유닛 수 설정
-        if self.boss_hp / self.max_boss_hp <= 0.3:
-            target_unit_count = 7
-        elif self.boss_hp / self.max_boss_hp <= 0.5:
-            target_unit_count = 5
-        elif self.boss_hp / self.max_boss_hp <= 0.7:
-            target_unit_count = 3
-        else:
-            target_unit_count = 0
-
-        # 현재 유닛이 목표 수보다 적으면 추가 생성
-        if current_unit_count < target_unit_count:
-            units_to_spawn = target_unit_count - current_unit_count
-
-            positions = []
-            for _ in range(units_to_spawn):
-                while True:
-                    pos = [random.randint(100, 1180), random.randint(100, 620)]
-                    if not any(math.hypot(pos[0] - p[0], pos[1] - p[1]) < 120 for p in positions):
-                        positions.append(pos)
-                        break
-                side = "left" if pos[0] < 640 else "right"
-                unit = Unit(pos, side)  
-                self.units.append(unit)  
-        
-        self.units_spawned = True
-
     def update_attacks(self, player_pos):
         for attack in self.boss_attacks:
             # 공격의 위치 업데이트
@@ -203,17 +141,17 @@ class Stage6Boss:
                 num_shots = 12
                 speed = 5
                 size = 40
-                image = load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40))
+                image = load_image("boss_skilles", "boss_stage6_a.png", size=(40, 40))
             elif attack_type == "medium":
                 num_shots = 24
                 speed = 6
                 size = 50
-                image = load_image("boss_skilles", "boss_stage9_b.png", size=(50, 50))
+                image = load_image("boss_skilles", "boss_stage6_b.png", size=(50, 50))
             else:
                 num_shots = 36
                 speed = 7
                 size = 60
-                image = load_image("boss_skilles", "boss_stage9_c.png", size=(60, 60))
+                image = load_image("boss_skilles", "boss_stage6_c.png", size=(60, 60))
 
             # 360도 방향 공격
             angle_step = 360 / num_shots  
@@ -242,14 +180,14 @@ class Stage6Boss:
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            angle = -attack[2] + 90  # 회전 방향 조정
-            rotated_image = pygame.transform.rotate(attack[3], angle)  # 탄환 이미지 회전
+            angle = -attack[2] + 90
+            rotated_image = pygame.transform.rotate(attack[3], angle)
             rect = rotated_image.get_rect(center=attack[0])
-            win.blit(rotated_image, rect)  # 화면에 그리기
+            win.blit(rotated_image, rect)
 
-    def draw_gem(self, win):
-        if self.gem_active:
-            win.blit(self.gem_image, self.gem_pos)
+    def draw(self, win):
+        if self.boss_hp > 0:
+            win.blit(self.boss_image, self.boss_pos)
 
     def draw_health_bar(self, win, font):
         if self.boss_active and self.boss_hp > 0:
@@ -322,20 +260,14 @@ class Stage6Boss:
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [1000, 600]  
-        self.boss_appearing = True  
+        self.boss_pos = [1000, 600]
+        self.boss_appearing = True
         self.boss_defeated = False
-        self.boss_appeared = False  
-        self.boss_waiting = False
-        self.boss_disappearing = False
-        self.boss_appeared = False
         self.boss_attacks = []
         self.boss_hit = False
         self.stage_cleared = False
         self.gem_active = False
         self.gem_pos = None
-        self.units = []
-        self.units_spawned = False
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         ex, ey = boss_pos
