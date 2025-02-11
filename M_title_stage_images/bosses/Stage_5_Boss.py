@@ -87,6 +87,10 @@ class Stage5Boss:
             win.blit(self.boss_image, self.boss_pos)
 
     def check_hit(self, attacks):
+        """ 보스가 'waiting' 또는 'exiting' 상태일 때만 데미지를 받음 """
+        if self.state not in ["waiting", "exiting"]:
+            return  # 보스가 'entering' 상태일 때는 데미지 없음
+
         current_time = pygame.time.get_ticks()
         if self.invincible and (current_time - self.last_hit_time) < self.invincible_duration:
             return  # 무적 상태일 경우 공격 무시
