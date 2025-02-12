@@ -21,6 +21,7 @@ class Stage5Boss:
         # 보스 이미지 로드
         self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(120, 120))
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(120, 120))
+        self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(50, 50))
 
         # 속성 초기화
         self.max_boss_hp = 15
