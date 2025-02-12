@@ -115,12 +115,26 @@ class Stage5Boss:
         rect = pygame.Rect(ex, ey, boss_size, boss_size)
         line = (sx, sy), attack_end
         return rect.clipline(line)
-
+    
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
+            px, py = player_pos
+            gx, gy = self.gem_pos
+            player_width, player_height = 40, 40  # 플레이어 크기
+            gem_size = 40  # 보석 크기
+            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+                self.gem_active = False
+                self.stage_cleared = True  # 스테이지 클리어
+                return True
+        return False
+    
     def reset(self):
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_appeared = False
-        self.invincible = False
+        self.gem_active = False
+        self.gem_pos = None
+        self.stage_cleared = False
         self.state = "entering"
         self.appear_time = pygame.time.get_ticks()
         self.direction = "right"
