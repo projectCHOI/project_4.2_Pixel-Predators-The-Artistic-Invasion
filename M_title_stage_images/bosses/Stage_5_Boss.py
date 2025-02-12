@@ -21,7 +21,7 @@ class Stage5Boss:
         # 보스 이미지 로드
         self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(120, 120))
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(120, 120))
-        self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(50, 50))
+        self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
 
         # 속성 초기화
         self.max_boss_hp = 15
@@ -38,6 +38,10 @@ class Stage5Boss:
         self.boss_pos = [1280 - 120, 720]  # 화면 우측 하단에서 시작
         self.appear_time = 0
         self.state = "entering"  # "entering", "waiting", "exiting", "cooldown"
+        # 보석 관련 속성
+        self.gem_pos = None
+        self.gem_active = False
+        self.stage_cleared = False
 
     def check_appear(self, seconds, current_level):
         if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
@@ -75,6 +79,9 @@ class Stage5Boss:
             if current_time - self.appear_time >= 2000:  # 2초 대기 후 재등장
                 self.state = "entering"
                 self.boss_hp = self.max_boss_hp
+                self.gem_active = False  # 보석 비활성화
+                self.gem_pos = None  # 보석 위치 초기화
+                self.stage_cleared = False  # 스테이지 클리어 상태 초기화
                 self.direction = random.choice(["left", "right"])  # 랜덤 위치에서 등장
                 if self.direction == "left":
                     self.boss_pos = [-120, 720]  # 왼쪽에서 등장
@@ -86,9 +93,10 @@ class Stage5Boss:
     def draw(self, win):
         if self.boss_hp > 0:
             win.blit(self.boss_image, self.boss_pos)
+        elif self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
 
     def check_hit(self, attacks):
-        """ 보스가 'waiting' 또는 'exiting' 상태일 때만 데미지를 받음 """
         if self.state not in ["waiting", "exiting"]:
             return  # 보스가 'entering' 상태일 때는 데미지 없음
 
@@ -100,8 +108,10 @@ class Stage5Boss:
             attack_start, attack_end, thickness = attack
             if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
                 self.boss_hp -= 1
-                if self.boss_hp < 0:
+                if self.boss_hp <= 0:
                     self.boss_hp = 0
+                    self.gem_active = True  # 보스가 죽으면 보석 활성화
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]  # 보석 위치 설정
                 self.invincible = True
                 self.last_hit_time = current_time
                 break
