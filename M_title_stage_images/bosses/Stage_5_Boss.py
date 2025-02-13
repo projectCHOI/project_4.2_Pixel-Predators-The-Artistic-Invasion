@@ -1,6 +1,7 @@
 import pygame
 import os
 import random
+import math
 
 # BASE_DIR 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,6 +22,7 @@ class Stage5Boss:
         # 보스 이미지 로드
         self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(120, 120))
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(120, 120))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
 
         # 속성 초기화
@@ -38,10 +40,24 @@ class Stage5Boss:
         self.boss_pos = [1280 - 120, 720]  # 화면 우측 하단에서 시작
         self.appear_time = 0
         self.state = "entering"  # "entering", "waiting", "exiting", "cooldown"
+
         # 보석 관련 속성
         self.gem_pos = None
         self.gem_active = False
         self.stage_cleared = False
+
+        # 공격 관련 속성 추가
+        self.boss_attacks = []  # 보스의 공격 리스트
+        self.boss_attack_cooldown = 1000  # 보스 공격 간격 (밀리초)
+        self.boss_last_attack_time = 0  # 마지막 공격 시점
+
+    def check_appear(self, seconds, current_level):
+        if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
+            self.state = "entering"
+            self.appear_time = pygame.time.get_ticks()
 
     def check_appear(self, seconds, current_level):
         if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
@@ -89,6 +105,44 @@ class Stage5Boss:
                 else:
                     self.boss_pos = [1280 - 120, 720]  # 오른쪽에서 등장
                     self.boss_image = self.boss_image_right
+
+    def attack(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
+            self.boss_last_attack_time = current_time
+            attack_angles = [90]  # 기본 아래로 발사
+
+            if self.boss_hp <= self.max_boss_hp * 0.5:
+                attack_angles.extend([80, 100])  # 좌우 추가
+
+            attack_start_pos = [self.boss_pos[0] + 60, self.boss_pos[1] + 120]  # 보스 중앙에서 공격
+
+            for angle in attack_angles:
+                radian = math.radians(angle)
+                dx = math.cos(radian) * 5
+                dy = math.sin(radian) * 5
+                self.boss_attacks.append({
+                    'pos': [attack_start_pos[0], attack_start_pos[1]],
+                    'dir': [dx, dy],
+                    'angle': angle
+                })
+
+    def update_attacks(self):
+        new_attacks = []
+        for attack in self.boss_attacks:
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1]
+
+            if 0 <= attack['pos'][0] <= 1280 and 0 <= attack['pos'][1] <= 720:
+                new_attacks.append(attack)
+
+        self.boss_attacks = new_attacks
+
+    def draw_attacks(self, win):
+        for attack in self.boss_attacks:
+            rotated_image = pygame.transform.rotate(self.boss_attack_image, -attack['angle'] + 90)
+            rect = rotated_image.get_rect(center=attack['pos'])
+            win.blit(rotated_image, rect)
 
     def draw(self, win):
         if self.boss_hp > 0:
@@ -149,4 +203,5 @@ class Stage5Boss:
         self.appear_time = pygame.time.get_ticks()
         self.direction = "right"
         self.boss_image = self.boss_image_right
-        self.boss_pos = [1280 - 120, 720]  # 처음엔 오른쪽에서 등장
+        self.boss_pos = [1280 - 120, 720]
+        self.boss_attacks = []
