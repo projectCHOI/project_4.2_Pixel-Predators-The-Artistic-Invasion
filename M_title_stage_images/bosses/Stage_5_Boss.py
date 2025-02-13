@@ -127,7 +127,7 @@ class Stage5Boss:
                     'angle': angle
                 })
 
-    def update_attacks(self):
+    def update_attacks(self, player_pos):
         new_attacks = []
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
@@ -190,6 +190,14 @@ class Stage5Boss:
                 self.gem_active = False
                 self.stage_cleared = True  # 스테이지 클리어
                 return True
+        return False
+    
+    def check_energy_ball_collision(self, ball_pos, player_pos):
+        bx, by = ball_pos
+        px, py = player_pos
+        player_width, player_height = 40, 40  # 플레이어 크기
+        if px < bx < px + player_width and py < by < py + player_height:
+            return True
         return False
     
     def reset(self):
