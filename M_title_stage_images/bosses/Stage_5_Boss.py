@@ -182,35 +182,31 @@ class Stage5Boss:
     
     def draw_health_bar(self, win, font):
         if self.boss_active and self.boss_hp > 0:
-            # "BOSS" 문자열 그리기
+            # "BOSS" 텍스트 표시
             boss_text = font.render("BOSS", True, (255, 255, 255))
             text_x = 10
             text_y = 680
             win.blit(boss_text, (text_x, text_y))
 
-            # 체력 바 설정
+            # 체력 바 위치 및 크기 설정
             health_bar_x = text_x + boss_text.get_width() + 10
             health_bar_y = 680
-            health_bar_width = 200  # 체력 바의 총 너비를 200으로 설정
-            health_bar_height = 30
+            health_bar_width = 200  # 체력 바 너비
+            health_bar_height = 30  # 체력 바 높이
 
             # 체력 비율 계산
             health_ratio = self.boss_hp / self.max_boss_hp
             current_health_width = int(health_bar_width * health_ratio)
 
-            # 체력 바 배경 그리기
+            # 체력 바 배경
             pygame.draw.rect(win, (50, 50, 50), (health_bar_x, health_bar_y, health_bar_width, health_bar_height))
 
-            # 현재 체력 바 그리기
+            # 현재 체력 바
             pygame.draw.rect(win, (210, 20, 4), (health_bar_x, health_bar_y, current_health_width, health_bar_height))
 
-            # 체력 바 테두리 그리기
+            # 체력 바 테두리
             pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
-        elif self.boss_hp <= 0 and self.boss_defeated:
-            # 보스가 제거되었을 때 메시지 표시 (옵션)
-            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
-            win.blit(defeated_text, (10, 680))
-            
+
     def check_gem_collision(self, player_pos):
         if self.gem_active:
             px, py = player_pos
