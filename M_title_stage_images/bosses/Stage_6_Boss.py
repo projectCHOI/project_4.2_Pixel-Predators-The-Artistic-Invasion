@@ -256,6 +256,10 @@ class Stage6Boss:
                 self.stage_cleared = True  # 스테이지 클리어
                 return True
         return False
+    
+    def draw_gem(self, win):
+        if self.gem_active and self.gem_pos:
+            win.blit(self.gem_image, self.gem_pos)
 
     def reset(self):
         self.boss_active = False
