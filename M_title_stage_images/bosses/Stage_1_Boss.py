@@ -37,7 +37,7 @@ class Stage1Boss:
         # 보스 위치 및 상태
         self.direction = "right"  # 처음에는 오른쪽에서 등장
         self.boss_image = self.boss_image_right
-        self.boss_pos = [1280 - 120, 720]  # 화면 우측 하단에서 시작
+        self.boss_pos = [1280 - 120, 340]  # 화면 우측 하단에서 시작
         self.appear_time = 0
         self.state = "entering"  # "entering", "waiting", "exiting", "cooldown"
 
@@ -63,8 +63,11 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
 
         if self.state == "entering":
-            if self.boss_pos[1] > 360:  # 목표 위치까지 이동
-                self.boss_pos[1] -= 2
+            # 보스가 오른쪽에서 왼쪽으로 등장
+            if self.boss_pos[1] < 360:  # 목표 y 좌표까지 이동
+                self.boss_pos[1] += 2
+            elif self.boss_pos[0] > 700:  # 오른쪽 → 왼쪽 이동
+                self.boss_pos[0] -= 2
             else:
                 self.state = "waiting"
                 self.appear_time = current_time  # 8초 대기 시작
@@ -85,7 +88,7 @@ class Stage1Boss:
             else:
                 self.boss_pos[0] -= 5  # 왼쪽으로 퇴장
 
-            if self.boss_pos[0] < -120 or self.boss_pos[0] > 1280:
+            if self.boss_pos[0] < 160 or self.boss_pos[0] > 1280:
                 self.state = "cooldown"
                 self.appear_time = current_time  # 2초 대기 시작
 
@@ -98,10 +101,10 @@ class Stage1Boss:
                 self.stage_cleared = False
                 self.direction = random.choice(["left", "right"])
                 if self.direction == "left":
-                    self.boss_pos = [-120, 720]
+                    self.boss_pos = [160, 720]
                     self.boss_image = self.boss_image_left
                 else:
-                    self.boss_pos = [1280 - 120, 720]
+                    self.boss_pos = [1280 - 160, 720]
                     self.boss_image = self.boss_image_right
 
     def attack(self):
@@ -236,5 +239,5 @@ class Stage1Boss:
         self.appear_time = pygame.time.get_ticks()
         self.direction = "right"
         self.boss_image = self.boss_image_right
-        self.boss_pos = [1280 - 120, 720]
+        self.boss_pos = [1280 - 120, 340]
         self.boss_attacks = []
