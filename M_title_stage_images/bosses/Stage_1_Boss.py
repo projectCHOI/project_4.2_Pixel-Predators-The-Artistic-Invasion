@@ -63,48 +63,39 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
 
         if self.state == "entering":
-            # 보스가 오른쪽에서 왼쪽으로 등장
-            if self.boss_pos[1] < 360:  # 목표 y 좌표까지 이동
-                self.boss_pos[1] += 2
-            elif self.boss_pos[0] > 700:  # 오른쪽 → 왼쪽 이동
-                self.boss_pos[0] -= 2
+            if self.boss_pos[1] > 360:  # 목표 위치까지 이동
+                self.boss_pos[1] -= 2
             else:
                 self.state = "waiting"
                 self.appear_time = current_time  # 8초 대기 시작
-                self.moving_direction = 1  # 왼쪽(1) 또는 오른쪽(-1) 이동 방향
 
         elif self.state == "waiting":
-            if current_time - self.appear_time >= 8000:  # 8초 후 퇴장
+            if current_time - self.appear_time >= 8000:  # 8초 경과 후 퇴장
                 self.state = "exiting"
-            else:
-                # 좌우로 왕복 이동
-                self.boss_pos[0] += self.moving_direction * 3  # 속도 3
-                if self.boss_pos[0] <= 100 or self.boss_pos[0] >= 1080:  # 벽에 닿으면 방향 전환
-                    self.moving_direction *= -1  # 이동 방향 반전
 
         elif self.state == "exiting":
             if self.direction == "right":
-                self.boss_pos[0] += 5  # 오른쪽으로 퇴장
+                self.boss_pos[0] += 5  # 오른쪽으로 이동하여 퇴장
             else:
-                self.boss_pos[0] -= 5  # 왼쪽으로 퇴장
+                self.boss_pos[0] -= 5  # 왼쪽으로 이동하여 퇴장
 
-            if self.boss_pos[0] < 160 or self.boss_pos[0] > 1280:
+            if self.boss_pos[0] < -120 or self.boss_pos[0] > 1280:
                 self.state = "cooldown"
                 self.appear_time = current_time  # 2초 대기 시작
 
         elif self.state == "cooldown":
-            if current_time - self.appear_time >= 2000:  # 2초 후 재등장
+            if current_time - self.appear_time >= 2000:  # 2초 대기 후 재등장
                 self.state = "entering"
                 self.boss_hp = self.max_boss_hp
-                self.gem_active = False
-                self.gem_pos = None
-                self.stage_cleared = False
-                self.direction = random.choice(["left", "right"])
+                self.gem_active = False  # 보석 비활성화
+                self.gem_pos = None  # 보석 위치 초기화
+                self.stage_cleared = False  # 스테이지 클리어 상태 초기화
+                self.direction = random.choice(["left", "right"])  # 랜덤 위치에서 등장
                 if self.direction == "left":
-                    self.boss_pos = [160, 720]
+                    self.boss_pos = [-120, 720]  # 왼쪽에서 등장
                     self.boss_image = self.boss_image_left
                 else:
-                    self.boss_pos = [1280 - 160, 720]
+                    self.boss_pos = [1280 - 120, 720]  # 오른쪽에서 등장
                     self.boss_image = self.boss_image_right
 
     def attack(self):
