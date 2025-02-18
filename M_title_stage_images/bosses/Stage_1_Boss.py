@@ -54,8 +54,7 @@ class Stage1Boss:
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
-            self.boss_hp = self.max_boss_hp
-            self.boss_appeared = True
+            self.boss_appeared = True  # 이미 등장했음을 표시
             self.state = "entering"
             self.appear_time = pygame.time.get_ticks()
 
@@ -94,10 +93,10 @@ class Stage1Boss:
                 # 랜덤한 방향으로 등장
                 self.direction = random.choice(["left", "right"])
                 if self.direction == "left":
-                    self.boss_pos = [-120, 720]
+                    self.boss_pos = [160, 720]
                     self.boss_image = self.boss_image_left
                 else:
-                    self.boss_pos = [1280 - 120, 720]
+                    self.boss_pos = [1280 - 160, 720]
                     self.boss_image = self.boss_image_right
 
     def attack(self):
@@ -117,7 +116,7 @@ class Stage1Boss:
                 dy = math.sin(radian) * 5
                 self.boss_attacks.append({'pos': attack_start_pos[:], 'dir': [dx, dy], 'angle': angle})
 
-    def update_attacks(self):
+    def update_attacks(self, player_pos):
         self.boss_attacks = [
             attack for attack in self.boss_attacks
             if 0 <= attack['pos'][0] <= 1280 and 0 <= attack['pos'][1] <= 720
@@ -152,8 +151,9 @@ class Stage1Boss:
                 self.boss_hp -= 1
                 if self.boss_hp <= 0:
                     self.boss_hp = 0
-                    self.gem_active = True
-                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
+                    self.boss_active = False  # 보스 비활성화
+                    self.gem_active = True  # 보석 활성화
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]  # 보석 위치 설정
                 break
 
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
@@ -215,7 +215,6 @@ class Stage1Boss:
     
     def reset(self):
         self.boss_active = False
-        self.boss_hp = self.max_boss_hp
         self.boss_appeared = False
         self.gem_active = False
         self.gem_pos = None
