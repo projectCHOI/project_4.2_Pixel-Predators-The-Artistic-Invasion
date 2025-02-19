@@ -23,13 +23,13 @@ class Stage1Boss:
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
-        
+
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 15  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 6  # 보스의 이동 속도
+        self.boss_speed = 3  # 보스의 이동 속도
         self.boss_pos = [640 - 60, 0]  # 보스의 초기 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
         self.boss_direction_y = 1  # 보스의 상하 이동 방향
@@ -47,6 +47,10 @@ class Stage1Boss:
         self.gem_active = False  # 보석 활성화 상태
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
+        self.boss_appearance_timer = 0
+        # 보스 상태 관리
+        self.state = "spawn"
+        self.state_timer = 0
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
