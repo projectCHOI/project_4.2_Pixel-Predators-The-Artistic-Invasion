@@ -1,8 +1,8 @@
 import pygame
 import os
+import random
 import math
 
-# BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
@@ -18,11 +18,12 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage1.png", size=(140, 140))
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage1_a.png", size=(40, 40))
-        self.gem_image = load_image("items", "mob_Jewelry_1.png", size=(40, 40))
-
+        # 보스 이미지 로드
+        self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(120, 120))
+        self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(120, 120))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
+        self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
+        
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 15  # 보스의 최대 체력
