@@ -51,7 +51,12 @@ class Stage1Boss:
         # 보스 상태 관리
         self.state = "spawn"
         self.state_timer = 0
-
+        # 보스 초기 위치 설정
+        if self.spawn_side == "left":
+            self.boss_pos = [-100, 400]
+        else:
+            self.boss_pos = [1380, 400]
+            
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
