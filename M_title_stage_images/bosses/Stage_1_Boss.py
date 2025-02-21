@@ -56,7 +56,7 @@ class Stage1Boss:
             self.boss_pos = [-100, 400]
         else:
             self.boss_pos = [1380, 400]
-            
+
     # 보스 상태 업데이트 및 동작        
     def update(self, current_time):
         """보스 상태 업데이트 및 동작"""
@@ -110,6 +110,18 @@ class Stage1Boss:
                 self.state_timer = pygame.time.get_ticks()
         
         self.attack()
+    
+    # 퇴장 상태 (2초 후 재등장)
+    def move_to_exit(self):
+        exit_x = -100 if self.spawn_side == "left" else 1380
+        
+        if abs(self.boss_pos[0] - exit_x) > self.boss_speed:
+            self.boss_pos[0] += self.boss_speed if self.boss_pos[0] < exit_x else -self.boss_speed
+        else:
+            self.state = "spawn"
+            self.state_timer = pygame.time.get_ticks()
+            self.spawn_side = "right" if self.spawn_side == "left" else "left"
+            self.boss_pos = [-100, 400] if self.spawn_side == "left" else [1380, 400]
 
     def attack(self):
         current_time = pygame.time.get_ticks()
