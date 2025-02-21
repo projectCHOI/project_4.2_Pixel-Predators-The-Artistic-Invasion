@@ -57,39 +57,59 @@ class Stage1Boss:
         else:
             self.boss_pos = [1380, 400]
             
-    def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
-            self.boss_active = True
-            self.boss_pos = [640 - 60, 0]  # (640, 0)에서 등장
-            self.boss_hp = self.max_boss_hp
-            self.boss_move_phase = 2
-            self.boss_appeared = True
+    # 보스 상태 업데이트 및 동작        
+    def update(self, current_time):
+        """보스 상태 업데이트 및 동작"""
+        if self.state == "spawn":
+            self.move_to_wait_position()
+        elif self.state == "wait":
+            self.wait_before_action()
+        elif self.state == "action":
+            self.perform_action()
+        elif self.state == "exit":
+            self.move_to_exit()
 
-    def move(self):
-        def limit_position():
-            self.boss_pos[0] = max(0, min(self.boss_pos[0], 1280 - 140))  # 보스1의 x, y 좌표 제한
-            self.boss_pos[1] = max(0, min(self.boss_pos[1], 720 - 540))
+    # 등장 후 대기 위치로 이동
+    def move_to_wait_position(self):
+        if self.spawn_side == "left":
+            target_x = 170
+        else:
+            target_x = 1110
+        
+        if abs(self.boss_pos[0] - target_x) > self.boss_speed:
+            self.boss_pos[0] += self.boss_speed if self.boss_pos[0] < target_x else -self.boss_speed
+        else:
+            self.boss_pos[0] = target_x
+            self.state = "wait"
+            self.state_timer = pygame.time.get_ticks()
 
-        if self.boss_move_phase == 2:
-            # 좌우 이동
-            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:
-                self.boss_direction_x *= -1
-
-            # 체력 조건 충족 시 상하 이동 활성화
-            if self.boss_hp <= self.max_boss_hp * 0.5:
-                self.boss_move_phase = 3
-
-        elif self.boss_move_phase == 3:
-            # 좌우 및 상하 이동
-            self.boss_pos[0] += self.boss_speed * self.boss_direction_x
-            self.boss_pos[1] += self.boss_speed * self.boss_direction_y
-            if self.boss_pos[0] <= 0 or self.boss_pos[0] >= 1280 - 140:
-                self.boss_direction_x *= -1
-            if self.boss_pos[1] <= 0 or self.boss_pos[1] >= 720 - 540:
-                self.boss_direction_y *= -1
-
-        limit_position()
+    # 대기 상태 (2초) 후 행동 시작
+    def wait_before_action(self):
+        if pygame.time.get_ticks() - self.state_timer > 2000:
+            self.state = "action"
+            self.state_timer = pygame.time.get_ticks()
+    
+    # 보스 행동: 좌우 또는 상하 이동
+    def perform_action(self):
+        if self.spawn_side == "left":
+            if self.boss_pos[0] < 820:
+                self.boss_pos[0] += self.boss_speed
+            else:
+                self.boss_speed = 5
+                if self.boss_pos[0] > 170:
+                    self.boss_pos[0] -= self.boss_speed
+                else:
+                    self.state = "wait"
+                    self.state_timer = pygame.time.get_ticks()
+        else:
+            if pygame.time.get_ticks() - self.state_timer < 5000:
+                self.boss_pos[1] += self.boss_speed if (pygame.time.get_ticks() // 1000) % 2 == 0 else -self.boss_speed
+            else:
+                self.boss_pos[1] = 400
+                self.state = "wait"
+                self.state_timer = pygame.time.get_ticks()
+        
+        self.attack()
 
     def attack(self):
         current_time = pygame.time.get_ticks()
