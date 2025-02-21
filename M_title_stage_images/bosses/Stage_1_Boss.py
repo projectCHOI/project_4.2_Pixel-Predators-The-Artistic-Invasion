@@ -123,38 +123,16 @@ class Stage1Boss:
             self.spawn_side = "right" if self.spawn_side == "left" else "left"
             self.boss_pos = [-100, 400] if self.spawn_side == "left" else [1380, 400]
 
+    # 보스 공격: 에너지 볼 발사
     def attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
             self.boss_last_attack_time = current_time
-            attack_angles = []
-
-            # 보스의 체력에 따른 공격 각도 설정
-            if self.boss_hp > self.max_boss_hp * 0.75:
-                # 체력 > 75%: 아래쪽으로만 공격 (에너지 볼 1개)
-                attack_angles = [90]
-            elif self.boss_hp > self.max_boss_hp * 0.5:
-                # 체력 > 50%: 아래쪽 + 좌우 5도 공격 (에너지 볼 3개)
-                attack_angles = [85, 90, 95]
-            elif self.boss_hp > self.max_boss_hp * 0.25:
-                # 체력 > 25%: 아래쪽 + 좌우 5도, 10도 공격 (에너지 볼 5개)
-                attack_angles = [80, 85, 90, 95, 100]
-            else:
-                # 그 이하: 기존 공격 + 좌우 15도 공격 추가 (에너지 볼 7개)
-                attack_angles = [75, 80, 85, 90, 95, 100, 105]
-
-            attack_start_pos = [self.boss_pos[0] + 120, self.boss_pos[1] + 240]  # 보스 아래 중앙 위치
-
-            # 각도에 따른 에너지 볼 생성
-            for angle in attack_angles:
-                radian = math.radians(angle)
-                dx = math.cos(radian) * 10  # 속도 조절
-                dy = math.sin(radian) * 10
-                self.boss_attacks.append({
-                    'pos': [attack_start_pos[0], attack_start_pos[1]],
-                    'dir': [dx, dy],
-                    'angle': angle
-                })
+            attack_dir = 1 if self.spawn_side == "left" else -1
+            self.boss_attacks.append({
+                'pos': [self.boss_pos[0] + 60, self.boss_pos[1] + 60],
+                'dir': [attack_dir * 10, 0]
+            })
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
@@ -174,18 +152,24 @@ class Stage1Boss:
         self.boss_attacks = new_boss_attacks
         return player_hit
 
+    # 보스 및 공격 그리기
     def draw(self, win):
-        if self.boss_hp > 0:
-            current_time = pygame.time.get_ticks()
-            if self.boss_hit:
-                if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
-                    self.boss_hit = False
-                    win.blit(self.boss_image, self.boss_pos)
-                else:
-                    if (current_time // self.boss_hit_duration) % 2 == 0:
-                        win.blit(self.boss_image, self.boss_pos)
-            else:
-                win.blit(self.boss_image, self.boss_pos)
+        image = self.boss_image_left if self.spawn_side == "left" else self.boss_image_right
+        win.blit(image, self.boss_pos)
+        for attack in self.boss_attacks:
+            win.blit(self.boss_attack_image, attack['pos'])
+    
+    def check_hit(self, attacks):
+        for attack in attacks:
+            if pygame.Rect(self.boss_pos[0], self.boss_pos[1], 120, 120).collidepoint(attack[1]):
+                self.boss_hp -= 1
+                if self.boss_hp <= 0:
+                    self.boss_hp = 0
+                    self.boss_active = False
+                    self.gem_active = True
+                    self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
+                    self.state = "exit"
+                break
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
