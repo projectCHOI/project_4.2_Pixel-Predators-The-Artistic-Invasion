@@ -25,7 +25,7 @@ class Stage1Boss:
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
 
         # ----- 보스 기본 속성 -----
-        self.max_boss_hp = 15       # 보스 최대 체력
+        self.max_boss_hp = 20       # 보스 최대 체력
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2        # 플레이어에게 주는 데미지 (충돌 시 등)
         self.boss_invincible_duration = 500  # 피격 무적 시간 (ms)
@@ -40,7 +40,8 @@ class Stage1Boss:
             self.boss_image = self.boss_image_right
 
         self.boss_attacks = []      # 보스가 발사하는 에너지 볼 목록
-        self.boss_active = True     # 보스 활성화 여부(등장~퇴장)  
+        self.boss_active = False
+        self.boss_appeared = False     
         self.boss_defeated = False  # 보스가 체력 0으로 사망했는지 여부
         self.gem_active = False     # 보스 사망 시 보석 드롭 후 활성화 여부
         self.gem_pos = None         # 보석 위치
