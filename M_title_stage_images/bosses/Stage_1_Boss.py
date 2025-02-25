@@ -59,7 +59,7 @@ class Stage1Boss:
 
         # 공격 관련 초기화
         self.boss_attacks = []
-        self.boss_attack_image = load_image("attacks", "energy_ball.png", size=(20, 20))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(20, 20))
         self.attack_cooldown = 1000  # 공격 간격(ms)
         self.last_attack_time = pygame.time.get_ticks()
 
