@@ -67,7 +67,6 @@ class Stage1Boss:
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
-            self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
 
     # 보스 이동 및 상태 전환
