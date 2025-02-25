@@ -56,12 +56,23 @@ class Stage1Boss:
         # 상태 머신
         self.state = "appear"
         self.state_start_time = pygame.time.get_ticks()
-        self.vertical_moves_done = 0
-        self.going_forward = True
-        self.attack_cooldown = 1000
-        self.last_attack_time = 0
+
+        # 공격 관련 초기화
+        self.boss_attacks = []
+        self.boss_attack_image = load_image("attacks", "energy_ball.png", size=(20, 20))
+        self.attack_cooldown = 1000  # 공격 간격(ms)
+        self.last_attack_time = pygame.time.get_ticks()
+
+        # 보스 피격 상태 관련 초기화
         self.boss_hit = False
         self.boss_hit_start_time = 0
+        self.boss_invincible_duration = 500  # 피격 시 무적 시간(ms 단위)
+
+        # 체력바 위치 및 크기 초기화
+        health_bar_x = 100
+        health_bar_y = 680
+        health_bar_width = 200
+        health_bar_height = 20
 
     # 보스 등장 시점 확인
     def check_appear(self, seconds, current_level):
