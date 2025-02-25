@@ -348,10 +348,10 @@ class Stage1Boss:
         if self.boss_defeated:
             return
 
-        self.boss_hp = self.max_boss_hp
         self.boss_hit = False
         self.boss_hit_start_time = 0
         self.boss_attacks.clear()
+        
         if reinit_side:
             self.side = random.choice(["left", "right"])
 
