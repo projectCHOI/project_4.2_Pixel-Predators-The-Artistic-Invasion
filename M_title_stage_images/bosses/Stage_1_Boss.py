@@ -307,10 +307,15 @@ class Stage1Boss:
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
 
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 500, 500)  # 보스 크기 설정
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 500, 500)  # 보스 크기
 
         for attack in attacks:
-            attack_x, attack_y, attack_size = attack  # 투사체 좌표 및 크기
+            if isinstance(attack, dict) and 'pos' in attack:
+                attack_x, attack_y = attack['pos']
+                attack_size = 20  # 기본 크기 지정 (실제 투사체 크기에 맞게 조정 가능)
+            else:
+                continue  # 예상한 형태가 아니면 무시
+
             attack_rect = pygame.Rect(attack_x, attack_y, attack_size, attack_size)
 
             if boss_rect.colliderect(attack_rect):  # 직사각형 충돌 체크
