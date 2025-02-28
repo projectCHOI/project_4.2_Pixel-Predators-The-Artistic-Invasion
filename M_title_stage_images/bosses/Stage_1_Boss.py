@@ -156,7 +156,7 @@ class Stage1Boss:
         self.attack()
 
         speed = 6
-        target_up = 250
+        target_up = 150
         target_down = 450
 
         y = self.boss_pos[1]
@@ -173,7 +173,7 @@ class Stage1Boss:
                 self.boss_pos[1] = target_down
                 self.vertical_moves_done += 1
 
-        # 5회(위->아래가 1회) 반복 후 원점(400)에 복귀
+        # 5회(위->아래가 1회) 반복 후 원점(350)에 복귀
         if self.vertical_moves_done >= 10:
             if self.boss_pos[1] > 350:
                 self.boss_pos[1] -= speed
