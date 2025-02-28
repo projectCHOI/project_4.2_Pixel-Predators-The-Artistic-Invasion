@@ -37,7 +37,7 @@ class Stage1Boss:
             self.boss_pos = [-400, 300]
             self.boss_image = self.boss_image_left
         else:
-            self.boss_pos = [1380, 400]
+            self.boss_pos = [1400, 350]
             self.boss_image = self.boss_image_right
 
         self.boss_attacks = []  # 보스가 발사하는 에너지 볼 목록
@@ -98,8 +98,8 @@ class Stage1Boss:
                     self._change_state("wait1")
             else:
                 self.boss_pos[0] -= speed
-                if self.boss_pos[0] <= 1110:
-                    self.boss_pos[0] = 1110
+                if self.boss_pos[0] <= 930:
+                    self.boss_pos[0] = 930
                     self._change_state("wait1")
 
         # 2) wait1 상태 (2초 대기)
@@ -129,8 +129,8 @@ class Stage1Boss:
                     self._change_state("wait3")
             else:
                 self.boss_pos[0] += speed
-                if self.boss_pos[0] >= 1380:
-                    self.boss_pos[0] = 1380
+                if self.boss_pos[0] >= 1400:
+                    self.boss_pos[0] = 1400
                     self._change_state("wait3")
 
         elif self.state == "wait3":
@@ -156,8 +156,8 @@ class Stage1Boss:
         self.attack()
 
         speed = 6
-        target_up = 320
-        target_down = 480
+        target_up = 250
+        target_down = 450
 
         y = self.boss_pos[1]
         moving_up = (self.vertical_moves_done % 2 == 0)
@@ -175,15 +175,15 @@ class Stage1Boss:
 
         # 5회(위->아래가 1회) 반복 후 원점(400)에 복귀
         if self.vertical_moves_done >= 10:
-            if self.boss_pos[1] > 400:
+            if self.boss_pos[1] > 350:
                 self.boss_pos[1] -= speed
-                if self.boss_pos[1] <= 400:
-                    self.boss_pos[1] = 400
+                if self.boss_pos[1] <= 350:
+                    self.boss_pos[1] = 350
                     self._change_state("wait2")
-            elif self.boss_pos[1] < 400:
+            elif self.boss_pos[1] < 350:
                 self.boss_pos[1] += speed
-                if self.boss_pos[1] >= 400:
-                    self.boss_pos[1] = 400
+                if self.boss_pos[1] >= 350:
+                    self.boss_pos[1] = 350
                     self._change_state("wait2")
             else:
                 self._change_state("wait2")
@@ -380,7 +380,7 @@ class Stage1Boss:
             self.boss_pos = [-400, 300]
             self.boss_image = self.boss_image_left
         else:
-            self.boss_pos = [1380, 400]
+            self.boss_pos = [1400, 350]
             self.boss_image = self.boss_image_right
 
         self.vertical_moves_done = 0
