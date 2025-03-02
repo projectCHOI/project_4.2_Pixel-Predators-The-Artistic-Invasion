@@ -24,9 +24,7 @@ class Stage1Boss:
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         # 보스 스킬
-        boss_effect_path = load_image("boss_skilles", "boss_stage5_b.png", size=(60, 60))
-        self.boss_effect_image = pygame.image.load(boss_effect_path).convert_alpha()
-        self.boss_effect_image = pygame.transform.scale(self.boss_effect_image, (60, 60))
+        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(60, 60))
         self.effect_offsets = [
             (-100,  -50),
             ( -50,   50),
@@ -280,10 +278,10 @@ class Stage1Boss:
                     effect_x = boss_center_x + offset_x
                     effect_y = boss_center_y + offset_y
                     win.blit(self.boss_effect_image, (effect_x, effect_y))
-        elif self.boss_hp <= 0 and self.boss_defeated:
-            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
-            win.blit(defeated_text, (10, 680))
-            
+        # elif self.boss_hp <= 0 and self.boss_defeated:
+        #     defeated_text = font.render("BOSS", True, (255, 255, 255))
+        #     win.blit(defeated_text, (10, 680))
+
     def draw_attacks(self, win):
         if not self.boss_active:
             return
@@ -332,7 +330,7 @@ class Stage1Boss:
 
     # 보스 피격 처리
     def check_hit(self, attacks):
-        if self.state != "act":
+        if self.state in ("appear", "wait1", "wait2", "wait3", "leave"):
             return
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
