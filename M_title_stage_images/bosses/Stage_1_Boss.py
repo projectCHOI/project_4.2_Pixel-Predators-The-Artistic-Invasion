@@ -74,6 +74,10 @@ class Stage1Boss:
         health_bar_width = 200
         health_bar_height = 20
 
+        # 이동 패턴 보조 변수들
+        self.vertical_moves_done = 0
+        self.going_forward = True
+
     # 보스 등장 시점 확인
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
@@ -133,6 +137,7 @@ class Stage1Boss:
                     self.boss_pos[0] = 1400
                     self._change_state("wait3")
 
+        # 6) wait3 상태
         elif self.state == "wait3":
             if time_in_state >= 2000:  # 2초 후
                 self.reset(reinit_side=True)
@@ -303,6 +308,8 @@ class Stage1Boss:
 
     # 보스 피격 처리
     def check_hit(self, attacks):
+        if self.state != "act":
+            return
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
