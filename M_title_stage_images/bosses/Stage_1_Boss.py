@@ -23,6 +23,17 @@ class Stage1Boss:
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(400, 400))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
+        # 보스 스킬
+        boss_effect_path = load_image("boss_skilles", "boss_stage5_b.png", size=(60, 60))
+        self.boss_effect_image = pygame.image.load(boss_effect_path).convert_alpha()
+        self.boss_effect_image = pygame.transform.scale(self.boss_effect_image, (60, 60))
+        self.effect_offsets = [
+            (-100,  -50),
+            ( -50,   50),
+            (   0, -100),
+            (  50,   50),
+            ( 100,  -50),
+        ]
 
         # 보스 기본 속성
         self.max_boss_hp = 20
@@ -260,6 +271,19 @@ class Stage1Boss:
             else:
                 win.blit(self.boss_image, self.boss_pos)
 
+        # 보스 스킬
+        if self.state == "act":
+                boss_center_x = self.boss_pos[0] + 200
+                boss_center_y = self.boss_pos[1] + 200
+
+                for (offset_x, offset_y) in self.effect_offsets:
+                    effect_x = boss_center_x + offset_x
+                    effect_y = boss_center_y + offset_y
+                    win.blit(self.boss_effect_image, (effect_x, effect_y))
+        elif self.boss_hp <= 0 and self.boss_defeated:
+            defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
+            win.blit(defeated_text, (10, 680))
+            
     def draw_attacks(self, win):
         if not self.boss_active:
             return
