@@ -270,7 +270,7 @@ class Stage1Boss:
                 win.blit(self.boss_image, self.boss_pos)
 
         # 보스 스킬
-        if self.state == "act":
+        if self.state in ("appear", "wait1", "wait2", "wait3", "leave"):
                 boss_center_x = self.boss_pos[0] + 200
                 boss_center_y = self.boss_pos[1] + 200
 
@@ -279,7 +279,7 @@ class Stage1Boss:
                     effect_y = boss_center_y + offset_y
                     win.blit(self.boss_effect_image, (effect_x, effect_y))
         # elif self.boss_hp <= 0 and self.boss_defeated:
-        #     defeated_text = font.render("BOSS", True, (255, 255, 255))
+        #     defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
         #     win.blit(defeated_text, (10, 680))
 
     def draw_attacks(self, win):
@@ -330,7 +330,7 @@ class Stage1Boss:
 
     # 보스 피격 처리
     def check_hit(self, attacks):
-        if self.state in ("appear", "wait1", "wait2", "wait3", "leave"):
+        if self.state != "act":
             return
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
@@ -341,7 +341,7 @@ class Stage1Boss:
         for attack in attacks:
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                attack_size = 20  # 기본 크기 지정 (실제 투사체 크기에 맞게 조정 가능)
+                attack_size = 400  # 기본 크기 지정 (실제 투사체 크기에 맞게 조정 가능)
             else:
                 continue  # 예상한 형태가 아니면 무시
 
