@@ -19,18 +19,18 @@ def load_image(*path_parts, size=None):
 class Stage1Boss:
     def __init__(self):
         # 보스 이미지 로드
-        self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(400, 400))
-        self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(400, 400))
+        self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(300, 300))
+        self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(300, 300))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         # 보스 스킬
-        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(60, 60))
+        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(80, 80))
         self.effect_offsets = [
-            ( 180,    0 ),
-            (  56,  171 ),
-            (-146,  106 ),
-            (-146, -106 ),
-            (  56, -171 )
+            ( 0,  150),
+            ( 0,   75),
+            ( 0,    0),
+            ( 0,  -75),
+            ( 0, -150),
         ]
 
         # 보스 기본 속성
@@ -337,11 +337,11 @@ class Stage1Boss:
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
 
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 400, 400)  # 보스 크기
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)  # 보스 크기
         for attack in attacks:
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                attack_size = 120
+                attack_size = 150
             else:
                 continue
 
