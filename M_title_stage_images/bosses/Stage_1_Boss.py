@@ -330,23 +330,22 @@ class Stage1Boss:
 
     # 보스 피격 처리
     def check_hit(self, attacks):
-        if self.state != "act":
+        if not self.boss_active:
             return
+
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
 
         boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 400, 400)  # 보스 크기
-
         for attack in attacks:
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                attack_size = 400  # 기본 크기 지정 (실제 투사체 크기에 맞게 조정 가능)
+                attack_size = 120
             else:
-                continue  # 예상한 형태가 아니면 무시
+                continue
 
             attack_rect = pygame.Rect(attack_x, attack_y, attack_size, attack_size)
-
             if boss_rect.colliderect(attack_rect):  # 직사각형 충돌 체크
                 self.boss_hp -= 1
                 if self.boss_hp < 0:
