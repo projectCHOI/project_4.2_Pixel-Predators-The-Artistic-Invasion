@@ -25,13 +25,7 @@ class Stage1Boss:
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         # 보스 스킬
         self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(60, 60))
-        self.effect_offsets = [
-            (-100,  -50),
-            ( -50,   50),
-            (   0, -100),
-            (  50,   50),
-            ( 100,  -50),
-        ]
+
 
         # 보스 기본 속성
         self.max_boss_hp = 20
