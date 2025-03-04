@@ -26,11 +26,14 @@ class Stage1Boss:
         # 보스 스킬
         self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(80, 80))
         self.effect_offsets = [
-            ( 0,  150),
-            ( 0,   75),
-            ( 0,    0),
-            ( 0,  -75),
-            ( 0, -150),
+            # 아래쪽 (y = +100)
+            (-100,  100),
+            (   0,  100),
+            ( 100,  100),
+            # 위쪽   (y = -100)
+            (-100, -100),
+            (   0, -100),
+            ( 100, -100),
         ]
 
         # 보스 기본 속성
@@ -68,7 +71,7 @@ class Stage1Boss:
 
         # 공격 관련 초기화
         self.boss_attacks = []
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(20, 20))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.attack_cooldown = 1000  # 공격 간격(ms)
         self.last_attack_time = pygame.time.get_ticks()
 
@@ -341,7 +344,7 @@ class Stage1Boss:
         for attack in attacks:
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                attack_size = 150
+                attack_size = 300
             else:
                 continue
 
