@@ -24,16 +24,12 @@ class Stage1Boss:
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         # 보스 스킬
-        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(80, 80))
+        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(200, 200))
         self.effect_offsets = [
-            # 아래쪽 (y = +100)
-            (-100,  100),
-            (   0,  100),
-            ( 100,  100),
-            # 위쪽   (y = -100)
+            (-50, -100),
             (-100, -100),
-            (   0, -100),
-            ( 100, -100),
+            (-150, -100),
+            (-200, -100)
         ]
 
         # 보스 기본 속성
