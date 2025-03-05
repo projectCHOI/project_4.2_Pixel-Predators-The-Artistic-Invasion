@@ -329,44 +329,33 @@ class Stage1Boss:
 
     # 보스 피격 처리
     def check_hit(self, attacks):
-    # 1) 보스가 활성화되지 않았거나, 지정한 상태(예: 'act', 'wait2')가 아니면 리턴
         if not self.boss_active:
             return
         if self.state not in ("act", "wait2"):
-            return  # 'act'와 'wait2' 상태가 아니면 피격판정 안 함
+            return
 
         current_time = pygame.time.get_ticks()
-
-        # 2) 무적(피격 쿨타임) 상태라면 리턴
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
 
-        # 3) 보스의 충돌 박스 Rect
         boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
 
-        # 4) 플레이어의 공격(attack)의 Rect와 보스 Rect가 겹치는지 확인
         for attack in attacks:
-            # 예시) 공격 정보가 {'pos': (x, y)} 형태라 가정
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                # 공격의 실제 크기에 맞추어 Rect 크기를 조정해 주세요.
-                # 예시로 30×30이라고 가정
-                attack_width, attack_height = 30, 30  
+                attack_width, attack_height = 300, 300  
                 attack_rect = pygame.Rect(attack_x, attack_y, attack_width, attack_height)
             else:
                 continue
 
             if boss_rect.colliderect(attack_rect):
-                # 피격 시 보스 HP 감소
                 self.boss_hp -= 1
                 if self.boss_hp < 0:
                     self.boss_hp = 0
 
-                # 보스 히트 상태 설정 및 시간 갱신
                 self.boss_hit = True
                 self.boss_hit_start_time = current_time
 
-                # 보스 사망 처리
                 if self.boss_hp <= 0:
                     self.boss_defeated = True
                     self.boss_active = False
