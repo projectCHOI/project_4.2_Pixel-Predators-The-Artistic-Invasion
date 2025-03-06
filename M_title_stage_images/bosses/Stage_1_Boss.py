@@ -278,15 +278,19 @@ class Stage1Boss:
     def check_hit(self, attacks):
         if not self.boss_active:
             return
+        # 특정 상태(`act`)에서만 공격을 받을 수 있도록 설정
+        if self.state not in ["act"]:
+            return
 
         current_time = pygame.time.get_ticks()
+
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
         
         boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
         
         for attack in attacks:
-            attack_start, attack_end, thickness = attack  # `main.py`의 attacks는 튜플 형태
+            attack_start, attack_end, thickness = attack
 
             if boss_rect.clipline(attack_start, attack_end):
                 self.boss_hp -= 1
