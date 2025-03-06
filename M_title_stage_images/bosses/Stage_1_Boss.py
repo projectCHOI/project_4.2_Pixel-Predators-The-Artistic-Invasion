@@ -282,36 +282,26 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
-
+        
         boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
-
+        
         for attack in attacks:
-            if isinstance(attack, dict) and 'pos' in attack:
-                attack_x, attack_y = attack['pos']
-                attack_width, attack_height = 40, 40  # 공격 범위
-                attack_rect = pygame.Rect(
-                    attack_x - attack_width // 2,
-                    attack_y - attack_height // 2,
-                    attack_width,
-                    attack_height
-                )
-            else:
-                continue
+            attack_start, attack_end, thickness = attack  # `main.py`의 attacks는 튜플 형태
 
-            if boss_rect.colliderect(attack_rect):
+            if boss_rect.clipline(attack_start, attack_end):
                 self.boss_hp -= 1
-                if self.boss_hp < 0:
-                    self.boss_hp = 0
-
-                self.boss_hit = True
-                self.boss_hit_start_time = current_time
-
+                
                 if self.boss_hp <= 0:
+                    self.boss_hp = 0
                     self.boss_defeated = True
                     self.boss_active = False
                     self.boss_attacks.clear()
                     self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
                     self.gem_active = True
+                    break
+
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
                 break
 
     def check_gem_collision(self, player_pos):
