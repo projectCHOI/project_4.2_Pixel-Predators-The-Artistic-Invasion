@@ -279,9 +279,6 @@ class Stage1Boss:
         if not self.boss_active:
             return
 
-        if self.state not in ("act", "wait2"):
-            return
-
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
@@ -291,7 +288,7 @@ class Stage1Boss:
         for attack in attacks:
             if isinstance(attack, dict) and 'pos' in attack:
                 attack_x, attack_y = attack['pos']
-                attack_width, attack_height = 40, 40
+                attack_width, attack_height = 40, 40  # 공격 범위
                 attack_rect = pygame.Rect(
                     attack_x - attack_width // 2,
                     attack_y - attack_height // 2,
