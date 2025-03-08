@@ -18,8 +18,8 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(300, 300))
-        self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(300, 300))
+        self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(500, 500))
+        self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(500, 500))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(200, 200))
@@ -34,7 +34,7 @@ class Stage1Boss:
         # 등장 위치
         self.side = random.choice(["left", "right"])
         if self.side == "left":
-            self.boss_pos = [-400, 300]
+            self.boss_pos = [-500, 200]
             self.boss_image = self.boss_image_left
         else:
             self.boss_pos = [1400, 350]
@@ -104,8 +104,8 @@ class Stage1Boss:
             speed = 6
             if self.side == "left":
                 self.boss_pos[0] -= speed
-                if self.boss_pos[0] <= -400:
-                    self.boss_pos[0] = -400
+                if self.boss_pos[0] <= -500:
+                    self.boss_pos[0] = -500
                     self._change_state("wait3")
             else:
                 self.boss_pos[0] += speed
@@ -287,7 +287,7 @@ class Stage1Boss:
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
         
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 500, 500)
         
         for attack in attacks:
             attack_start, attack_end, thickness = attack
@@ -347,7 +347,7 @@ class Stage1Boss:
             self.side = random.choice(["left", "right"])
 
         if self.side == "left":
-            self.boss_pos = [-400, 300]
+            self.boss_pos = [-500, 200]
             self.boss_image = self.boss_image_left
         else:
             self.boss_pos = [1400, 350]
