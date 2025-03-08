@@ -37,7 +37,7 @@ class Stage1Boss:
             self.boss_pos = [-500, 200]
             self.boss_image = self.boss_image_left
         else:
-            self.boss_pos = [1400, 350]
+            self.boss_pos = [1500, 250]
             self.boss_image = self.boss_image_right
 
         self.boss_attacks = []
@@ -77,8 +77,8 @@ class Stage1Boss:
             speed = 3
             if self.side == "left":
                 self.boss_pos[0] += speed
-                if self.boss_pos[0] >= 170:
-                    self.boss_pos[0] = 170
+                if self.boss_pos[0] >= 120:
+                    self.boss_pos[0] = 120
                     self._change_state("wait1")
             else:
                 self.boss_pos[0] -= speed
@@ -109,8 +109,8 @@ class Stage1Boss:
                     self._change_state("wait3")
             else:
                 self.boss_pos[0] += speed
-                if self.boss_pos[0] >= 1400:
-                    self.boss_pos[0] = 1400
+                if self.boss_pos[0] >= 1500:
+                    self.boss_pos[0] = 1500
                     self._change_state("wait3")
 
         elif self.state == "wait3":
@@ -126,20 +126,20 @@ class Stage1Boss:
         self.attack()
         if self.going_forward:
             self.boss_pos[0] += 3
-            if self.boss_pos[0] >= 820:
-                self.boss_pos[0] = 820
+            if self.boss_pos[0] >= 720:
+                self.boss_pos[0] = 720
                 self.going_forward = False
         else:
             self.boss_pos[0] -= 5
-            if self.boss_pos[0] <= 170:
-                self.boss_pos[0] = 170
+            if self.boss_pos[0] <= 120:
+                self.boss_pos[0] = 120
                 self._change_state("wait2")
 
     def _move_right_side(self):
         self.attack()
         speed = 6
-        target_up = 150
-        target_down = 450
+        target_up = 130
+        target_down = 250
 
         moving_up = (self.vertical_moves_done % 2 == 0)
         if moving_up:
@@ -154,15 +154,15 @@ class Stage1Boss:
                 self.vertical_moves_done += 1
 
         if self.vertical_moves_done >= 10:
-            if self.boss_pos[1] > 350:
+            if self.boss_pos[1] > 250:
                 self.boss_pos[1] -= speed
-                if self.boss_pos[1] <= 350:
-                    self.boss_pos[1] = 350
+                if self.boss_pos[1] <= 250:
+                    self.boss_pos[1] = 250
                     self._change_state("wait2")
-            elif self.boss_pos[1] < 350:
+            elif self.boss_pos[1] < 250:
                 self.boss_pos[1] += speed
-                if self.boss_pos[1] >= 350:
-                    self.boss_pos[1] = 350
+                if self.boss_pos[1] >= 250:
+                    self.boss_pos[1] = 250
                     self._change_state("wait2")
             else:
                 self._change_state("wait2")
@@ -350,7 +350,7 @@ class Stage1Boss:
             self.boss_pos = [-500, 200]
             self.boss_image = self.boss_image_left
         else:
-            self.boss_pos = [1400, 350]
+            self.boss_pos = [1500, 250]
             self.boss_image = self.boss_image_right
 
         self.vertical_moves_done = 0
