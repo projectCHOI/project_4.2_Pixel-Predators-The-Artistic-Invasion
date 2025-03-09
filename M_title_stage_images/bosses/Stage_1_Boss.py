@@ -23,9 +23,11 @@ class Stage1Boss:
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
         self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(300, 300))
-        # self.effect_offsets = [(-100, -100), (-50, -50), (0, 0), (50, 50), (100, 100)]
-        self.effect_offsets = [(0, 0)]
-
+        self.effect_offsets = [(-200, -200), (200, -200), (-250, 250), (250, 250),
+                               (-100, -100), (100, -100), (-100, 100), (100, 100),
+                               (-200, 0), (0, -200), (200, 0), (0, 200),
+                               (0, 0)]
+        
         self.max_boss_hp = 20
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
@@ -288,7 +290,7 @@ class Stage1Boss:
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
             return
         
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 500, 500)
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
         
         for attack in attacks:
             attack_start, attack_end, thickness = attack
