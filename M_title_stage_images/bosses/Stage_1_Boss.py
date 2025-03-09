@@ -22,8 +22,9 @@ class Stage1Boss:
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(500, 500))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
-        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(200, 200))
-        self.effect_offsets = [(-50, -100), (-100, -100), (-150, -100), (-200, -100)]
+        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(300, 300))
+        # self.effect_offsets = [(-100, -100), (-50, -50), (0, 0), (50, 50), (100, 100)]
+        self.effect_offsets = [(0, 0)]
 
         self.max_boss_hp = 20
         self.boss_hp = self.max_boss_hp
@@ -82,8 +83,8 @@ class Stage1Boss:
                     self._change_state("wait1")
             else:
                 self.boss_pos[0] -= speed
-                if self.boss_pos[0] <= 930:
-                    self.boss_pos[0] = 930
+                if self.boss_pos[0] <= 830:
+                    self.boss_pos[0] = 830
                     self._change_state("wait1")
 
         elif self.state == "wait1":
@@ -226,8 +227,8 @@ class Stage1Boss:
 
         # 보스 스킬 (등장 상태 등에서 보이는 효과)
         if self.state in ("appear", "wait1", "wait2", "wait3", "leave"):
-            boss_center_x = self.boss_pos[0] + 200
-            boss_center_y = self.boss_pos[1] + 200
+            boss_center_x = self.boss_pos[0]
+            boss_center_y = self.boss_pos[1]
             for (offset_x, offset_y) in self.effect_offsets:
                 effect_x = boss_center_x + offset_x
                 effect_y = boss_center_y + offset_y
