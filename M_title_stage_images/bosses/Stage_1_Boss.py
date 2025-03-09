@@ -195,6 +195,23 @@ class Stage1Boss:
                 'angle': angle_deg
             })
 
+    def check_player_collision(self, player_pos):
+        px, py = player_pos
+        player_rect = pygame.Rect(px, py, 50, 50)
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 500, 500)  # 보스 hitbox
+        
+        for (offset_x, offset_y) in self.effect_offsets:
+            effect_x = self.boss_pos[0] + offset_x
+            effect_y = self.boss_pos[1] + offset_y
+            effect_rect = pygame.Rect(effect_x, effect_y, 300, 300)
+            if player_rect.colliderect(effect_rect):
+                return 3
+
+        if player_rect.colliderect(boss_rect):  
+            return 3
+
+        return
+
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = self.check_player_collision(player_pos)
