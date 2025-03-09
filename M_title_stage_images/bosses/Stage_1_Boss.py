@@ -197,7 +197,7 @@ class Stage1Boss:
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
-        player_hit = False
+        player_hit = self.check_player_collision(player_pos)
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
