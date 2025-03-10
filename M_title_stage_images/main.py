@@ -508,41 +508,46 @@ while run:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                run = False  # 게임 루프 종료
+                run = False
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    level = 1
-                    current_health = 3
-                    enemies_defeated = 0
-                    player_speed = original_player_speed
-                    power_item_active = 0
-                    game_over = False
-                    game_over_reason = None
-                    game_active = False
-
+            elif event.type == pygame.KEYDOWN:
+                # 선택 방향 이동
+                if event.key == pygame.K_a:
+                    selected_option = "main"
+                elif event.key == pygame.K_d:
+                    selected_option = "continue"
+                # Main으로 이동 (초기화하고 타이틀로 복귀)
                 elif event.key == pygame.K_SPACE:
-                    current_health = 3
-                    enemies_defeated = 0
-                    player_speed = original_player_speed
-                    power_item_active = 0
-                    game_over = False
-                    game_over_reason = None
-                    start_ticks = pygame.time.get_ticks()
-                    game_active = True
+                    if selected_option == "main":
+                        level = 1
+                        current_health = 3
+                        enemies_defeated = 0
+                        player_speed = original_player_speed
+                        power_item_active = 0
+                        game_over = False
+                        game_over_reason = None
+                        game_active = False
+                    # Continue - 현재 스테이지 다시 시작
+                    elif selected_option == "continue":
+                        current_health = 3
+                        enemies_defeated = 0
+                        player_speed = original_player_speed
+                        power_item_active = 0
+                        game_over = False
+                        game_over_reason = None
+                        start_ticks = pygame.time.get_ticks()
+                        game_active = True
 
-                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
-                    enemies = []
-                    stage_start_ticks = pygame.time.get_ticks()
-
-                    intro_screen(level)
-                    attacks = []
-                    energy_balls = []
-
-                    boss = initialize_boss(level)
-                    if boss:
-                        boss.reset()
-                    stage_duration = get_stage_duration(level)
+                        player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
+                        enemies = []
+                        stage_start_ticks = pygame.time.get_ticks()
+                        intro_screen(level)
+                        attacks = []
+                        energy_balls = []
+                        boss = initialize_boss(level)
+                        if boss:
+                            boss.reset()
+                        stage_duration = get_stage_duration(level)
 
     else:
         # 마우스 위치 가져오기
