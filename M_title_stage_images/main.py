@@ -208,7 +208,6 @@ victory_image = load_image("stages", "Stage14_Victory.JPG", size=(1280, 720))
 game_over_image = load_image("stages", "Stage15_GameOver.JPG", size=(1280, 720))
 time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
 
-
 selected_option = "main"  # 기본값
 
 def draw_end_screen():
