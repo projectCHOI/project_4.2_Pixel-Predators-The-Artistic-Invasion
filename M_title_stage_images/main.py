@@ -495,7 +495,6 @@ while run:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    # ▶ Main으로 돌아가기 (level 1부터 새 게임 시작)
                     level = 1
                     current_health = 3
                     enemies_defeated = 0
@@ -503,25 +502,9 @@ while run:
                     power_item_active = 0
                     game_over = False
                     game_over_reason = None
-                    start_ticks = pygame.time.get_ticks()
-                    game_active = True
-
-                    # 플레이어 위치 초기화
-                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
-                    enemies = []
-                    stage_start_ticks = pygame.time.get_ticks()
-
-                    intro_screen(level)  # 스테이지 인트로 화면
-                    attacks = []
-                    energy_balls = []
-
-                    boss = initialize_boss(level)
-                    if boss:
-                        boss.reset()
-                    stage_duration = get_stage_duration(level)
+                    game_active = False
 
                 elif event.key == pygame.K_SPACE:
-                    # ▶ Continue: 죽은 스테이지부터 다시 시작
                     current_health = 3
                     enemies_defeated = 0
                     player_speed = original_player_speed
@@ -531,12 +514,11 @@ while run:
                     start_ticks = pygame.time.get_ticks()
                     game_active = True
 
-                    # 플레이어 위치 초기화
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                     enemies = []
                     stage_start_ticks = pygame.time.get_ticks()
 
-                    intro_screen(level)  # 이전 스테이지 인트로 화면
+                    intro_screen(level)
                     attacks = []
                     energy_balls = []
 
