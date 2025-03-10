@@ -208,8 +208,12 @@ victory_image = load_image("stages", "Stage14_Victory.JPG", size=(1280, 720))
 game_over_image = load_image("stages", "Stage15_GameOver.JPG", size=(1280, 720))
 time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
 
-# 게임 종료 화면 그리기 함수
+
+selected_option = "main"  # 기본값
+
 def draw_end_screen():
+    global selected_option
+
     if game_over_reason == "victory":
         image = victory_image
     elif game_over_reason == "game_over":
@@ -217,21 +221,35 @@ def draw_end_screen():
     elif game_over_reason == "time_over":
         image = time_over_image
     else:
-        image = game_over_image  # 기본값 설정
+        image = game_over_image
 
     win.blit(image, (0, 0))
 
-    # 선택지 텍스트 추가
-    enter_text = font.render("Main? [Enter]", True, WHITE)
-    space_text = font.render("Continue? [Space Bar]", True, WHITE)
+    # 버튼 텍스트
+    main_text = font.render("Main?", True, BLACK)
+    continue_text = font.render("Continue?", True, BLACK)
 
-    # 위치 설정 (중앙 아래 기준)
-    enter_x = win_width // 2 - enter_text.get_width() // 2 - 100
-    space_x = win_width // 2 - space_text.get_width() // 2 + 100
+    # 배경 사각형 위치 및 크기 설정
+    button_width, button_height = 180, 50
+    main_x = win_width // 2 - 300
+    continue_x = win_width // 2 + 300
     y = win_height // 2 + 100
 
-    win.blit(enter_text, (enter_x, y))
-    win.blit(space_text, (space_x, y))
+    # Main 버튼 배경
+    if selected_option == "main":
+        pygame.draw.rect(win, (255, 255, 204), (main_x - 10, y - 10, button_width, button_height))
+    else:
+        pygame.draw.rect(win, (0, 0, 0), (main_x - 10, y - 10, button_width, button_height), 2)
+
+    # Continue 버튼 배경
+    if selected_option == "continue":
+        pygame.draw.rect(win, (255, 255, 204), (continue_x - 10, y - 10, button_width, button_height))
+    else:
+        pygame.draw.rect(win, (0, 0, 0), (continue_x - 10, y - 10, button_width, button_height), 2)
+
+    # 텍스트 출력
+    win.blit(main_text, (main_x, y))
+    win.blit(continue_text, (continue_x, y))
 
     pygame.display.update()
 
