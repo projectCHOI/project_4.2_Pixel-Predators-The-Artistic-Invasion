@@ -220,8 +220,19 @@ def draw_end_screen():
         image = game_over_image  # 기본값 설정
 
     win.blit(image, (0, 0))
-    text = font.render("Press Enter to Continue", True, WHITE)
-    win.blit(text, (win_width // 2 - text.get_width() // 2, win_height // 2 - text.get_height() // 2))
+
+    # 선택지 텍스트 추가
+    enter_text = font.render("Main? [Enter]", True, WHITE)
+    space_text = font.render("Continue? [Space Bar]", True, WHITE)
+
+    # 위치 설정 (중앙 아래 기준)
+    enter_x = win_width // 2 - enter_text.get_width() // 2 - 100
+    space_x = win_width // 2 - space_text.get_width() // 2 + 100
+    y = win_height // 2 + 100
+
+    win.blit(enter_text, (enter_x, y))
+    win.blit(space_text, (space_x, y))
+
     pygame.display.update()
 
 # 스테이지 시작 시 시간 제한 함수
