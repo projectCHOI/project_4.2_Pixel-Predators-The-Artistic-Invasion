@@ -225,30 +225,37 @@ def draw_end_screen():
     win.blit(image, (0, 0))
 
     # 버튼 텍스트
-    main_text = font.render("Main?", True, BLACK)
-    continue_text = font.render("Continue?", True, BLACK)
+    main_text = font.render("Main?", True, WHITE)  # 흰색
+    continue_text = font.render("Continue?", True, WHITE)  # 흰색
 
-    # 배경 사각형 위치 및 크기 설정
+    # 버튼 크기 및 위치 설정
     button_width, button_height = 180, 50
     main_x = win_width // 2 - 300
     continue_x = win_width // 2 + 300
     y = win_height // 2 + 100
 
-    # Main 버튼 배경
+    # Main 버튼
     if selected_option == "main":
-        pygame.draw.rect(win, (255, 255, 204), (main_x - 10, y - 10, button_width, button_height))
+        # 선택된 버튼 배경 (연노랑)
+        pygame.draw.rect(win, (255, 255, 204), (main_x, y, button_width, button_height))
     else:
-        pygame.draw.rect(win, (141, 25, 43), (main_x - 10, y - 10, button_width, button_height), 2)
+        # 선택되지 않은 버튼 배경 + 회색 테두리
+        pygame.draw.rect(win, (0, 0, 0), (main_x, y, button_width, button_height))
+        pygame.draw.rect(win, (192, 192, 192), (main_x, y, button_width, button_height), 2)
 
-    # Continue 버튼 배경
+    # Continue 버튼
     if selected_option == "continue":
-        pygame.draw.rect(win, (255, 255, 204), (continue_x - 10, y - 10, button_width, button_height))
+        pygame.draw.rect(win, (255, 255, 204), (continue_x, y, button_width, button_height))
     else:
-        pygame.draw.rect(win, (141, 25, 43), (continue_x - 10, y - 10, button_width, button_height), 2)
+        pygame.draw.rect(win, (0, 0, 0), (continue_x, y, button_width, button_height))
+        pygame.draw.rect(win, (192, 192, 192), (continue_x, y, button_width, button_height), 2)
 
-    # 텍스트 출력
-    win.blit(main_text, (main_x, y))
-    win.blit(continue_text, (continue_x, y))
+    # 텍스트 가운데 정렬
+    main_text_rect = main_text.get_rect(center=(main_x + button_width // 2, y + button_height // 2))
+    continue_text_rect = continue_text.get_rect(center=(continue_x + button_width // 2, y + button_height // 2))
+
+    win.blit(main_text, main_text_rect)
+    win.blit(continue_text, continue_text_rect)
 
     pygame.display.update()
 
