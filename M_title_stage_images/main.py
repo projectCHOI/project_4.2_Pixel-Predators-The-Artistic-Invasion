@@ -225,10 +225,6 @@ def draw_end_screen():
     win.blit(image, (0, 0))
 
     # 버튼 텍스트
-    main_text = font.render("Main?", True, WHITE)  # 흰색
-    continue_text = font.render("Continue?", True, WHITE)  # 흰색
-
-    # 버튼 크기 및 위치 설정
     button_width, button_height = 180, 50
     main_x = win_width // 2 - 300
     continue_x = win_width // 2 + 300
@@ -236,24 +232,27 @@ def draw_end_screen():
 
     # Main 버튼
     if selected_option == "main":
-        # 선택된 버튼 배경 (연노랑)
         pygame.draw.rect(win, (255, 255, 204), (main_x, y, button_width, button_height))
+        main_text = font.render("Main?", True, (255, 0, 0))
     else:
-        # 선택되지 않은 버튼 배경 + 회색 테두리
         pygame.draw.rect(win, (0, 0, 0), (main_x, y, button_width, button_height))
         pygame.draw.rect(win, (192, 192, 192), (main_x, y, button_width, button_height), 2)
+        main_text = font.render("Main?", True, (255, 255, 255))
 
     # Continue 버튼
     if selected_option == "continue":
         pygame.draw.rect(win, (255, 255, 204), (continue_x, y, button_width, button_height))
+        continue_text = font.render("Continue?", True, (255, 0, 0))
     else:
         pygame.draw.rect(win, (0, 0, 0), (continue_x, y, button_width, button_height))
         pygame.draw.rect(win, (192, 192, 192), (continue_x, y, button_width, button_height), 2)
+        continue_text = font.render("Continue?", True, (255, 255, 255))
 
     # 텍스트 가운데 정렬
     main_text_rect = main_text.get_rect(center=(main_x + button_width // 2, y + button_height // 2))
     continue_text_rect = continue_text.get_rect(center=(continue_x + button_width // 2, y + button_height // 2))
 
+    # 텍스트 출력
     win.blit(main_text, main_text_rect)
     win.blit(continue_text, continue_text_rect)
 
