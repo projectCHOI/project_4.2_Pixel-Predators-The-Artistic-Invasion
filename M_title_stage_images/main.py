@@ -238,13 +238,13 @@ def draw_end_screen():
     if selected_option == "main":
         pygame.draw.rect(win, (255, 255, 204), (main_x - 10, y - 10, button_width, button_height))
     else:
-        pygame.draw.rect(win, (0, 0, 0), (main_x - 10, y - 10, button_width, button_height), 2)
+        pygame.draw.rect(win, (141, 25, 43), (main_x - 10, y - 10, button_width, button_height), 2)
 
     # Continue 버튼 배경
     if selected_option == "continue":
         pygame.draw.rect(win, (255, 255, 204), (continue_x - 10, y - 10, button_width, button_height))
     else:
-        pygame.draw.rect(win, (0, 0, 0), (continue_x - 10, y - 10, button_width, button_height), 2)
+        pygame.draw.rect(win, (141, 25, 43), (continue_x - 10, y - 10, button_width, button_height), 2)
 
     # 텍스트 출력
     win.blit(main_text, (main_x, y))
@@ -511,12 +511,25 @@ while run:
                 run = False
 
             elif event.type == pygame.KEYDOWN:
-                # 선택 방향 이동
-                if event.key == pygame.K_a:
+                if not game_over and event.key == pygame.K_RETURN:
+                    start_ticks = pygame.time.get_ticks()
+                    game_active = True
+
+                    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
+                    enemies = []
+                    stage_start_ticks = pygame.time.get_ticks()
+                    intro_screen(level)
+                    attacks = []
+                    energy_balls = []
+                    boss = initialize_boss(level)
+                    if boss:
+                        boss.reset()
+                    stage_duration = get_stage_duration(level)
+
+                elif event.key == pygame.K_a:
                     selected_option = "main"
                 elif event.key == pygame.K_d:
                     selected_option = "continue"
-                # Main으로 이동 (초기화하고 타이틀로 복귀)
                 elif event.key == pygame.K_SPACE:
                     if selected_option == "main":
                         level = 1
@@ -527,7 +540,6 @@ while run:
                         game_over = False
                         game_over_reason = None
                         game_active = False
-                    # Continue - 현재 스테이지 다시 시작
                     elif selected_option == "continue":
                         current_health = 3
                         enemies_defeated = 0
