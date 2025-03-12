@@ -226,9 +226,9 @@ def draw_end_screen():
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
-    main_x = win_width // 2 - 300
-    continue_x = win_width // 2 + 300
-    y = win_height // 2 + 100
+    main_x = 240 
+    continue_x = 880
+    y = 480
 
     # Main 버튼
     if selected_option == "main":
