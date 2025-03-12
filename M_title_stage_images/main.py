@@ -202,6 +202,7 @@ mouse_held = False
 # 게임 오버 상태 및 이유
 game_over = False
 game_over_reason = None  # "victory", "game_over", "time_over"
+game_end_time = None
 
 # 게임 종료 상태 이미지 로드
 victory_image = load_image("stages", "Stage14_Victory.JPG", size=(1280, 720))
@@ -229,8 +230,9 @@ def draw_end_screen():
     win.blit(enemy_text, (640, 400))
 
     # 게임 시간 표시
-    time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
-    win.blit(time_text, (640, 440))
+    if game_end_time is not None:
+        time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
+        win.blit(time_text, (640, 440))
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
@@ -650,6 +652,7 @@ while run:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
+                        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
                         
             # 보스가 공격받았는지 체크
             boss.check_hit(attacks)
@@ -777,6 +780,7 @@ while run:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
+                        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
                     elif current_health == 2:
                         collision_image = collision_images[3]["image"]
                         collision_effect_duration = collision_images[3]["duration"]
