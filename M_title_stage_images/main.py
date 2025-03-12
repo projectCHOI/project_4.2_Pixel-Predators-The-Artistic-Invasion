@@ -224,6 +224,14 @@ def draw_end_screen():
 
     win.blit(image, (0, 0))
 
+    # 제거한 적 수 표시
+    enemy_text = font.render(f"제거한 적 : {enemies_defeated}", True, (255, 255, 255))
+    win.blit(enemy_text, (640, 400))
+
+    # 게임 시간 표시
+    time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
+    win.blit(time_text, (640, 440))
+
     # 버튼 텍스트
     button_width, button_height = 180, 50
     main_x = 240 
