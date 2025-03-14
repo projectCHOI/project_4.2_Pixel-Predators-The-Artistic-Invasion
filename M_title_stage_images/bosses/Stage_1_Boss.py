@@ -311,7 +311,7 @@ class Stage1Boss:
         boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
         
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
+            attack_start, attack_end, thickness, color = attack
 
             if boss_rect.clipline(attack_start, attack_end):
                 self.boss_hp -= 1

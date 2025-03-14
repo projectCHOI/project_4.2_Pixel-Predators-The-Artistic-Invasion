@@ -508,7 +508,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
         color = YELLOW if ball[2] == "yellow" else GREEN
         pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
     for attack in attacks:
-        pygame.draw.line(win, RED, attack[0], attack[1], attack[2])
+        pygame.draw.line(win, attack[3], attack[0], attack[1], attack[2])
     # 마우스 위치 그리기
     pygame.draw.circle(win, RED, mouse_pos, 5)
     # 대시보드 그리기
@@ -590,31 +590,39 @@ while run:
                 attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                 attack_end = mouse_pos
                 attack_thickness = 3
+                attack_color = attack_colors.get(power_item_active, (255, 255, 255))  # 기본값 흰색
 
                 if power_item_active == 0:
-                    attacks.append((attack_start, attack_end, attack_thickness))
+                    attacks.append((attack_start, attack_end, attack_thickness, attack_color))
 
                 elif power_item_active == 1:
-                    offsets = [5, -5]
-                    attacks.append((attack_start, attack_end, attack_thickness))
+                    offsets = [0, 5, -5]
                     for offset in offsets:
-                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness, attack_color))
 
                 elif power_item_active == 2:
-                    offsets = [10, -10, 5, -5]
-                    attacks.append((attack_start, attack_end, attack_thickness))
+                    offsets = [0, 10, -10, 5, -5]
                     for offset in offsets:
-                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness, attack_color))
 
                 elif power_item_active == 3:
-                    offsets = [15, -15, 8, -8, 0]
+                    offsets = [0, 15, -15, 8, -8, 4, -4]
                     for offset in offsets:
-                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness, attack_color))
 
                 elif power_item_active >= 4:
-                    offsets = [20, -20, 13, -13, 7, -7, 0]
+                    offsets = [0, 20, -20, 13, -13, 7, -7, 3, -3]
                     for offset in offsets:
-                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness, attack_color))
+
+        # 공격 색상 정의
+        attack_colors = {
+            0: (255, 0, 0),     
+            1: (255, 127, 0),     
+            2: (255, 255, 0),    
+            3: (0, 255, 0),       
+            4: (0, 0, 255),     
+        }
 
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
@@ -727,7 +735,7 @@ while run:
         # 공격 이동 및 위치 업데이트
         new_attacks = []
         for attack in attacks:
-            start, end, thickness = attack
+            start, end, thickness, color = attack
             direction = (end[0] - start[0], end[1] - start[1])
             length = math.hypot(direction[0], direction[1])
             if length == 0:
@@ -735,7 +743,7 @@ while run:
             direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
             new_end = (start[0] + direction[0], start[1] + direction[1])
             if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness))
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness, attack[3]))
         attacks = new_attacks
 
         # 공격과 적의 충돌 처리
@@ -744,7 +752,7 @@ while run:
             enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
             hit = False
             for attack in attacks:
-                attack_start, attack_end, thickness = attack
+                start, end, thickness, color = attack
                 if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1  # 제거된 적의 수 증가
