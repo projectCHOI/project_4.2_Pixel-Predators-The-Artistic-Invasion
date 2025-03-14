@@ -173,7 +173,7 @@ class Stage3Boss:
             self.boss_hit = False  # 무적 상태 해제
 
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
+            attack_start, attack_end, thickness, color = attack
             if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
                 self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:

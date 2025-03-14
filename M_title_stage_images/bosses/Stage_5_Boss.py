@@ -159,7 +159,7 @@ class Stage5Boss:
             return  # 무적 상태일 경우 공격 무시
         
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
+            attack_start, attack_end, thickness, color = attack
             if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
                 self.boss_hp -= 1
                 if self.boss_hp <= 0:

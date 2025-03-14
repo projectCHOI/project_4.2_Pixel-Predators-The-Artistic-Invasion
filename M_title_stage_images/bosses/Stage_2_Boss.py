@@ -103,7 +103,7 @@ class Stage2Boss:
             return
         
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
+            attack_start, attack_end, thickness, color = attack
             if self.check_attack_collision(attack_start, attack_end):
                 self.boss_hp -= 1
                 self.invincible = True
