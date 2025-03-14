@@ -590,24 +590,31 @@ while run:
                 attack_start = (player_pos[0] + player_width // 2, player_pos[1] + player_height // 2)
                 attack_end = mouse_pos
                 attack_thickness = 3
+
                 if power_item_active == 0:
                     attacks.append((attack_start, attack_end, attack_thickness))
 
                 elif power_item_active == 1:
-                    offset = 5
-                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
-                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
-                elif power_item_active == 2:
-                    offset = 10
-                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+                    offsets = [5, -5]
                     attacks.append((attack_start, attack_end, attack_thickness))
-                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                    for offset in offsets:
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+
+                elif power_item_active == 2:
+                    offsets = [10, -10, 5, -5]
+                    attacks.append((attack_start, attack_end, attack_thickness))
+                    for offset in offsets:
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+
                 elif power_item_active == 3:
-                    offset = 15
-                    attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
-                    attacks.append((attack_start, (attack_end[0] + offset // 2, attack_end[1] + offset // 2), attack_thickness))
-                    attacks.append((attack_start, (attack_end[0] - offset // 2, attack_end[1] - offset // 2), attack_thickness))
-                    attacks.append((attack_start, (attack_end[0] - offset, attack_end[1] - offset), attack_thickness))
+                    offsets = [15, -15, 8, -8, 0]
+                    for offset in offsets:
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
+
+                elif power_item_active >= 4:
+                    offsets = [20, -20, 13, -13, 7, -7, 0]
+                    for offset in offsets:
+                        attacks.append((attack_start, (attack_end[0] + offset, attack_end[1] + offset), attack_thickness))
 
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
