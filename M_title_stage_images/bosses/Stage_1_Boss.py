@@ -34,7 +34,6 @@ class Stage1Boss:
         self.boss_invincible_duration = 500
         self.boss_hit_duration = 100
 
-        # 등장 위치
         self.side = random.choice(["left", "right"])
         if self.side == "left":
             self.boss_pos = [-500, 200]
@@ -53,14 +52,11 @@ class Stage1Boss:
         self.state = "appear"
         self.state_start_time = pygame.time.get_ticks()
 
-        # 공격 관련
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
         self.attack_cooldown = 1000
         self.last_attack_time = pygame.time.get_ticks()
         self.boss_hit = False
         self.boss_hit_start_time = 0
 
-        # 이동 패턴 보조
         self.vertical_moves_done = 0
         self.going_forward = True
 
@@ -178,22 +174,34 @@ class Stage1Boss:
         if current_time - self.last_attack_time >= self.attack_cooldown:
             self.last_attack_time = current_time
 
-            if self.side == "left":
-                angle_deg = 0
+            if self.boss_hp > self.max_boss_hp * 0.75:
+                directions = [0]
+                self.attack_cooldown = 1000
+            elif self.boss_hp > self.max_boss_hp * 0.5:
+                directions = [-15, 0, 15]
+                self.attack_cooldown = 800
+            elif self.boss_hp > self.max_boss_hp * 0.25:
+                directions = [-30, -15, 0, 15, 30]
+                self.attack_cooldown = 600
             else:
-                angle_deg = 180
-            rad = math.radians(angle_deg)
-            dx = math.cos(rad) * 10
-            dy = math.sin(rad) * 10
+                directions = [-45, -30, -15, 0, 15, 30, 45]
+                self.attack_cooldown = 400
 
-            start_x = self.boss_pos[0] + 60
-            start_y = self.boss_pos[1] + 60
+            for angle_offset in directions:
+                angle_deg = 0 if self.side == "left" else 180
+                angle_deg += angle_offset
+                rad = math.radians(angle_deg)
+                dx = math.cos(rad) * 10
+                dy = math.sin(rad) * 10
 
-            self.boss_attacks.append({
-                'pos': [start_x, start_y],
-                'dir': [dx, dy],
-                'angle': angle_deg
-            })
+                start_x = self.boss_pos[0] + 60
+                start_y = self.boss_pos[1] + 60
+
+                self.boss_attacks.append({
+                    'pos': [start_x, start_y],
+                    'dir': [dx, dy],
+                    'angle': angle_deg
+                })
 
     def check_player_collision(self, player_pos):
         px, py = player_pos
