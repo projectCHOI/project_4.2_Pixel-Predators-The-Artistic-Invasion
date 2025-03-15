@@ -176,16 +176,16 @@ class Stage1Boss:
 
             if self.boss_hp > self.max_boss_hp * 0.75:
                 directions = [0]
-                self.attack_cooldown = 1000
+                self.attack_cooldown = 800
             elif self.boss_hp > self.max_boss_hp * 0.5:
                 directions = [-15, 0, 15]
-                self.attack_cooldown = 800
+                self.attack_cooldown = 600
             elif self.boss_hp > self.max_boss_hp * 0.25:
                 directions = [-30, -15, 0, 15, 30]
-                self.attack_cooldown = 600
+                self.attack_cooldown = 500
             else:
                 directions = [-45, -30, -15, 0, 15, 30, 45]
-                self.attack_cooldown = 400
+                self.attack_cooldown = 350
 
             for angle_offset in directions:
                 angle_deg = 0 if self.side == "left" else 180
@@ -213,7 +213,7 @@ class Stage1Boss:
             attack['time'] += 1  # 경과 시간 증가
             t = attack['time'] / 10.0
             attack['pos'][0] += attack['dir'][0]
-            attack['pos'][1] += attack['dir'][1] + math.sin(t * 2) * 3  # Y축에 곡선 적용
+            attack['pos'][1] += attack['dir'][1] + math.sin(t * 2) * 1.5  # Y축에 곡선 적용
 
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
