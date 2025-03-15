@@ -197,11 +197,33 @@ class Stage1Boss:
                 start_x = self.boss_pos[0] + 60
                 start_y = self.boss_pos[1] + 60
 
+                # 곡선 탄도
                 self.boss_attacks.append({
                     'pos': [start_x, start_y],
                     'dir': [dx, dy],
-                    'angle': angle_deg
+                    'angle': angle_deg,
+                    'time': 0  # 경과 시간
                 })
+
+    def update_attacks(self, player_pos):
+        new_boss_attacks = []
+        player_hit = 0
+
+        for attack in self.boss_attacks:
+            attack['time'] += 1  # 경과 시간 증가
+            t = attack['time'] / 10.0
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1] + math.sin(t * 2) * 3  # Y축에 곡선 적용
+
+            bx, by = attack['pos']
+            if 0 <= bx <= 1280 and 0 <= by <= 720:
+                if self.check_energy_ball_collision((bx, by), player_pos):
+                    player_hit += 1
+                else:
+                    new_boss_attacks.append(attack)
+
+        self.boss_attacks = new_boss_attacks
+        return player_hit
 
     def check_player_collision(self, player_pos):
         px, py = player_pos
