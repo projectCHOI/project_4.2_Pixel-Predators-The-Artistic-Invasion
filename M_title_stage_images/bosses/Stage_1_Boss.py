@@ -194,8 +194,8 @@ class Stage1Boss:
                 dx = math.cos(rad) * 10
                 dy = math.sin(rad) * 10
 
-                start_x = self.boss_pos[0] + 60
-                start_y = self.boss_pos[1] + 60
+                start_x = self.boss_pos[0]
+                start_y = self.boss_pos[1]
 
                 # 곡선 탄도
                 self.boss_attacks.append({
