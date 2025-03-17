@@ -228,12 +228,12 @@ class Stage1Boss:
     def check_player_collision(self, player_pos):
         px, py = player_pos
         player_rect = pygame.Rect(px, py, 50, 50)
-        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 400, 400)  # 보스 hitbox
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)  # 보스 hitbox
         
         for (offset_x, offset_y) in self.effect_offsets:
             effect_x = self.boss_pos[0] + offset_x
             effect_y = self.boss_pos[1] + offset_y
-            effect_rect = pygame.Rect(effect_x, effect_y, 200, 200)
+            effect_rect = pygame.Rect(effect_x, effect_y, 100, 100)
             if player_rect.colliderect(effect_rect):
                 return 3
 
