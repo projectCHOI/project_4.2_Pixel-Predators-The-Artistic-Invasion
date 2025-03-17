@@ -125,8 +125,8 @@ class Stage1Boss:
         self.attack()
         if self.going_forward:
             self.boss_pos[0] += 3
-            if self.boss_pos[0] >= 720:
-                self.boss_pos[0] = 720
+            if self.boss_pos[0] >= 520:
+                self.boss_pos[0] = 520
                 self.going_forward = False
         else:
             self.boss_pos[0] -= 5
@@ -137,7 +137,7 @@ class Stage1Boss:
     def _move_right_side(self):
         self.attack()
         speed = 6
-        target_up = 130
+        target_up = 110
         target_down = 250
 
         moving_up = (self.vertical_moves_done % 2 == 0)
@@ -194,8 +194,8 @@ class Stage1Boss:
                 dx = math.cos(rad) * 10
                 dy = math.sin(rad) * 10
 
-                start_x = self.boss_pos[0]
-                start_y = self.boss_pos[1]
+                start_x = self.boss_pos[0] + 250
+                start_y = self.boss_pos[1] + 60
 
                 # 곡선 탄도
                 self.boss_attacks.append({
@@ -216,7 +216,7 @@ class Stage1Boss:
             attack['pos'][1] += attack['dir'][1] + math.sin(t * 2) * 1.5  # Y축에 곡선 적용
 
             bx, by = attack['pos']
-            if 0 <= bx <= 1280 and 0 <= by <= 720:
+            if 0 <= bx <= 1280 and 0 <= by <= 520:
                 if self.check_energy_ball_collision((bx, by), player_pos):
                     player_hit += 1
                 else:
@@ -250,7 +250,7 @@ class Stage1Boss:
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
             bx, by = attack['pos']
-            if 0 <= bx <= 1280 and 0 <= by <= 720:
+            if 0 <= bx <= 1280 and 0 <= by <= 520:
                 if self.check_energy_ball_collision((bx, by), player_pos):  
                     player_hit += 1
                 else:
