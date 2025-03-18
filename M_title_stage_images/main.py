@@ -753,7 +753,7 @@ while run:
                     if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                         speed_item_pos = (enemy_pos[0], enemy_pos[1])
                     # 공격력 증가 아이템 생성
-                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 3:
+                    if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 4:
                         power_item_pos = (enemy_pos[0], enemy_pos[1])
                     # 체력 회복 아이템 생성
                     if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:

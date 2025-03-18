@@ -246,7 +246,7 @@ class Stage5Boss:
         if player_rect.colliderect(boss_rect):  
             return 3
 
-        return
+        return 0
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
