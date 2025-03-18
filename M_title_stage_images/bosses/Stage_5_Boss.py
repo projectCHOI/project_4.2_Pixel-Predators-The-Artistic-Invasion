@@ -296,7 +296,7 @@ class Stage5Boss:
 
         for attack in self.boss_attacks:
             angle = -attack['angle'] + 90
-            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
+            rotated_image = pygame.transform.rotate(attack['image'], angle)  # ← 각 공격의 이미지
             rect = rotated_image.get_rect(center=attack['pos'])
             win.blit(rotated_image, rect)
 
