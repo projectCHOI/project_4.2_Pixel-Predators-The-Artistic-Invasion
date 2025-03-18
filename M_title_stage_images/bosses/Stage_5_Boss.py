@@ -201,12 +201,14 @@ class Stage5Boss:
                 start_x = self.boss_pos[0] + 250
                 start_y = self.boss_pos[1] + 60
 
-                # 곡선 탄도
+                random_attack_image = random.choice(self.boss_attack_images)
+
                 self.boss_attacks.append({
                     'pos': [start_x, start_y],
                     'dir': [dx, dy],
                     'angle': angle_deg,
-                    'time': 0  # 경과 시간
+                    'time': 0,
+                    'image': random_attack_image
                 })
 
     def update_attacks(self, player_pos):
