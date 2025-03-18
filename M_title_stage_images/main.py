@@ -287,16 +287,8 @@ def check_collision(player_pos, enemies):
 
 # 공격이 적에게 충돌하는지 확인하는 함수
 def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
-    ex, ey = enemy_pos
-    sx, sy = attack_start
-    ex2, ey2 = ex + enemy_size, ey + enemy_size
-
-    # 공격 선분의 직사각형 영역 계산
-    line_rect = pygame.Rect(min(sx, attack_end[0]), min(sy, attack_end[1]),
-                            abs(attack_end[0] - sx), abs(attack_end[1] - sy))
-    enemy_rect = pygame.Rect(ex, ey, enemy_size, enemy_size)
-
-    return line_rect.colliderect(enemy_rect)
+    enemy_rect = pygame.Rect(enemy_pos[0], enemy_pos[1], enemy_size, enemy_size)
+    return enemy_rect.clipline(attack_start, attack_end)
 
 # 에너지 볼과 플레이어의 충돌 체크 함수
 def check_energy_ball_collision(ball_pos, player_pos):
