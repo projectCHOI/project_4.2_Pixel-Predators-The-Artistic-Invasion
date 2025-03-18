@@ -20,9 +20,13 @@ class Stage5Boss:
     def __init__(self):
         self.boss_image_left = load_image("bosses", "boss_stage5_Left.png", size=(500, 500))
         self.boss_image_right = load_image("bosses", "boss_stage5_Right.png", size=(500, 500))
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40))
+        self.boss_attack_images = [
+            load_image("boss_skilles", "boss_stage5_a.png", size=(40, 40)),
+            load_image("boss_skilles", "boss_stage5_b.png", size=(40, 40)),
+            load_image("boss_skilles", "boss_stage5_c.png", size=(40, 40)),
+        ]
         self.gem_image = load_image("items", "mob_Jewelry_5.png", size=(40, 40))
-        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_b.png", size=(300, 300))
+        self.boss_effect_image = load_image("boss_skilles", "boss_stage5_d.png", size=(300, 300))
         self.effect_offsets = [(-200, -200), (200, -200), (-250, 250), (250, 250),
                                (-100, -100), (100, -100), (-100, 100), (100, 100),
                                (-200, 0), (0, -200), (200, 0), (0, 200),
