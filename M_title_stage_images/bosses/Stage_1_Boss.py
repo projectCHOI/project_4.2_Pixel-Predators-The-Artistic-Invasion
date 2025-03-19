@@ -20,11 +20,12 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage7.png", size=(140, 140))
-        self.boss_attack_image = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
-        self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(40, 40))  # 필요 시 사용할 변수
-        self.gem_image = load_image("items", "mob_Jewelry_7.png", size=(40, 40))
+        # 이미지 로드 (수정된 경로 및 역할별 변수명 정의)
+        self.boss_image = load_image("bosses", "boss_stage7.png", size=(140, 140))  # 보스 본체
+        self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(40, 40))  # 미니 보스 소환 이미지
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))  # 보스의 일반 에너지 볼 공격
+        self.direct_attack_image = load_image("boss_skilles", "boss_stage7_c.png", size=(40, 40))  # 미니 보스의 공격 이미지
+        self.gem_image = load_image("items", "mob_Jewelry_7.png", size=(40, 40))  # 보석 이미지
 
         # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
