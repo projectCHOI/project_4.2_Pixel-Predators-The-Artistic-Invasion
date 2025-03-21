@@ -83,40 +83,40 @@ class Stage1Boss:
                     'angle': angle
                 })
 
+    def spawn_minions(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
+            self.last_minion_spawn_time = current_time
+            spawn_positions = [(700, 150), (700, 300), (700, 450)]
+            for pos in spawn_positions:
+                self.minions.append({'pos': list(pos), 'opacity': 255, 'spawn_time': current_time})
+
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
-            # 에너지 볼 이동
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
-
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
-                    player_hit = True  # 플레이어에게 맞음
+                    player_hit = True
                 else:
                     new_boss_attacks.append(attack)
-            # 화면 밖으로 나가면 공격 제거
         self.boss_attacks = new_boss_attacks
         return player_hit
 
     def draw(self, win):
-        if self.boss_hp > 0:
-            current_time = pygame.time.get_ticks()
-            if self.boss_hit:
-                if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
-                    self.boss_hit = False
-                    win.blit(self.boss_image, self.boss_pos)
-                else:
-                    if (current_time // self.boss_hit_duration) % 2 == 0:
-                        win.blit(self.boss_image, self.boss_pos)
-            else:
-                win.blit(self.boss_image, self.boss_pos)
+        win.blit(self.boss_image, self.boss_pos)
+        for minion in self.minions:
+            temp_image = self.minion_image.copy()
+            alpha = max(100, minion['opacity'])
+            temp_image.set_alpha(alpha)
+            win.blit(temp_image, minion['pos'])
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
+            angle = -attack['angle'] + 90
             rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
             rect = rotated_image.get_rect(center=attack['pos'])
             win.blit(rotated_image, rect)
@@ -192,6 +192,7 @@ class Stage1Boss:
         return False
 
     def reset(self):
+        self.__init__()
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_pos = [640 - 60, 0]
