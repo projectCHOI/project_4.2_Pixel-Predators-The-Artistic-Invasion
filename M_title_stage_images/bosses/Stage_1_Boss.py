@@ -84,6 +84,9 @@ class Stage1Boss:
                 })
 
     def spawn_minions(self):
+        if not self.boss_active:
+            return
+
         current_time = pygame.time.get_ticks()
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
@@ -195,7 +198,6 @@ class Stage1Boss:
         self.__init__()
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 60, 0]
         self.boss_defeated = False
         self.boss_appeared = False
         self.boss_attacks = []

@@ -653,6 +653,7 @@ while run:
             if boss.boss_active:
                 boss.move()  # 보스 이동
                 boss.attack()  # 보스 공격
+                boss.spawn_minions() # stage 7의 미니언 소환
                 if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
                     current_health -= boss.boss_damage
                     if current_health <= 0:
