@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
@@ -17,8 +18,8 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage7.png", size=(140, 140))
-        self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(40, 40))
+        self.boss_image = load_image("bosses", "boss_stage7.png", size=(240, 240))
+        self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(60, 60))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
         self.direct_attack_image = load_image("boss_skilles", "boss_stage7_c.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_7.png", size=(40, 40))
@@ -55,6 +56,7 @@ class Stage1Boss:
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_appeared = True
+            self.last_minion_spawn_time = pygame.time.get_ticks()
 
     def move(self):
         if self.boss_active:
@@ -90,9 +92,19 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
-            spawn_positions = [(700, 150), (700, 300), (700, 450)]
-            for pos in spawn_positions:
-                self.minions.append({'pos': list(pos), 'opacity': 255, 'spawn_time': current_time})
+
+            # 생성 범위
+            min_x, max_x = 200, 1000
+            min_y, max_y = 100, 600
+
+            for _ in range(3):  # 3마리 미니언 생성
+                rand_x = random.randint(min_x, max_x)
+                rand_y = random.randint(min_y, max_y)
+                self.minions.append({
+                    'pos': [rand_x, rand_y],
+                    'opacity': 255,
+                    'spawn_time': current_time
+                })
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
