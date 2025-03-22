@@ -290,6 +290,14 @@ def check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
     enemy_rect = pygame.Rect(enemy_pos[0], enemy_pos[1], enemy_size, enemy_size)
     return enemy_rect.clipline(attack_start, attack_end)
 
+for minion in boss.minions[:]:  # 복사본으로 순회
+    for atk in attacks:
+        if boss.check_attack_collision(atk[0], atk[1], minion['pos'], 40):
+            minion['hp'] -= 1
+            if minion['hp'] <= 0:
+                boss.minions.remove(minion)
+            break
+
 # 에너지 볼과 플레이어의 충돌 체크 함수
 def check_energy_ball_collision(ball_pos, player_pos):
     bx, by = ball_pos
@@ -858,6 +866,18 @@ while run:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
 
+        # 미니언과 플레이어 충돌 체크
+        for minion in boss.minions:
+            minion_rect = pygame.Rect(minion['pos'][0], minion['pos'][1], 40, 40)
+            player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
+            if player_rect.colliderect(minion_rect):
+                current_health -= 1
+
+            # ✅ 미니언 공격과 플레이어 충돌 체크
+            for atk in minion['attacks']:
+                if check_energy_ball_collision(atk['pos'], player_pos):
+                    current_health -= 1
+
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
@@ -868,6 +888,10 @@ while run:
             boss.draw(win)
             boss.draw_attacks(win)
             boss.draw_health_bar(win, font)
+            # 미니 보스
+            boss.draw_minion_attacks(win)
+            boss.update_minion_behavior()
+            boss.update_minion_attacks()
         elif boss and boss.gem_active:
             boss.draw_gem(win)
 
