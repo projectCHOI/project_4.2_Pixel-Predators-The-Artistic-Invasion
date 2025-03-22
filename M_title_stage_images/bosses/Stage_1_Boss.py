@@ -103,7 +103,11 @@ class Stage1Boss:
                 self.minions.append({
                     'pos': [rand_x, rand_y],
                     'opacity': 255,
-                    'spawn_time': current_time
+                    'spawn_time': current_time,
+                    'hp': 2,
+                    'last_attack_time': current_time,
+                    'direction': [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])],
+                    'attacks': []
                 })
 
     def update_attacks(self, player_pos):
