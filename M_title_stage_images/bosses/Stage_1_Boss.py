@@ -110,6 +110,36 @@ class Stage1Boss:
                     'attacks': []
                 })
 
+    def update_minion_behavior(self):
+        current_time = pygame.time.get_ticks()
+        for minion in self.minions:
+            # 랜덤 이동 (작은 범위 내)
+            minion['pos'][0] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+            minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+
+            # 화면 경계 안에서만 이동
+            minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
+            minion['pos'][1] = max(0, min(680, minion['pos'][1]))
+
+            # 공격
+            if current_time - minion['last_attack_time'] >= 2000:  # 2초 간격
+                minion['last_attack_time'] = current_time
+                mx, my = minion['pos']
+                minion['attacks'] = []
+                minion['attacks'].append({'pos': [mx, my], 'dir': [0, -5]})
+                minion['attacks'].append({'pos': [mx, my], 'dir': [3, -5]})
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-3, -5]})
+
+    def update_minion_attacks(self):
+        for minion in self.minions:
+            new_attacks = []
+            for atk in minion['attacks']:
+                atk['pos'][0] += atk['dir'][0]
+                atk['pos'][1] += atk['dir'][1]
+                if 0 <= atk['pos'][0] <= 1280 and 0 <= atk['pos'][1] <= 720:
+                    new_attacks.append(atk)
+            minion['attacks'] = new_attacks
+
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = False
@@ -197,6 +227,14 @@ class Stage1Boss:
                     self.gem_active = True
                     self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
+        
+        for minion in self.minions[:]:
+            for atk in attacks:
+                if self.check_attack_collision(atk[0], atk[1], minion['pos'], 40):
+                    minion['hp'] -= 1
+                    if minion['hp'] <= 0:
+                        self.minions.remove(minion)
+                    break   
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
