@@ -205,6 +205,13 @@ class Stage1Boss:
             defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
             win.blit(defeated_text, (10, 680))
 
+    def draw_minion_attacks(self, win):
+        for minion in self.minions:
+            for atk in minion['attacks']:
+                rotated_image = pygame.transform.rotate(self.direct_attack_image, 0)
+                rect = rotated_image.get_rect(center=atk['pos'])
+                win.blit(rotated_image, rect)
+
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
