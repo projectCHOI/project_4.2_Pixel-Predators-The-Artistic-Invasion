@@ -872,11 +872,21 @@ while run:
             player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
             if player_rect.colliderect(minion_rect):
                 current_health -= 1
+                if current_health <= 0:
+                    game_active = False
+                    game_over = True
+                    game_over_reason = "game_over"
+                    game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
 
-            # ✅ 미니언 공격과 플레이어 충돌 체크
+            # 미니언 공격과 플레이어 충돌 체크
             for atk in minion['attacks']:
                 if check_energy_ball_collision(atk['pos'], player_pos):
                     current_health -= 1
+                    if current_health <= 0:
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "game_over"
+                        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]

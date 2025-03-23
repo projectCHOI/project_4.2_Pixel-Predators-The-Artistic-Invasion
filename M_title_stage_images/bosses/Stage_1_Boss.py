@@ -118,6 +118,7 @@ class Stage1Boss:
             minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
 
             # 화면 경계 안에서만 이동
+            minion_speed = 3
             minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
             minion['pos'][1] = max(0, min(680, minion['pos'][1]))
 
@@ -126,9 +127,9 @@ class Stage1Boss:
                 minion['last_attack_time'] = current_time
                 mx, my = minion['pos']
                 minion['attacks'] = []
-                minion['attacks'].append({'pos': [mx, my], 'dir': [0, -5]})
-                minion['attacks'].append({'pos': [mx, my], 'dir': [3, -5]})
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-3, -5]})
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 0]}) # 왼쪽 직진
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, -3]}) # 왼쪽 위
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 3]}) # 왼쪽 아래
 
     def update_minion_attacks(self):
         for minion in self.minions:
