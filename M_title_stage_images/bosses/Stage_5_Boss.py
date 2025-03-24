@@ -64,6 +64,16 @@ class Stage5Boss:
         self.vertical_moves_done = 0
         self.going_forward = True
 
+        self.minions = []
+    def draw_minion_attacks(self, win):
+        pass
+    def update_minion_behavior(self):
+        pass
+    def update_minion_attacks(self):
+        pass
+    def spawn_minions(self):
+        pass
+
     def check_appear(self, seconds, current_level):
         if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
