@@ -198,7 +198,7 @@ class Stage4Boss:
         if self.gem_active:
             px, py = player_pos
             gx, gy = self.gem_pos
-            player_width, player_height = 40, 40  # 플레이어 크기
+            player_width, player_height = 50, 50  # 플레이어 크기
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False

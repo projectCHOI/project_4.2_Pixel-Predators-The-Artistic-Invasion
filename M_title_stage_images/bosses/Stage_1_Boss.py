@@ -18,7 +18,7 @@ def load_image(*path_parts, size=None):
 
 class Stage1Boss:
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage7.png", size=(240, 240))
+        self.boss_image = load_image("bosses", "boss_stage7.png", size=(280, 280))
         self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(60, 60))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
         self.direct_attack_image = load_image("boss_skilles", "boss_stage7_c.png", size=(40, 40))
@@ -223,7 +223,7 @@ class Stage1Boss:
 
         for attack in attacks:
             attack_start, attack_end, thickness, color = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 280):
                 self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
@@ -248,7 +248,7 @@ class Stage1Boss:
         if self.gem_active:
             px, py = player_pos
             gx, gy = self.gem_pos
-            player_width, player_height = 40, 40  # 플레이어 크기
+            player_width, player_height = 50, 50  # 플레이어 크기
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False
