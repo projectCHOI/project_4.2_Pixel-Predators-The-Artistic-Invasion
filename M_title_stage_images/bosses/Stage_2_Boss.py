@@ -47,6 +47,16 @@ class Stage2Boss:
         self.invincible_duration = 500  # 무적 상태 지속 시간 (밀리초)
         self.last_hit_time = 0
 
+        self.minions = []
+    def draw_minion_attacks(self, win):
+        pass
+    def update_minion_behavior(self):
+        pass
+    def update_minion_attacks(self):
+        pass
+    def spawn_minions(self):
+        pass
+
     def check_appear(self, seconds, current_level):
         if current_level == 2 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
@@ -97,17 +107,16 @@ class Stage2Boss:
         return player_hit
 
     def check_hit(self, attacks):
-        # 무적 상태일 때는 공격을 무시
         current_time = pygame.time.get_ticks()
         if self.invincible and (current_time - self.last_hit_time) < self.invincible_duration:
             return
-        
+
         for attack in attacks:
-            attack_start, attack_end, thickness, color = attack
-            if self.check_attack_collision(attack_start, attack_end):
+            start, end, thickness, color = attack  
+            if self.check_attack_collision(start, end):
                 self.boss_hp -= 1
                 self.invincible = True
-                self.boss_hit = True  # 점멸 상태 활성화
+                self.boss_hit = True
                 self.last_hit_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False

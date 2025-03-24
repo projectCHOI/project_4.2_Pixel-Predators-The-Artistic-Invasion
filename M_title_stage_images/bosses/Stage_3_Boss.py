@@ -52,6 +52,16 @@ class Stage3Boss:
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
 
+        self.minions = []
+    def draw_minion_attacks(self, win):
+        pass
+    def update_minion_behavior(self):
+        pass
+    def update_minion_attacks(self):
+        pass
+    def spawn_minions(self):
+        pass
+
     def check_appear(self, seconds, current_level):
         if current_level == 3 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
@@ -167,25 +177,24 @@ class Stage3Boss:
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
-            # 보스가 무적 상태일 때는 공격을 무시합니다.
             return
         else:
-            self.boss_hit = False  # 무적 상태 해제
+            self.boss_hit = False
 
         for attack in attacks:
-            attack_start, attack_end, thickness, color = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
-                self.boss_hp -= 1  # 데미지 적용
+            start, end, thickness, color = attack
+            if self.check_attack_collision(start, end, self.boss_pos, 120):
+                self.boss_hp -= 1
                 if self.boss_hp < 0:
-                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+                    self.boss_hp = 0
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
-                break  # 한 번에 하나의 공격만 처리
+                break
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
