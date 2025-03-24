@@ -754,7 +754,7 @@ while run:
             hit = False
             for attack in attacks:
                 start, end, thickness, color = attack
-                if check_attack_collision(attack_start, attack_end, enemy_pos, enemy_size):
+                if check_attack_collision(start, end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1  # 제거된 적의 수 증가
                     # 아이템 생성 로직

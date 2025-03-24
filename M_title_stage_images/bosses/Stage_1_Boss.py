@@ -216,33 +216,33 @@ class Stage1Boss:
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
-            # 보스가 무적 상태일 때는 공격을 무시합니다.
             return
         else:
-            self.boss_hit = False  # 무적 상태 해제
+            self.boss_hit = False
 
         for attack in attacks:
-            attack_start, attack_end, thickness, color = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
-                self.boss_hp -= 1  # 데미지 적용
+            start, end, thickness, color = attack
+            if self.check_attack_collision(start, end, self.boss_pos, 240):
+                self.boss_hp -= 1
                 if self.boss_hp < 0:
-                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+                    self.boss_hp = 0
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
                     self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
-                break  # 한 번에 하나의 공격만 처리
-        
+                break
+
         for minion in self.minions[:]:
-            for atk in attacks:
-                if self.check_attack_collision(atk[0], atk[1], minion['pos'], 40):
+            for attack in attacks:
+                start, end, thickness, color = attack
+                if self.check_attack_collision(start, end, minion['pos'], 40):
                     minion['hp'] -= 1
                     if minion['hp'] <= 0:
                         self.minions.remove(minion)
-                    break   
+                    break
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
