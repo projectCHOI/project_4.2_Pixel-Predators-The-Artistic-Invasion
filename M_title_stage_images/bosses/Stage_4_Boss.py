@@ -53,6 +53,16 @@ class Stage4Boss:
         self.max_speed = 8
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
 
+        self.minions = []
+    def draw_minion_attacks(self, win):
+        pass
+    def update_minion_behavior(self):
+        pass
+    def update_minion_attacks(self):
+        pass
+    def spawn_minions(self):
+        pass
+
     def check_appear(self, seconds, current_level):
         if current_level == 4 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
@@ -76,21 +86,19 @@ class Stage4Boss:
         self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
 
     def update_attacks(self, player_pos):
+        new_attacks = []
         for attack in self.boss_attacks:
-            # 공격의 위치 업데이트
             attack[0][0] += attack[1][0]
             attack[0][1] += attack[1][1]
 
-            # 공격이 화면 밖으로 나가는지 확인하고 필요하면 제거
-            if attack[0][0] < 0 or attack[0][0] > 1280 or attack[0][1] < 0 or attack[0][1] > 720:
-                self.boss_attacks.remove(attack)
-            else:
-                player_width, player_height = 40, 40  # 플레이어 크기
+            if 0 <= attack[0][0] <= 1280 and 0 <= attack[0][1] <= 720:
+                new_attacks.append(attack)
+                player_width, player_height = 40, 40
                 if (player_pos[0] < attack[0][0] < player_pos[0] + player_width and
-                        player_pos[1] < attack[0][1] < player_pos[1] + player_height):
-                    return True  # 충돌 발생 시
-
-        return False  # 충돌 없음
+                    player_pos[1] < attack[0][1] < player_pos[1] + player_height):
+                    return True
+        self.boss_attacks = new_attacks
+        return False
 
     def attack(self):
         current_time = pygame.time.get_ticks()
