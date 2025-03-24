@@ -73,8 +73,8 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time >= self.boss_attack_interval:
             self.boss_last_attack_time = current_time
-            center_x = self.boss_pos[0] + 70
-            center_y = self.boss_pos[1] + 70
+            center_x = self.boss_pos[0] + 140
+            center_y = self.boss_pos[1] + 140
             for angle in range(0, 360, 30):
                 rad = math.radians(angle)
                 dx = math.cos(rad) * 5
@@ -223,7 +223,7 @@ class Stage1Boss:
 
         for attack in attacks:
             attack_start, attack_end, thickness, color = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 280):
+            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 240):
                 self.boss_hp -= 1  # 데미지 적용
                 if self.boss_hp < 0:
                     self.boss_hp = 0  # 체력이 음수가 되지 않도록
@@ -231,7 +231,7 @@ class Stage1Boss:
                 self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
                 if self.boss_hp <= 0:
                     self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
                 break  # 한 번에 하나의 공격만 처리
@@ -252,9 +252,12 @@ class Stage1Boss:
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False
-                self.stage_cleared = True  # 스테이지 클리어
+                self.stage_cleared = True
+                self.boss_attacks.clear()
+                for minion in self.minions:
+                    minion['attacks'].clear()
                 return True
-        return False
+
 
     def reset(self):
         self.__init__()
