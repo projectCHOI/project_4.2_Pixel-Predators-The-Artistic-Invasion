@@ -153,18 +153,11 @@ class Stage6Boss:
     def draw(self, win):
         if self.boss_hp > 0:
             current_time = pygame.time.get_ticks()
-            if self.boss_hit:
-                if current_time - self.boss_hit_start_time >= self.invincible_duration:
-                    self.boss_hit = False  
+            if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
+                if (current_time // self.boss_hit_duration) % 2 == 0:
                     win.blit(self.boss_image, self.boss_pos)
-                else:
-                    if (current_time // self.boss_hit_duration) % 2 == 0:
-                        win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
-
-        for unit in self.units:
-            win.blit(unit.image, unit.position)
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
