@@ -49,6 +49,20 @@ class Stage1Boss:
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
 
+        self.minions = []
+
+    def spawn_minions(self):
+        pass
+
+    def update_minion_behavior(self):
+        pass
+
+    def update_minion_attacks(self):
+        pass
+
+    def draw_minion_attacks(self, win):
+        pass    
+    
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
