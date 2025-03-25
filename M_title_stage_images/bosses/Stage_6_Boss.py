@@ -55,9 +55,6 @@ class Stage6Boss:
         self.boss_hit_start_time = 0
         self.minions = []
 
-    def reset(self):
-        self.__init__()
-
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         rect = pygame.Rect(boss_pos[0], boss_pos[1], boss_size, boss_size)
         return rect.clipline((attack_start, attack_end))
@@ -73,7 +70,7 @@ class Stage6Boss:
 
     def spawn_minions(self):
         pass
-    
+
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
         if health_ratio > 0.6:
@@ -175,15 +172,6 @@ class Stage6Boss:
             rotated_image = pygame.transform.rotate(attack[3], angle)
             rect = rotated_image.get_rect(center=attack[0])
             win.blit(rotated_image, rect)
-
-    def draw(self, win):
-        if self.boss_hp > 0:
-            current_time = pygame.time.get_ticks()
-            if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
-                if (current_time // self.boss_hit_duration) % 2 == 0:
-                    win.blit(self.boss_image, self.boss_pos)
-            else:
-                win.blit(self.boss_image, self.boss_pos)
 
     def draw_health_bar(self, win, font):
         if self.boss_active and self.boss_hp > 0:
