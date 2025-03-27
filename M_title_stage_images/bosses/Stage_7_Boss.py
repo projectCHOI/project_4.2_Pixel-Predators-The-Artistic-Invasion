@@ -3,7 +3,6 @@ import os
 import math
 import random
 
-# BASE_DIR 설정: 현재 파일의 부모 디렉토리 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
@@ -19,19 +18,21 @@ def load_image(*path_parts, size=None):
 
 class Stage7Boss:
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage7.png", size=(120, 120))
-        self.boss_attack_image1 = load_image("boss_skilles", "boss_stage7_a.png", size=(40, 40))
-        self.boss_attack_image2 = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
+        self.boss_image = load_image("bosses", "boss_stage7.png", size=(280, 280))
+        self.minion_image = load_image("boss_skilles", "boss_stage7_a.png", size=(60, 60))
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage7_b.png", size=(40, 40))
+        self.direct_attack_image = load_image("boss_skilles", "boss_stage7_c.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_7.png", size=(40, 40))
 
-        # 보스 속성 초기화
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
-        self.max_boss_hp = 10  # 보스의 최대 체력
+        self.max_boss_hp = 15  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
         self.boss_damage = 2  # 보스의 공격력
-        self.boss_speed = 5  # 보스의 이동 속도
-        self.boss_pos = [640 - 120, 0]  # 보스의 초기 위치 (화면 상단 중앙)
+        self.boss_speed = 4  # 보스의 이동 속도
+        self.boss_pos = [1400, 350]  # 보스의 초기 위치
+        self.boss_target_pos = [930, 350]  # 이동 목표 위치
         self.boss_direction_x = 1  # 보스의 좌우 이동 방향
+        self.boss_direction_y = 1  # 보스의 상하 이동 방향
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
@@ -46,104 +47,127 @@ class Stage7Boss:
         self.gem_active = False  # 보석 활성화 상태
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
+        self.boss_attack_interval = 5000  # 5초 간격 공격
+        self.minions = []
+        self.minion_spawn_interval = 3000  # 3초 간격 소환
+        self.last_minion_spawn_time = 0
 
     def check_appear(self, seconds, current_level):
         if current_level == 7 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
-            self.boss_pos = [640 - 120, 0]
-            self.boss_hp = self.max_boss_hp
-            self.boss_appeared = True  # 보스가 등장했음을 표시
+            self.boss_appeared = True
+            self.last_minion_spawn_time = pygame.time.get_ticks()
 
     def move(self):
-        current_time = pygame.time.get_ticks()
-        if not hasattr(self, 'move_start_time'):
-            self.move_start_time = current_time
-        elapsed_time = (current_time - self.move_start_time) / 1000  # 초 단위
-
-        # 8자(lemniscate) 곡선으로 움직임
-        a = 150  # 8자 곡선의 크기 조절 변수
-        b = 75
-        x = a * math.sin(elapsed_time)
-        y = b * math.sin(2 * elapsed_time) / 2
-
-        self.boss_pos[0] = 640 + x  # 중앙 기준 X 이동
-        self.boss_pos[1] = 300 + y  # 중앙 기준 Y 이동
-
-        # 경계 제한 설정
-        self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
-        self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
+        if self.boss_active:
+            dx = self.boss_target_pos[0] - self.boss_pos[0]
+            dy = self.boss_target_pos[1] - self.boss_pos[1]
+            dist = math.hypot(dx, dy)
+            if dist > self.boss_speed:
+                self.boss_pos[0] += self.boss_speed * dx / dist
+                self.boss_pos[1] += self.boss_speed * dy / dist
+            else:
+                self.boss_pos = self.boss_target_pos[:]
 
     def attack(self):
         current_time = pygame.time.get_ticks()
-
-        if current_time - self.boss_last_attack_time > self.boss_attack_cooldown:
+        if current_time - self.boss_last_attack_time >= self.boss_attack_interval:
             self.boss_last_attack_time = current_time
-            # 보스의 체력에 따라 웨이브 크기 설정
-            if self.boss_hp > self.max_boss_hp * 0.75:
-                wave_size = 5  # 체력 > 75%
-            elif self.boss_hp > self.max_boss_hp * 0.5:
-                wave_size = 10  # 체력 > 50%
-            elif self.boss_hp > self.max_boss_hp * 0.25:
-                wave_size = 15  # 체력 > 25%
-            else:
-                wave_size = 20  # 체력 <= 25%
-
-            # 공격 시작 위치: 보스 중앙
-            attack_start_pos = [
-                self.boss_pos[0] + self.boss_image.get_width() // 2,
-                self.boss_pos[1] + self.boss_image.get_height() // 2
-            ]
-
-            # 웨이브 패턴으로 에너지 볼 생성
-            for i in range(wave_size):
-                angle = i * (360 / wave_size)  # 웨이브 형태의 각도 계산
-                radian = math.radians(angle)
-                dx = math.cos(radian) * 3  # 속도 조절
-                dy = math.sin(radian) * 3
-                attack_image = self.boss_attack_image1 if dx < 0 else self.boss_attack_image2
+            center_x = self.boss_pos[0] + 140
+            center_y = self.boss_pos[1] + 140
+            for angle in range(0, 360, 30):
+                rad = math.radians(angle)
+                dx = math.cos(rad) * 5
+                dy = math.sin(rad) * 5
                 self.boss_attacks.append({
-                    'pos': [attack_start_pos[0], attack_start_pos[1]],
+                    'pos': [center_x, center_y],
                     'dir': [dx, dy],
-                    'angle': angle,
-                    'image': attack_image
+                    'angle': angle
                 })
+
+    def spawn_minions(self):
+        if not self.boss_active:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
+            self.last_minion_spawn_time = current_time
+
+            # 생성 범위
+            min_x, max_x = 200, 1000
+            min_y, max_y = 100, 600
+
+            for _ in range(3):  # 3마리 미니언 생성
+                rand_x = random.randint(min_x, max_x)
+                rand_y = random.randint(min_y, max_y)
+                self.minions.append({
+                    'pos': [rand_x, rand_y],
+                    'opacity': 255,
+                    'spawn_time': current_time,
+                    'hp': 2,
+                    'last_attack_time': current_time,
+                    'direction': [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])],
+                    'attacks': []
+                })
+
+    def update_minion_behavior(self):
+        current_time = pygame.time.get_ticks()
+        for minion in self.minions:
+            # 랜덤 이동 (작은 범위 내)
+            minion['pos'][0] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+            minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+
+            # 화면 경계 안에서만 이동
+            minion_speed = 3
+            minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
+            minion['pos'][1] = max(0, min(680, minion['pos'][1]))
+
+            # 공격
+            if current_time - minion['last_attack_time'] >= 2000:  # 2초 간격
+                minion['last_attack_time'] = current_time
+                mx, my = minion['pos']
+                minion['attacks'] = []
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 0]}) # 왼쪽 직진
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, -3]}) # 왼쪽 위
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 3]}) # 왼쪽 아래
+
+    def update_minion_attacks(self):
+        for minion in self.minions:
+            new_attacks = []
+            for atk in minion['attacks']:
+                atk['pos'][0] += atk['dir'][0]
+                atk['pos'][1] += atk['dir'][1]
+                if 0 <= atk['pos'][0] <= 1280 and 0 <= atk['pos'][1] <= 720:
+                    new_attacks.append(atk)
+            minion['attacks'] = new_attacks
 
     def update_attacks(self, player_pos):
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
-            # 에너지 볼 이동
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
-
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
-                    player_hit = True  # 플레이어에게 맞음
+                    player_hit = True
                 else:
                     new_boss_attacks.append(attack)
-            # 화면 밖으로 나가면 공격 제거
         self.boss_attacks = new_boss_attacks
         return player_hit
 
     def draw(self, win):
-        if self.boss_hp > 0:
-            current_time = pygame.time.get_ticks()
-            if self.boss_hit:
-                if current_time - self.boss_hit_start_time >= self.boss_invincible_duration:
-                    self.boss_hit = False  # 무적 상태 및 깜박임 종료
-                    win.blit(self.boss_image, self.boss_pos)
-                else:
-                    # 깜박임 효과
-                    if (current_time // self.boss_hit_duration) % 2 == 0:
-                        win.blit(self.boss_image, self.boss_pos)
-            else:
-                win.blit(self.boss_image, self.boss_pos)
+        win.blit(self.boss_image, self.boss_pos)
+        for minion in self.minions:
+            temp_image = self.minion_image.copy()
+            alpha = max(100, minion['opacity'])
+            temp_image.set_alpha(alpha)
+            win.blit(temp_image, minion['pos'])
 
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
-            angle = -attack['angle'] + 90  # 이미지 회전을 위해 각도 조정
-            rotated_image = pygame.transform.rotate(attack['image'], angle)
+            angle = -attack['angle'] + 90
+            rotated_image = pygame.transform.rotate(self.boss_attack_image, angle)
             rect = rotated_image.get_rect(center=attack['pos'])
             win.blit(rotated_image, rect)
 
@@ -177,53 +201,70 @@ class Stage7Boss:
 
             # 체력 바 테두리 그리기
             pygame.draw.rect(win, (255, 255, 255), (health_bar_x, health_bar_y, health_bar_width, health_bar_height), 2)
-        
         elif self.boss_hp <= 0 and self.boss_defeated:
             # 보스가 제거되었을 때 메시지 표시 (옵션)
             defeated_text = font.render("BOSS DEFEATED", True, (255, 255, 255))
             win.blit(defeated_text, (10, 680))
 
+    def draw_minion_attacks(self, win):
+        for minion in self.minions:
+            for atk in minion['attacks']:
+                rotated_image = pygame.transform.rotate(self.direct_attack_image, 0)
+                rect = rotated_image.get_rect(center=atk['pos'])
+                win.blit(rotated_image, rect)
+
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
-            # 보스가 무적 상태일 때는 공격을 무시합니다.
             return
         else:
-            self.boss_hit = False  # 무적 상태 해제
+            self.boss_hit = False
 
         for attack in attacks:
-            attack_start, attack_end, thickness = attack
-            if self.check_attack_collision(attack_start, attack_end, self.boss_pos, 120):
-                self.boss_hp -= 1  # 데미지 적용
+            start, end, thickness, color = attack
+            if self.check_attack_collision(start, end, self.boss_pos, 240):
+                self.boss_hp -= 1
                 if self.boss_hp < 0:
-                    self.boss_hp = 0  # 체력이 음수가 되지 않도록
-                self.boss_hit = True  # 보스가 공격을 받았음을 표시
-                self.boss_hit_start_time = current_time  # 공격 받은 시간 기록
+                    self.boss_hp = 0
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
                 if self.boss_hp <= 0:
                     self.boss_active = False
-                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 100]
+                    self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
-                break  # 한 번에 하나의 공격만 처리
+                break
+
+        for minion in self.minions[:]:
+            for attack in attacks:
+                start, end, thickness, color = attack
+                if self.check_attack_collision(start, end, minion['pos'], 40):
+                    minion['hp'] -= 1
+                    if minion['hp'] <= 0:
+                        self.minions.remove(minion)
+                    break
 
     def check_gem_collision(self, player_pos):
         if self.gem_active:
             px, py = player_pos
             gx, gy = self.gem_pos
-            player_width, player_height = 40, 40  # 플레이어 크기
+            player_width, player_height = 50, 50  # 플레이어 크기
             gem_size = 40  # 보석 크기
             if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
                 self.gem_active = False
-                self.stage_cleared = True  # 스테이지 클리어
+                self.stage_cleared = True
+                self.boss_attacks.clear()
+                for minion in self.minions:
+                    minion['attacks'].clear()
                 return True
-        return False
+
 
     def reset(self):
+        self.__init__()
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
-        self.boss_pos = [640 - 120, 0]
         self.boss_defeated = False
-        self.boss_appeared = False  # 보스 등장 여부 재설정
+        self.boss_appeared = False
         self.boss_attacks = []
         self.gem_active = False
         self.gem_pos = None
