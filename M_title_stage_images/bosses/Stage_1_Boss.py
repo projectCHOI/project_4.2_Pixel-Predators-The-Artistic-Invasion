@@ -99,14 +99,16 @@ class Stage1Boss:
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
 
-            # 생성 범위
             min_x, max_x = 200, 1000
             min_y, max_y = 100, 600
 
-            for _ in range(3):  # 3마리 미니언 생성
+            for _ in range(3):
                 rand_x = random.randint(min_x, max_x)
                 rand_y = random.randint(min_y, max_y)
+                minion_type = random.choice(["A", "B", "C"])  # 타입 지정
+
                 self.minions.append({
+                    'type': minion_type,
                     'pos': [rand_x, rand_y],
                     'opacity': 255,
                     'spawn_time': current_time,
@@ -165,7 +167,8 @@ class Stage1Boss:
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
         for minion in self.minions:
-            temp_image = self.minion_image.copy()
+            minion_type = minion['type']
+            temp_image = self.minion_images[minion_type].copy()
             alpha = max(100, minion['opacity'])
             temp_image.set_alpha(alpha)
             win.blit(temp_image, minion['pos'])
@@ -214,8 +217,9 @@ class Stage1Boss:
 
     def draw_minion_attacks(self, win):
         for minion in self.minions:
+            minion_type = minion['type']
             for atk in minion['attacks']:
-                rotated_image = pygame.transform.rotate(self.direct_attack_image, 0)
+                rotated_image = pygame.transform.rotate(self.minion_attack_images[minion_type], 0)
                 rect = rotated_image.get_rect(center=atk['pos'])
                 win.blit(rotated_image, rect)
 
