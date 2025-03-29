@@ -1,55 +1,35 @@
 import pygame
 import os
-import random
 import math
+import random
 
-# BASE_DIR 설정: 현재 파일의 부모 디렉토리를 기준으로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
-
 def load_image(*path_parts, size=None):
     path = os.path.join(BASE_IMAGE_PATH, *path_parts)
-    try:
-        image = pygame.image.load(path).convert_alpha()
-    except pygame.error as e:
-        raise SystemExit(f"Cannot load image: {path}\n{e}")
+    image = pygame.image.load(path).convert_alpha()
     if size:
         image = pygame.transform.scale(image, size)
     return image
 
-
-class Stage8Boss:
-    class GravityCore:
-        def __init__(self, pos, duration=5000, radius=150):
-            self.pos = pos
-            self.duration = duration  # 코어 유지 시간(밀리초)
-            self.radius = radius      # 중력 영향 범위(픽셀)
-            self.spawn_time = pygame.time.get_ticks()
-
-        def is_active(self):
-            return pygame.time.get_ticks() - self.spawn_time < self.duration
-
-        def draw(self, win):
-            remaining = self.duration - (pygame.time.get_ticks() - self.spawn_time)
-            alpha_ratio = max(0, remaining / self.duration)
-            # 유지 시간에 따라 점점 투명해지도록 (선택)
-            alpha_value = int(128 * alpha_ratio) + 50
-
-            core_surface = pygame.Surface((self.radius*2, self.radius*2), pygame.SRCALPHA)
-            pygame.draw.circle(core_surface, (100, 100, 255, alpha_value),
-                               (self.radius, self.radius), self.radius)
-            win.blit(core_surface, (self.pos[0] - self.radius, self.pos[1] - self.radius))
-
+class Stage7Boss:
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage8.png", size=(120, 120))
-        self.boss_attack_images = {
-            "high": load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40)),
-            "medium": load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40)),
-            "low": load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40)),
-        }
+        self.boss_attack_image = load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40))
         self.gem_image = load_image("items", "mob_Jewelry_8.png", size=(40, 40))
 
+        self.minion_images = {
+            "A": load_image("boss_skilles", "boss_stage8_b1.png", size=(40, 40)),
+            "B": load_image("boss_skilles", "boss_stage8_c1.png", size=(40, 40)),
+            "C": load_image("boss_skilles", "boss_stage8_d1.png", size=(40, 40)),
+        }
+        self.minion_attack_images = {
+            "A": load_image("boss_skilles", "boss_stage8_b2.png", size=(20, 20)),
+            "B": load_image("boss_skilles", "boss_stage8_c2.png", size=(20, 20)),
+            "C": load_image("boss_skilles", "boss_stage8_d2.png", size=(20, 20)),
+        }
+        
         self.max_boss_hp = 15
         self.boss_hp = self.max_boss_hp
         self.boss_damage = 2
