@@ -30,6 +30,8 @@ class Stage1Boss:
             "C": load_image("boss_skilles", "boss_stage8_d2.png", size=(20, 20)),
         }
 
+        self.player_pos = [640, 360] # 플레이어 위치 기본값
+
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 15  # 보스의 최대 체력
         self.boss_hp = self.max_boss_hp  # 현재 보스 체력
@@ -121,23 +123,46 @@ class Stage1Boss:
     def update_minion_behavior(self):
         current_time = pygame.time.get_ticks()
         for minion in self.minions:
-            # 랜덤 이동 (작은 범위 내)
-            minion['pos'][0] += random.choice([-1, 0, 1]) * random.randint(0, 20)
-            minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+            m_type = minion['type']
+            mx, my = minion['pos']
+            px, py = self.player_pos
 
-            # 화면 경계 안에서만 이동
-            minion_speed = 3
+            if m_type == "A":
+                minion['pos'][0] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+                minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+
+            elif m_type == "B":
+                dx = px - mx
+                dy = py - my
+                distance = math.hypot(dx, dy)
+                if distance != 0:
+                    dx /= distance
+                    dy /= distance
+                    minion['pos'][0] += dx * 1.5
+                    minion['pos'][1] += dy * 1.5
+
+            elif m_type == "C":
+                if 'angle' not in minion:
+                    minion['angle'] = random.randint(0, 360)
+                    minion['radius'] = random.randint(30, 80)
+                    minion['center'] = minion['pos'][:]
+                minion['angle'] += 5
+                rad = math.radians(minion['angle'])
+                cx, cy = minion['center']
+                r = minion['radius']
+                minion['pos'][0] = cx + math.cos(rad) * r
+                minion['pos'][1] = cy + math.sin(rad) * r
+
             minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
             minion['pos'][1] = max(0, min(680, minion['pos'][1]))
 
-            # 공격
-            if current_time - minion['last_attack_time'] >= 2000:  # 2초 간격
+            if current_time - minion['last_attack_time'] >= 2000:
                 minion['last_attack_time'] = current_time
                 mx, my = minion['pos']
                 minion['attacks'] = []
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 0]}) # 왼쪽 직진
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, -3]}) # 왼쪽 위
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 3]}) # 왼쪽 아래
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 0]})
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, -3]})
+                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 3]})
 
     def update_minion_attacks(self):
         for minion in self.minions:
@@ -150,6 +175,7 @@ class Stage1Boss:
             minion['attacks'] = new_attacks
 
     def update_attacks(self, player_pos):
+        self.player_pos = player_pos
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
