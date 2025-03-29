@@ -60,6 +60,10 @@ class Stage1Boss:
         self.minion_spawn_interval = 3000  # 3초 간격 소환
         self.last_minion_spawn_time = 0
 
+        self.movement_effects = {"B": False, "C": False}  # 이동 변화 상태
+        self.original_player_speed = 10  # 기본 속도
+        self.player_speed = 10  # 현재 속도
+
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
@@ -178,6 +182,7 @@ class Stage1Boss:
         self.player_pos = player_pos
         new_boss_attacks = []
         player_hit = False
+
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
@@ -188,7 +193,27 @@ class Stage1Boss:
                 else:
                     new_boss_attacks.append(attack)
         self.boss_attacks = new_boss_attacks
+
+        # 미니언 탄환 충돌 처리
+        for minion in self.minions:
+            for atk in minion['attacks']:
+                if self.check_energy_ball_collision(atk['pos'], player_pos):
+                    m_type = minion['type']
+                    if m_type == "A":
+                        self.last_player_hit_type = "A"
+                        self.last_player_hit_damage = 2
+                    elif m_type == "B":
+                        self.movement_effects["B"] = True
+                        self.player_speed = 2
+                    elif m_type == "C":
+                        self.movement_effects["C"] = True
+                        self.player_speed = 20
+                    player_hit = True
+
         return player_hit
+    
+    def get_player_speed(self):
+        return self.player_speed
 
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
@@ -275,9 +300,19 @@ class Stage1Boss:
             for attack in attacks:
                 start, end, thickness, color = attack
                 if self.check_attack_collision(start, end, minion['pos'], 40):
-                    minion['hp'] -= 1
-                    if minion['hp'] <= 0:
-                        self.minions.remove(minion)
+                    m_type = minion['type']
+                    self.minions.remove(minion)
+
+                    # 효과 해제
+                    if m_type == "B":
+                        self.movement_effects["B"] = False
+                    elif m_type == "C":
+                        self.movement_effects["C"] = False
+
+                    # 속도 복구 조건
+                    if not self.movement_effects["B"] and not self.movement_effects["C"]:
+                        self.player_speed = self.original_player_speed
+
                     break
 
     def check_gem_collision(self, player_pos):
