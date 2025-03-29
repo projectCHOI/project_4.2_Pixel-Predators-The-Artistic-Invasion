@@ -624,6 +624,9 @@ while run:
             4: (0, 0, 255),     
         }
 
+        # boss8의 플레이어 이동
+        player_speed = boss.get_player_speed()
+        
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
