@@ -213,7 +213,7 @@ class Stage1Boss:
         return player_hit
     
     def get_player_speed(self):
-        return self.player_speed
+        return self.player_speed if self.boss_active else self.original_player_speed
 
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
