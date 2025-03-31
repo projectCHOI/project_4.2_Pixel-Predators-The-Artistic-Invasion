@@ -111,18 +111,27 @@ class Stage1Boss:
             for _ in range(3):
                 rand_x = random.randint(min_x, max_x)
                 rand_y = random.randint(min_y, max_y)
-                minion_type = random.choice(["A", "B", "C"])  # 타입 지정
+                minion_type = random.choice(["A", "B", "C"])
 
-                self.minions.append({
+                minion_data = {
                     'type': minion_type,
                     'pos': [rand_x, rand_y],
                     'opacity': 255,
                     'spawn_time': current_time,
                     'hp': 2,
                     'last_attack_time': current_time,
-                    'direction': [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])],
                     'attacks': []
-                })
+                }
+
+                # 고정된 방향 및 패턴 추가
+                if minion_type == "A":
+                    minion_data['direction'] = [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])]
+                elif minion_type == "C":
+                    minion_data['angle'] = random.randint(0, 360)
+                    minion_data['radius'] = random.randint(30, 80)
+                    minion_data['center'] = [rand_x, rand_y]
+
+                self.minions.append(minion_data)
 
     def update_minion_behavior(self):
         current_time = pygame.time.get_ticks()
@@ -132,8 +141,9 @@ class Stage1Boss:
             px, py = self.player_pos
 
             if m_type == "A":
-                minion['pos'][0] += random.choice([-1, 0, 1]) * random.randint(0, 20)
-                minion['pos'][1] += random.choice([-1, 0, 1]) * random.randint(0, 20)
+                dx, dy = minion.get('direction', [0, 0])
+                minion['pos'][0] += dx * random.randint(0, 3)
+                minion['pos'][1] += dy * random.randint(0, 3)
 
             elif m_type == "B":
                 dx = px - mx
@@ -146,27 +156,27 @@ class Stage1Boss:
                     minion['pos'][1] += dy * 1.5
 
             elif m_type == "C":
-                if 'angle' not in minion:
-                    minion['angle'] = random.randint(0, 360)
-                    minion['radius'] = random.randint(30, 80)
-                    minion['center'] = minion['pos'][:]
-                minion['angle'] += 5
+                angle = minion.get('angle', 0)
+                minion['angle'] += 3  # 속도 고정
                 rad = math.radians(minion['angle'])
                 cx, cy = minion['center']
                 r = minion['radius']
                 minion['pos'][0] = cx + math.cos(rad) * r
                 minion['pos'][1] = cy + math.sin(rad) * r
 
+            # 화면 안으로 제한
             minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
             minion['pos'][1] = max(0, min(680, minion['pos'][1]))
 
+            # 공격 주기 체크
             if current_time - minion['last_attack_time'] >= 2000:
                 minion['last_attack_time'] = current_time
                 mx, my = minion['pos']
-                minion['attacks'] = []
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 0]})
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, -3]})
-                minion['attacks'].append({'pos': [mx, my], 'dir': [-5, 3]})
+                minion['attacks'] = [
+                    {'pos': [mx, my], 'dir': [-5, 0]},
+                    {'pos': [mx, my], 'dir': [-5, -3]},
+                    {'pos': [mx, my], 'dir': [-5, 3]},
+                ]
 
     def update_minion_attacks(self):
         for minion in self.minions:
@@ -348,6 +358,8 @@ class Stage1Boss:
 
     def reset(self):
         self.__init__()
+        self.boss_last_attack_time = pygame.time.get_ticks()
+        self.last_minion_spawn_time = pygame.time.get_ticks()
         self.boss_active = False
         self.boss_hp = self.max_boss_hp
         self.boss_defeated = False
