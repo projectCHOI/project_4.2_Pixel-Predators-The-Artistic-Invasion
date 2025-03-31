@@ -864,15 +864,22 @@ while run:
         # 에너지 볼 이동 및 충돌 체크
         new_energy_balls = []
         for ball in energy_balls:
-            ball[0] += ball[3][0] * 5  # x 좌표 업데이트
-            ball[1] += ball[3][1] * 5  # y 좌표 업데이트
+            ball[0] += ball[3][0] * 5
+            ball[1] += ball[3][1] * 5
             if 0 <= ball[0] <= win_width and 0 <= ball[1] <= win_height:
-                if check_energy_ball_collision((ball[0], ball[1]), player_pos):
+                if not invincible and check_energy_ball_collision((ball[0], ball[1]), player_pos):
                     current_health -= 1
+                    invincible = True
+                    invincible_start_time = pygame.time.get_ticks()
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    collision_image = collision_images.get(current_health, {}).get("image")
+                    collision_effect_duration = collision_images.get(current_health, {}).get("duration", 0)
+
                     if current_health <= 0:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
+                        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
                 else:
                     new_energy_balls.append(ball)
         energy_balls = new_energy_balls
