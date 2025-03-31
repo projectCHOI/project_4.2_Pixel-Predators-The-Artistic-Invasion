@@ -203,15 +203,15 @@ class Stage1Boss:
                     m_type = minion['type']
                     if m_type == "A":
                         self.last_player_hit_type = "A"
-                        hit_damage = max(hit_damage, 2)
+                        hit_damage = max(hit_damage, 1)
                     elif m_type == "B":
                         self.movement_effects["B"] = True
                         self.player_speed = 2
-                        hit_damage = max(hit_damage, 0)
+                        hit_damage = max(hit_damage, 1)
                     elif m_type == "C":
                         self.movement_effects["C"] = True
                         self.player_speed = 20
-                        hit_damage = max(hit_damage, 0)
+                        hit_damage = max(hit_damage, 1)
                     player_hit = True
 
         return hit_damage if player_hit else 0

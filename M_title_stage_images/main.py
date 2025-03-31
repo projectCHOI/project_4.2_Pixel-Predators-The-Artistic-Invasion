@@ -626,7 +626,8 @@ while run:
 
         # boss8의 플레이어 이동
         player_speed = boss.get_player_speed()
-        
+        print(f"[DEBUG] 현재 플레이어 속도: {player_speed}")
+
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a]:
@@ -668,12 +669,18 @@ while run:
                 damage = boss.update_attacks(player_pos)
                 if damage > 0:
                     current_health -= damage
+                    invincible = True
+                    invincible_start_time = pygame.time.get_ticks()
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    collision_image = collision_images.get(current_health, {}).get("image")
+                    collision_effect_duration = collision_images.get(current_health, {}).get("duration", 0)
+
                     if current_health <= 0:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
                         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
-
+                        
             # 보스가 공격받았는지 체크
             boss.check_hit(attacks)
 
