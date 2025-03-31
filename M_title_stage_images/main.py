@@ -881,8 +881,14 @@ while run:
         for minion in boss.minions:
             minion_rect = pygame.Rect(minion['pos'][0], minion['pos'][1], 40, 40)
             player_rect = pygame.Rect(player_pos[0], player_pos[1], player_width, player_height)
-            if player_rect.colliderect(minion_rect):
+            if not invincible and player_rect.colliderect(minion_rect):
                 current_health -= 1
+                invincible = True
+                invincible_start_time = pygame.time.get_ticks()
+                collision_effect_start_time = pygame.time.get_ticks()
+                collision_image = collision_images.get(current_health, {}).get("image")
+                collision_effect_duration = collision_images.get(current_health, {}).get("duration", 0)
+
                 if current_health <= 0:
                     game_active = False
                     game_over = True
