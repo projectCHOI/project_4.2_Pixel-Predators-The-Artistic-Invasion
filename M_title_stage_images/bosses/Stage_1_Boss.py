@@ -207,11 +207,11 @@ class Stage1Boss:
                     elif m_type == "B":
                         self.movement_effects["B"] = True
                         self.player_speed = 2
-                        hit_damage = max(hit_damage, 1)
+                        hit_damage = max(hit_damage, 0)
                     elif m_type == "C":
                         self.movement_effects["C"] = True
                         self.player_speed = 20
-                        hit_damage = max(hit_damage, 1)
+                        hit_damage = max(hit_damage, 0)
                     player_hit = True
 
         return hit_damage if player_hit else 0
