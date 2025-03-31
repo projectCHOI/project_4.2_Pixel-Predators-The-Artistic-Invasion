@@ -897,8 +897,14 @@ while run:
 
             # 미니언 공격과 플레이어 충돌 체크
             for atk in minion['attacks']:
-                if check_energy_ball_collision(atk['pos'], player_pos):
+                if not invincible and check_energy_ball_collision(atk['pos'], player_pos):
                     current_health -= 1
+                    invincible = True
+                    invincible_start_time = pygame.time.get_ticks()
+                    collision_effect_start_time = pygame.time.get_ticks()
+                    collision_image = collision_images.get(current_health, {}).get("image")
+                    collision_effect_duration = collision_images.get(current_health, {}).get("duration", 0)
+
                     if current_health <= 0:
                         game_active = False
                         game_over = True
