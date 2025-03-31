@@ -178,12 +178,24 @@ class Stage1Boss:
                     new_attacks.append(atk)
             minion['attacks'] = new_attacks
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         self.player_pos = player_pos
         new_boss_attacks = []
         player_hit = False
         hit_damage = 0  
 
+        if is_invincible:
+            for attack in self.boss_attacks:
+                attack['pos'][0] += attack['dir'][0]
+                attack['pos'][1] += attack['dir'][1]
+                if 0 <= attack['pos'][0] <= 1280 and 0 <= attack['pos'][1] <= 720:
+                    new_boss_attacks.append(attack)
+            self.boss_attacks = new_boss_attacks
+
+            self.update_minion_attacks()
+            return 0
+
+        # 보스 탄환 충돌 체크
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]

@@ -666,7 +666,7 @@ while run:
                 boss.move()  # 보스 이동
                 boss.attack()  # 보스 공격
                 boss.spawn_minions() # stage 7의 미니언 소환
-                damage = boss.update_attacks(player_pos)
+                damage = boss.update_attacks(player_pos, invincible)
                 if damage > 0:
                     current_health -= damage
                     invincible = True
