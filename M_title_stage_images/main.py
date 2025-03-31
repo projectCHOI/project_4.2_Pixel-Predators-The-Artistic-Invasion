@@ -665,14 +665,15 @@ while run:
                 boss.move()  # 보스 이동
                 boss.attack()  # 보스 공격
                 boss.spawn_minions() # stage 7의 미니언 소환
-                if boss.update_attacks(player_pos):  # 보스의 공격과 플레이어의 충돌 체크
-                    current_health -= boss.boss_damage
+                damage = boss.update_attacks(player_pos)
+                if damage > 0:
+                    current_health -= damage
                     if current_health <= 0:
                         game_active = False
                         game_over = True
                         game_over_reason = "game_over"
                         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
-                        
+
             # 보스가 공격받았는지 체크
             boss.check_hit(attacks)
 
