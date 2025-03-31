@@ -182,6 +182,7 @@ class Stage1Boss:
         self.player_pos = player_pos
         new_boss_attacks = []
         player_hit = False
+        hit_damage = 0  
 
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
@@ -190,6 +191,7 @@ class Stage1Boss:
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
                     player_hit = True
+                    hit_damage = max(hit_damage, self.boss_damage)
                 else:
                     new_boss_attacks.append(attack)
         self.boss_attacks = new_boss_attacks
@@ -201,16 +203,18 @@ class Stage1Boss:
                     m_type = minion['type']
                     if m_type == "A":
                         self.last_player_hit_type = "A"
-                        self.last_player_hit_damage = 2
+                        hit_damage = max(hit_damage, 2)
                     elif m_type == "B":
                         self.movement_effects["B"] = True
                         self.player_speed = 2
+                        hit_damage = max(hit_damage, 1)
                     elif m_type == "C":
                         self.movement_effects["C"] = True
                         self.player_speed = 20
+                        hit_damage = max(hit_damage, 1)
                     player_hit = True
 
-        return player_hit
+        return hit_damage if player_hit else 0
     
     def get_player_speed(self):
         return self.player_speed if self.boss_active else self.original_player_speed
