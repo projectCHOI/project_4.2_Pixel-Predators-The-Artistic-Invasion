@@ -30,7 +30,7 @@ class Stage1Boss:
             "C": load_image("boss_skilles", "boss_stage8_d2.png", size=(20, 20)),
         }
 
-        self.player_pos = [640, 360] # 플레이어 위치 기본값
+        self.player_pos = [640, 360]
 
         self.boss_appear_time = 10  # 보스 등장 시간 (초)
         self.max_boss_hp = 15  # 보스의 최대 체력
@@ -69,6 +69,7 @@ class Stage1Boss:
             self.boss_active = True
             self.boss_appeared = True
             self.last_minion_spawn_time = pygame.time.get_ticks()
+            self.boss_last_attack_time = pygame.time.get_ticks()
 
     def move(self):
         if self.boss_active:
@@ -91,11 +92,7 @@ class Stage1Boss:
                 rad = math.radians(angle)
                 dx = math.cos(rad) * 5
                 dy = math.sin(rad) * 5
-                self.boss_attacks.append({
-                    'pos': [center_x, center_y],
-                    'dir': [dx, dy],
-                    'angle': angle
-                })
+                self.boss_attacks.append({'pos': [center_x, center_y], 'dir': [dx, dy], 'angle': angle})
 
     def spawn_minions(self):
         if not self.boss_active:
@@ -104,15 +101,10 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
-
-            min_x, max_x = 200, 1000
-            min_y, max_y = 100, 600
-
             for _ in range(3):
-                rand_x = random.randint(min_x, max_x)
-                rand_y = random.randint(min_y, max_y)
+                rand_x = random.randint(200, 1000)
+                rand_y = random.randint(100, 600)
                 minion_type = random.choice(["A", "B", "C"])
-
                 minion_data = {
                     'type': minion_type,
                     'pos': [rand_x, rand_y],
@@ -122,15 +114,12 @@ class Stage1Boss:
                     'last_attack_time': current_time,
                     'attacks': []
                 }
-
-                # 고정된 방향 및 패턴 추가
                 if minion_type == "A":
                     minion_data['direction'] = [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])]
                 elif minion_type == "C":
                     minion_data['angle'] = random.randint(0, 360)
                     minion_data['radius'] = random.randint(30, 80)
                     minion_data['center'] = [rand_x, rand_y]
-
                 self.minions.append(minion_data)
 
     def update_minion_behavior(self):
@@ -156,26 +145,23 @@ class Stage1Boss:
                     minion['pos'][1] += dy * 1.5
 
             elif m_type == "C":
-                angle = minion.get('angle', 0)
-                minion['angle'] += 3  # 속도 고정
+                minion['angle'] += 3
                 rad = math.radians(minion['angle'])
                 cx, cy = minion['center']
                 r = minion['radius']
                 minion['pos'][0] = cx + math.cos(rad) * r
                 minion['pos'][1] = cy + math.sin(rad) * r
 
-            # 화면 안으로 제한
             minion['pos'][0] = max(0, min(1240, minion['pos'][0]))
             minion['pos'][1] = max(0, min(680, minion['pos'][1]))
 
-            # 공격 주기 체크
             if current_time - minion['last_attack_time'] >= 2000:
                 minion['last_attack_time'] = current_time
                 mx, my = minion['pos']
                 minion['attacks'] = [
                     {'pos': [mx, my], 'dir': [-5, 0]},
                     {'pos': [mx, my], 'dir': [-5, -3]},
-                    {'pos': [mx, my], 'dir': [-5, 3]},
+                    {'pos': [mx, my], 'dir': [-5, 3]}
                 ]
 
     def update_minion_attacks(self):
@@ -187,6 +173,34 @@ class Stage1Boss:
                 if 0 <= atk['pos'][0] <= 1280 and 0 <= atk['pos'][1] <= 720:
                     new_attacks.append(atk)
             minion['attacks'] = new_attacks
+
+    def update_attacks(self, player_pos, is_invincible=False):
+        self.player_pos = player_pos
+        new_boss_attacks = []
+        hit_damage = 0
+
+        for attack in self.boss_attacks:
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1]
+            bx, by = attack['pos']
+            if 0 <= bx <= 1280 and 0 <= by <= 720:
+                if not is_invincible and self.check_energy_ball_collision((bx, by), player_pos):
+                    hit_damage = max(hit_damage, self.boss_damage)
+                else:
+                    new_boss_attacks.append(attack)
+        self.boss_attacks = new_boss_attacks
+
+        for minion in self.minions:
+            for atk in minion['attacks']:
+                if not is_invincible and self.check_energy_ball_collision(atk['pos'], player_pos):
+                    m_type = minion['type']
+                    if m_type == "B":
+                        self.movement_effects["B"] = True
+                    elif m_type == "C":
+                        self.movement_effects["C"] = True
+                    hit_damage = max(hit_damage, 1)
+
+        return hit_damage
 
     def update_attacks(self, player_pos, is_invincible=False):
         self.player_pos = player_pos
