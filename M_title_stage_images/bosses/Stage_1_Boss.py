@@ -174,34 +174,6 @@ class Stage1Boss:
                     new_attacks.append(atk)
             minion['attacks'] = new_attacks
 
-    def update_attacks(self, player_pos, is_invincible=False):
-        self.player_pos = player_pos
-        new_boss_attacks = []
-        hit_damage = 0
-
-        for attack in self.boss_attacks:
-            attack['pos'][0] += attack['dir'][0]
-            attack['pos'][1] += attack['dir'][1]
-            bx, by = attack['pos']
-            if 0 <= bx <= 1280 and 0 <= by <= 720:
-                if not is_invincible and self.check_energy_ball_collision((bx, by), player_pos):
-                    hit_damage = max(hit_damage, self.boss_damage)
-                else:
-                    new_boss_attacks.append(attack)
-        self.boss_attacks = new_boss_attacks
-
-        for minion in self.minions:
-            for atk in minion['attacks']:
-                if not is_invincible and self.check_energy_ball_collision(atk['pos'], player_pos):
-                    m_type = minion['type']
-                    if m_type == "B":
-                        self.movement_effects["B"] = True
-                    elif m_type == "C":
-                        self.movement_effects["C"] = True
-                    hit_damage = max(hit_damage, 1)
-
-        return hit_damage
-
     def get_player_speed(self):
         speed = self.original_player_speed
         if self.movement_effects["B"]:
