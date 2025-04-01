@@ -202,6 +202,14 @@ class Stage1Boss:
 
         return hit_damage
 
+    def get_player_speed(self):
+        speed = self.original_player_speed
+        if self.movement_effects["B"]:
+            speed = 2
+        if self.movement_effects["C"]:
+            speed = 20
+        return speed
+    
     def update_attacks(self, player_pos, is_invincible=False):
         self.player_pos = player_pos
         new_boss_attacks = []
@@ -252,9 +260,6 @@ class Stage1Boss:
 
         return hit_damage if player_hit else 0
     
-    def get_player_speed(self):
-        return self.player_speed if self.boss_active else self.original_player_speed
-
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
         for minion in self.minions:
@@ -316,25 +321,28 @@ class Stage1Boss:
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
-        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
-            return
-        else:
-            self.boss_hit = False
-
         for attack in attacks:
             start, end, thickness, color = attack
             if self.check_attack_collision(start, end, self.boss_pos, 240):
                 self.boss_hp -= 1
-                if self.boss_hp < 0:
-                    self.boss_hp = 0
-                self.boss_hit = True
-                self.boss_hit_start_time = current_time
                 if self.boss_hp <= 0:
+                    self.boss_hp = 0
                     self.boss_active = False
                     self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
                 break
+        for minion in self.minions[:]:
+            for attack in attacks:
+                start, end, thickness, color = attack
+                if self.check_attack_collision(start, end, minion['pos'], 40):
+                    m_type = minion['type']
+                    self.minions.remove(minion)
+                    if m_type == "B":
+                        self.movement_effects["B"] = False
+                    elif m_type == "C":
+                        self.movement_effects["C"] = False
+                    break
 
         for minion in self.minions[:]:
             for attack in attacks:
@@ -359,9 +367,7 @@ class Stage1Boss:
         if self.gem_active:
             px, py = player_pos
             gx, gy = self.gem_pos
-            player_width, player_height = 50, 50  # 플레이어 크기
-            gem_size = 40  # 보석 크기
-            if px < gx + gem_size and px + player_width > gx and py < gy + gem_size and py + player_height > gy:
+            if px < gx + 40 and px + 50 > gx and py < gy + 40 and py + 50 > gy:
                 self.gem_active = False
                 self.stage_cleared = True
                 self.boss_attacks.clear()
@@ -388,19 +394,8 @@ class Stage1Boss:
     def check_energy_ball_collision(self, ball_pos, player_pos):
         bx, by = ball_pos
         px, py = player_pos
-        player_width, player_height = 50, 50  # 플레이어 크기
-        if px < bx < px + player_width and py < by < py + player_height:
-            return True
-        return False
+        return px < bx < px + 50 and py < by < py + 50
 
-    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
-        ex, ey = boss_pos
-        sx, sy = attack_start
-        ex2, ey2 = ex + boss_size, ey + boss_size
-
-        # 공격 선분과 보스 사각형의 충돌 검사
-        rect = pygame.Rect(ex, ey, boss_size, boss_size)
-        line = (sx, sy), attack_end
-        if rect.clipline(line):
-            return True
-        return False
+    def check_attack_collision(self, attack_start, attack_end, target_pos, size):
+        rect = pygame.Rect(target_pos[0], target_pos[1], size, size)
+        return rect.clipline(attack_start, attack_end)
