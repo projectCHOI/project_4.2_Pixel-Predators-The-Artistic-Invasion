@@ -321,6 +321,14 @@ class Stage1Boss:
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
+
+        # 보스 무적 처리
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
+            return
+        else:
+            self.boss_hit = False
+
+        # 보스 피격 처리
         for attack in attacks:
             start, end, thickness, color = attack
             if self.check_attack_collision(start, end, self.boss_pos, 240):
@@ -331,19 +339,12 @@ class Stage1Boss:
                     self.gem_pos = [self.boss_pos[0] + 100, self.boss_pos[1] + 140]
                     self.gem_active = True
                     self.boss_defeated = True
-                break
-        for minion in self.minions[:]:
-            for attack in attacks:
-                start, end, thickness, color = attack
-                if self.check_attack_collision(start, end, minion['pos'], 40):
-                    m_type = minion['type']
-                    self.minions.remove(minion)
-                    if m_type == "B":
-                        self.movement_effects["B"] = False
-                    elif m_type == "C":
-                        self.movement_effects["C"] = False
-                    break
 
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
+                break
+
+        # 미니언 피격 처리
         for minion in self.minions[:]:
             for attack in attacks:
                 start, end, thickness, color = attack
@@ -356,10 +357,6 @@ class Stage1Boss:
                         self.movement_effects["B"] = False
                     elif m_type == "C":
                         self.movement_effects["C"] = False
-
-                    # 속도 복구 조건
-                    if not self.movement_effects["B"] and not self.movement_effects["C"]:
-                        self.player_speed = self.original_player_speed
 
                     break
 
@@ -392,10 +389,21 @@ class Stage1Boss:
         self.stage_cleared = False
 
     def check_energy_ball_collision(self, ball_pos, player_pos):
-        bx, by = ball_pos
-        px, py = player_pos
-        return px < bx < px + 50 and py < by < py + 50
+            bx, by = ball_pos
+            px, py = player_pos
+            player_width, player_height = 50, 50  # 플레이어 크기
+            if px < bx < px + player_width and py < by < py + player_height:
+                return True
+            return False
 
-    def check_attack_collision(self, attack_start, attack_end, target_pos, size):
-        rect = pygame.Rect(target_pos[0], target_pos[1], size, size)
-        return rect.clipline(attack_start, attack_end)
+    def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
+        ex, ey = boss_pos
+        sx, sy = attack_start
+        ex2, ey2 = ex + boss_size, ey + boss_size
+
+        # 공격 선분과 보스 사각형의 충돌 검사
+        rect = pygame.Rect(ex, ey, boss_size, boss_size)
+        line = (sx, sy), attack_end
+        if rect.clipline(line):
+            return True
+        return False
