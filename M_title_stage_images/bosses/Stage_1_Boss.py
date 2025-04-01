@@ -56,13 +56,13 @@ class Stage1Boss:
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
         self.boss_attack_interval = 5000  # 5초 간격 공격
+
         self.minions = []
-        self.minion_spawn_interval = 3000  # 3초 간격 소환
+        self.minion_spawn_interval = 3000 # 3초 간격 소환
         self.last_minion_spawn_time = 0
 
         self.movement_effects = {"B": False, "C": False}  # 이동 변화 상태
         self.original_player_speed = 10  # 기본 속도
-        self.player_speed = 10  # 현재 속도
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
@@ -86,27 +86,26 @@ class Stage1Boss:
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time >= self.boss_attack_interval:
             self.boss_last_attack_time = current_time
-            center_x = self.boss_pos[0] + 140
-            center_y = self.boss_pos[1] + 140
+            cx = self.boss_pos[0] + 140
+            cy = self.boss_pos[1] + 140
             for angle in range(0, 360, 30):
                 rad = math.radians(angle)
                 dx = math.cos(rad) * 5
                 dy = math.sin(rad) * 5
-                self.boss_attacks.append({'pos': [center_x, center_y], 'dir': [dx, dy], 'angle': angle})
+                self.boss_attacks.append({'pos': [cx, cy], 'dir': [dx, dy], 'angle': angle})
 
     def spawn_minions(self):
         if not self.boss_active:
             return
-
         current_time = pygame.time.get_ticks()
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
             for _ in range(3):
                 rand_x = random.randint(200, 1000)
                 rand_y = random.randint(100, 600)
-                minion_type = random.choice(["A", "B", "C"])
-                minion_data = {
-                    'type': minion_type,
+                m_type = random.choice(["A", "B", "C"])
+                minion = {
+                    'type': m_type,
                     'pos': [rand_x, rand_y],
                     'opacity': 255,
                     'spawn_time': current_time,
@@ -114,13 +113,13 @@ class Stage1Boss:
                     'last_attack_time': current_time,
                     'attacks': []
                 }
-                if minion_type == "A":
-                    minion_data['direction'] = [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])]
-                elif minion_type == "C":
-                    minion_data['angle'] = random.randint(0, 360)
-                    minion_data['radius'] = random.randint(30, 80)
-                    minion_data['center'] = [rand_x, rand_y]
-                self.minions.append(minion_data)
+                if m_type == "A":
+                    minion['direction'] = [random.choice([-1, 0, 1]), random.choice([-1, 0, 1])]
+                elif m_type == "C":
+                    minion['angle'] = random.randint(0, 360)
+                    minion['radius'] = random.randint(30, 80)
+                    minion['center'] = [rand_x, rand_y]
+                self.minions.append(minion)
 
     def update_minion_behavior(self):
         current_time = pygame.time.get_ticks()
@@ -128,22 +127,19 @@ class Stage1Boss:
             m_type = minion['type']
             mx, my = minion['pos']
             px, py = self.player_pos
-
             if m_type == "A":
                 dx, dy = minion.get('direction', [0, 0])
                 minion['pos'][0] += dx * random.randint(0, 3)
                 minion['pos'][1] += dy * random.randint(0, 3)
-
             elif m_type == "B":
                 dx = px - mx
                 dy = py - my
-                distance = math.hypot(dx, dy)
-                if distance != 0:
-                    dx /= distance
-                    dy /= distance
+                dist = math.hypot(dx, dy)
+                if dist:
+                    dx /= dist
+                    dy /= dist
                     minion['pos'][0] += dx * 1.5
                     minion['pos'][1] += dy * 1.5
-
             elif m_type == "C":
                 minion['angle'] += 3
                 rad = math.radians(minion['angle'])
@@ -186,7 +182,7 @@ class Stage1Boss:
         self.player_pos = player_pos
         new_boss_attacks = []
         player_hit = False
-        hit_damage = 0  
+        hit_damage = 0
 
         if is_invincible:
             for attack in self.boss_attacks:
@@ -195,11 +191,9 @@ class Stage1Boss:
                 if 0 <= attack['pos'][0] <= 1280 and 0 <= attack['pos'][1] <= 720:
                     new_boss_attacks.append(attack)
             self.boss_attacks = new_boss_attacks
-
             self.update_minion_attacks()
             return 0
 
-        # 보스 탄환 충돌 체크
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
@@ -212,24 +206,16 @@ class Stage1Boss:
                     new_boss_attacks.append(attack)
         self.boss_attacks = new_boss_attacks
 
-        # 미니언 탄환 충돌 처리
         for minion in self.minions:
             for atk in minion['attacks']:
                 if self.check_energy_ball_collision(atk['pos'], player_pos):
                     m_type = minion['type']
-                    if m_type == "A":
-                        self.last_player_hit_type = "A"
-                        hit_damage = max(hit_damage, 1)
-                    elif m_type == "B":
+                    if m_type == "B":
                         self.movement_effects["B"] = True
-                        self.player_speed = 2
-                        hit_damage = max(hit_damage, 1)
                     elif m_type == "C":
                         self.movement_effects["C"] = True
-                        self.player_speed = 20
-                        hit_damage = max(hit_damage, 1)
+                    hit_damage = max(hit_damage, 1)
                     player_hit = True
-
         return hit_damage if player_hit else 0
     
     def draw(self, win):
