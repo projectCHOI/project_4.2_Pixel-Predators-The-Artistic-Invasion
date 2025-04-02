@@ -58,7 +58,8 @@ class Stage1Boss:
         self.stage_cleared = False  # 스테이지 클리어 여부
         self.boss_invincible_duration = 500  # 무적 상태 지속 시간(밀리초)
         self.boss_attack_interval = 5000  # 5초 간격 공격
-
+        self.base_boss_speed = 4
+        
         self.minions = []
         self.minion_spawn_interval = 3000 # 3초 간격 소환
         self.last_minion_spawn_time = 0
@@ -73,17 +74,26 @@ class Stage1Boss:
             self.boss_appeared = True
             self.last_minion_spawn_time = pygame.time.get_ticks()
             self.boss_last_attack_time = pygame.time.get_ticks()
+            self.boss_move_timer = pygame.time.get_ticks()
 
     def move(self):
         if self.boss_active:
-            dx = self.boss_target_pos[0] - self.boss_pos[0]
-            dy = self.boss_target_pos[1] - self.boss_pos[1]
-            dist = math.hypot(dx, dy)
-            if dist > self.boss_speed:
-                self.boss_pos[0] += self.boss_speed * dx / dist
-                self.boss_pos[1] += self.boss_speed * dy / dist
+            current_time = pygame.time.get_ticks()
+            elapsed_time = (current_time - self.boss_move_timer)
+
+            # 페이즈 전환: 체력 40% 이하에서 속도 증가
+            if self.boss_hp <= self.max_boss_hp * 0.4:
+                self.boss_speed = self.base_boss_speed * 1.5
             else:
-                self.boss_pos = self.boss_target_pos[:]
+                self.boss_speed = self.base_boss_speed
+
+            # 좌우 이동
+            self.boss_pos[0] += self.boss_direction_x * self.boss_speed
+            if self.boss_pos[0] < 100 or self.boss_pos[0] > 1100:
+                self.boss_direction_x *= -1
+
+            # 위아래 사인파 이동 (여기서 elapsed_time을 사용해야 함)
+            self.boss_pos[1] = 300 + math.sin(elapsed_time * self.boss_frequency) * self.boss_amplitude
 
     def attack(self):
         current_time = pygame.time.get_ticks()
