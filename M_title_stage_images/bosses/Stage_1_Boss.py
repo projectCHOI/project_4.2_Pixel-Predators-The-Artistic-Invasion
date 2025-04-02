@@ -38,13 +38,15 @@ class Stage1Boss:
         self.boss_damage = 2  # 보스의 공격력
         self.boss_speed = 4  # 보스의 이동 속도
         self.boss_pos = [1400, 350]  # 보스의 초기 위치
-        self.boss_target_pos = [930, 350]  # 이동 목표 위치
-        self.boss_direction_x = 1  # 보스의 좌우 이동 방향
-        self.boss_direction_y = 1  # 보스의 상하 이동 방향
+        self.boss_direction_x = -1
+        self.boss_amplitude = 100
+        self.boss_frequency = 0.005
+        self.boss_move_timer = 0
+
         self.boss_active = False  # 보스 활성화 상태
         self.boss_defeated = False  # 보스 패배 상태
         self.boss_appeared = False  # 보스가 이미 등장했는지 여부
-        self.boss_move_phase = 1  # 보스의 이동 단계
+        
         self.boss_hit = False  # 보스 피격 상태
         self.boss_hit_start_time = 0  # 보스 피격 시점
         self.boss_hit_duration = 100  # 보스 피격 효과 지속 시간 (밀리초)
@@ -63,6 +65,7 @@ class Stage1Boss:
 
         self.movement_effects = {"B": False, "C": False}  # 이동 변화 상태
         self.original_player_speed = 10  # 기본 속도
+        self.player_speed = 10
 
     def check_appear(self, seconds, current_level):
         if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
