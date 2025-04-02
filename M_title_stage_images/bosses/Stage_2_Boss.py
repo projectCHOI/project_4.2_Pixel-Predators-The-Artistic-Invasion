@@ -205,3 +205,5 @@ class Stage2Boss:
                 return True
         return False
     
+    def get_player_speed(self):
+        return 10

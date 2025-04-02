@@ -626,7 +626,6 @@ while run:
 
         # boss8의 플레이어 이동
         player_speed = boss.get_player_speed()
-        print(f"[DEBUG] 현재 플레이어 속도: {player_speed}")
 
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
