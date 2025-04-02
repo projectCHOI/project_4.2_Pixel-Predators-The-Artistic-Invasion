@@ -92,7 +92,7 @@ class Stage2Boss:
                     direction = (dx / length, dy / length)
                     self.boss_attacks.append([self.boss_pos[0] + 60, self.boss_pos[1] + 60, direction])
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         new_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
