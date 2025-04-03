@@ -85,7 +85,7 @@ class Stage4Boss:
         self.boss_pos[0] = max(38, min(self.boss_pos[0], 1242))
         self.boss_pos[1] = max(38, min(self.boss_pos[1], 682))
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False)::
         new_attacks = []
         for attack in self.boss_attacks:
             attack[0][0] += attack[1][0]
@@ -237,3 +237,6 @@ class Stage4Boss:
         if rect.clipline(line):
             return True
         return False
+
+    def get_player_speed(self):
+        return 10
