@@ -239,3 +239,6 @@ class Stage3Boss:
         if rect.clipline(line):
             return True
         return False
+
+    def get_player_speed(self):
+        return 10
