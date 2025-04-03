@@ -99,7 +99,7 @@ class Stage3Boss:
         else:
             return "low"
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         new_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
