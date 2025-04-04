@@ -221,7 +221,7 @@ class Stage5Boss:
                     'image': random_attack_image
                 })
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         new_boss_attacks = []
         player_hit = 0
 
@@ -428,3 +428,6 @@ class Stage5Boss:
         self.boss_appeared = False
         self.state = "appear"
         self.state_start_time = pygame.time.get_ticks()
+   
+    def get_player_speed(self):
+        return 10
