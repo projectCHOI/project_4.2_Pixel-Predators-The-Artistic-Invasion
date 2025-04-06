@@ -119,7 +119,7 @@ class Stage8Boss:
                     })
 
 # 투사체 이동 업데이트
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         new_boss_attacks = []
         player_hit = False
         for attack in self.boss_attacks:
@@ -257,3 +257,6 @@ class Stage8Boss:
         if rect.clipline(line):
             return True
         return False
+
+    def get_player_speed(self):
+        return 10  # 또는 보스 특성에 따라 조정
