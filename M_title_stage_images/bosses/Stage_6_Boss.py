@@ -135,7 +135,7 @@ class Stage6Boss:
                 dy = math.sin(radian) * speed
                 self.boss_attacks.append([self.boss_pos[:], [dx, dy], angle, image])
 
-    def update_attacks(self, player_pos, is_invincible=False):3
+    def update_attacks(self, player_pos, is_invincible=False):
         new_attacks = []
         player_width, player_height = 40, 40
         hit = False
