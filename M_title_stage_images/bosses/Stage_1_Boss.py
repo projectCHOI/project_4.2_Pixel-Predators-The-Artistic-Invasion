@@ -81,20 +81,27 @@ class Stage1Boss:
             current_time = pygame.time.get_ticks()
             elapsed_time = current_time - self.boss_move_timer
 
-            # 체력 40% 이하 → 이동속도 증가
+            # 체력 40% 이하 시 속도 증가
             if self.boss_hp <= self.max_boss_hp * 0.4:
                 self.boss_speed = self.base_boss_speed * 1.5
             else:
                 self.boss_speed = self.base_boss_speed
 
-            # 좌우 이동 (화면 내에서 왕복)
+            # 1. 먼저 [1400, 350] → [900, 350]까지 등장 이동
+            if not hasattr(self, "entered_screen"):
+                if self.boss_pos[0] > 900:
+                    self.boss_pos[0] -= self.boss_speed  # 왼쪽으로 이동
+                    return  # 아직 등장 이동 중 → 아래 이동 패턴은 적용 안 함
+                else:
+                    self.entered_screen = True  # 등장 완료 후 이동 시작
+
+            # 2. 등장 완료 후: 좌우 + 사인파 이동
             self.boss_pos[0] += self.boss_direction_x * self.boss_speed
             if self.boss_pos[0] < 100 or self.boss_pos[0] > 1100:
-                self.boss_direction_x *= -1  # 방향 반전
+                self.boss_direction_x *= -1
 
-            # 위아래 사인파 이동
             self.boss_pos[1] = 300 + math.sin(elapsed_time * self.boss_frequency) * self.boss_amplitude
-    
+
     def attack(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.boss_last_attack_time >= self.boss_attack_interval:
