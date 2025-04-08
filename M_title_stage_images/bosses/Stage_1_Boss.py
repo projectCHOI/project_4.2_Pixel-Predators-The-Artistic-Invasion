@@ -128,23 +128,32 @@ class Stage1Boss:
                     'angle': angle
                 })
 
-    def update_attacks(self, player_pos):
+    def update_attacks(self, player_pos, is_invincible=False):
         new_boss_attacks = []
         player_hit = False
+
+        if is_invincible:
+            for attack in self.boss_attacks:
+                attack['pos'][0] += attack['dir'][0]
+                attack['pos'][1] += attack['dir'][1]
+                bx, by = attack['pos']
+                if 0 <= bx <= 1280 and 0 <= by <= 720:
+                    new_boss_attacks.append(attack)
+            self.boss_attacks = new_boss_attacks
+            return 0  # 데미지 없음
+
         for attack in self.boss_attacks:
-            # 에너지 볼 이동
             attack['pos'][0] += attack['dir'][0]
             attack['pos'][1] += attack['dir'][1]
-
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 720:
                 if self.check_energy_ball_collision((bx, by), player_pos):
-                    player_hit = True  # 플레이어에게 맞음
+                    player_hit = True  # 플레이어 피격
                 else:
                     new_boss_attacks.append(attack)
-            # 화면 밖으로 나가면 공격 제거
+
         self.boss_attacks = new_boss_attacks
-        return player_hit
+        return self.boss_damage if player_hit else 0
 
     def draw(self, win):
         if self.boss_hp > 0:
@@ -268,3 +277,6 @@ class Stage1Boss:
         if rect.clipline(line):
             return True
         return False
+
+    def get_player_speed(self):
+        return 10
