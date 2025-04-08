@@ -13,7 +13,7 @@ def load_image(*path_parts, size=None):
         image = pygame.transform.scale(image, size)
     return image
 
-class Stage1Boss:
+class Stage8Boss:
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage8.png", size=(120, 120))
         self.boss_attack_image = load_image("boss_skilles", "boss_stage8_a.png", size=(40, 40))
@@ -69,7 +69,7 @@ class Stage1Boss:
         self.player_speed = 10
 
     def check_appear(self, seconds, current_level):
-        if current_level == 1 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
+        if current_level == 8 and not self.boss_active and seconds >= self.boss_appear_time and not self.boss_appeared:
             self.boss_active = True
             self.boss_appeared = True
             self.last_minion_spawn_time = pygame.time.get_ticks()
