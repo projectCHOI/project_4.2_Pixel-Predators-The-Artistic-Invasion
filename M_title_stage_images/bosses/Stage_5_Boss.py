@@ -233,7 +233,7 @@ class Stage5Boss:
                 if 0 <= bx <= 1280 and 0 <= by <= 520:
                     new_boss_attacks.append(attack)
             self.boss_attacks = new_boss_attacks
-            return 0  # 무적일 때는 데미지 없음
+            return 0
 
         for attack in self.boss_attacks:
             attack['pos'][0] += attack['dir'][0]
