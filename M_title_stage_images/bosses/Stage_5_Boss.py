@@ -223,14 +223,21 @@ class Stage5Boss:
 
     def update_attacks(self, player_pos, is_invincible=False):
         new_boss_attacks = []
-        player_hit = 0
+        player_hit = self.check_player_collision(player_pos)
+
+        if is_invincible:
+            for attack in self.boss_attacks:
+                attack['pos'][0] += attack['dir'][0]
+                attack['pos'][1] += attack['dir'][1]
+                bx, by = attack['pos']
+                if 0 <= bx <= 1280 and 0 <= by <= 520:
+                    new_boss_attacks.append(attack)
+            self.boss_attacks = new_boss_attacks
+            return 0  # 무적일 때는 데미지 없음
 
         for attack in self.boss_attacks:
-            attack['time'] += 1  # 경과 시간 증가
-            t = attack['time'] / 10.0
             attack['pos'][0] += attack['dir'][0]
-            attack['pos'][1] += attack['dir'][1] + math.sin(t * 2) * 1.5  # Y축에 곡선 적용
-
+            attack['pos'][1] += attack['dir'][1]
             bx, by = attack['pos']
             if 0 <= bx <= 1280 and 0 <= by <= 520:
                 if self.check_energy_ball_collision((bx, by), player_pos):
