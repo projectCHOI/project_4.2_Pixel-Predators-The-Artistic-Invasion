@@ -41,6 +41,10 @@ class Stage9Boss:
         self.invincible_duration = 500
         self.boss_hit_duration = 100
 
+        self.minions = []
+        self.last_minion_spawn_time = 0
+        self.minion_spawn_interval = 4000  # 4초마다 소환
+
     def check_appear(self, seconds, current_level):
         if current_level == 9 and not self.boss_active and seconds >= 10:
             self.boss_active = True
@@ -80,6 +84,73 @@ class Stage9Boss:
                     'angle': angle,
                     'image': self.attack_images[f"phase{self.phase}"]
                 })
+
+    def move(self, player_pos=None):
+        if not self.boss_active:
+            return
+
+        self.move_timer += 1
+
+        if self.phase == 1:
+            radius = 100
+            speed = 0.02
+        elif self.phase == 2:
+            radius = 150
+            speed = 0.03
+        elif self.phase == 3:
+            # 나선 궤도
+            radius = 100 + 50 * math.sin(self.move_timer * 0.05)
+            speed = 0.04
+        else:
+            # 플레이어 중심 회전 (보스가 플레이어를 도는 느낌)
+            if player_pos:
+                px, py = player_pos
+                radius = 80
+                speed = 0.05
+                self.boss_pos[0] = px + math.cos(self.move_timer * speed) * radius
+                self.boss_pos[1] = py + math.sin(self.move_timer * speed) * radius
+                return
+            
+        self.spawn_minions()
+
+
+        # 일반 회전 운동
+        center_x, center_y = 640, 360  # 화면 중심
+        self.boss_pos[0] = center_x + math.cos(self.move_timer * speed) * radius
+        self.boss_pos[1] = center_y + math.sin(self.move_timer * speed) * radius
+
+    def spawn_minions(self):
+        if not self.boss_active:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
+            self.last_minion_spawn_time = current_time
+
+            minion_count = 1
+            if self.phase == 2:
+                minion_count = 2
+            elif self.phase >= 3:
+                minion_count = 3
+
+            for _ in range(minion_count):
+                offset_x = random.randint(-100, 100)
+                offset_y = random.randint(-100, 100)
+                spawn_x = max(0, min(1240, self.boss_pos[0] + offset_x))
+                spawn_y = max(0, min(680, self.boss_pos[1] + offset_y))
+
+                minion_type = random.choice(["A", "B", "C"])  # 필요시 phase별로 고정도 가능
+
+                minion = {
+                    'type': minion_type,
+                    'pos': [spawn_x, spawn_y],
+                    'opacity': 255,
+                    'spawn_time': current_time,
+                    'hp': 2,
+                    'last_attack_time': current_time,
+                    'attacks': []
+                }
+                self.minions.append(minion)
 
     def update_attacks(self, player_pos, is_invincible=False):
         new_attacks = []
