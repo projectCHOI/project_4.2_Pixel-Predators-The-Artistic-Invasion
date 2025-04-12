@@ -264,6 +264,79 @@ class Stage9Boss:
     def check_attack_collision(self, attack_start, attack_end, boss_pos, boss_size):
         rect = pygame.Rect(boss_pos[0], boss_pos[1], boss_size, boss_size)
         return rect.clipline((attack_start, attack_end))
+        
+    def check_hit(self, attacks):
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time < self.invincible_duration):
+            return
+        for attack in attacks:
+            start, end, _, _ = attack
+            if self.check_attack_collision(start, end, self.boss_pos, 180):
+                self.boss_hp -= 1
+                if self.boss_hp <= 0:
+                    self.boss_hp = 0
+                    self.boss_defeated = True
+                    self.boss_active = False
+                    self.gem_pos = [self.boss_pos[0] + 70, self.boss_pos[1] + 180]
+                    self.gem_active = True
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
+                break
+        self.update_phase()
+        for minion in self.minions:
+            for attack in attacks:
+                start, end, _, _ = attack
+                if self.check_attack_collision(start, end, minion['pos'], 40):
+                    minion['hp'] -= 1
+                    break
+
+    def check_gem_collision(self, player_pos):
+        if self.gem_active:
+            px, py = player_pos
+            gx, gy = self.gem_pos
+            if px < gx + 40 and px + 50 > gx and py < gy + 40 and py + 50 > gy:
+                self.gem_active = False
+                self.stage_cleared = True
+                return True
+        return False
+
+    def draw(self, win):
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time < self.invincible_duration):
+            if (current_time // self.boss_hit_duration) % 2 == 0:
+                win.blit(self.boss_image, self.boss_pos)
+        else:
+            win.blit(self.boss_image, self.boss_pos)
+        for minion in self.minions:
+            win.blit(self.boss_image, minion['pos'])
+
+    def draw_attacks(self, win):
+        for atk in self.boss_attacks:
+            angle = -atk['angle'] + 90
+            rotated = pygame.transform.rotate(atk['image'], angle)
+            rect = rotated.get_rect(center=atk['pos'])
+            win.blit(rotated, rect)
+
+    def draw_health_bar(self, win, font):
+        if self.boss_active and self.boss_hp > 0:
+            boss_text = font.render("BOSS", True, (255, 255, 255))
+            win.blit(boss_text, (10, 680))
+            bar_x = 10 + boss_text.get_width() + 10
+            bar_y = 680
+            bar_w = 200
+            bar_h = 30
+            ratio = self.boss_hp / self.max_boss_hp
+            cur_w = int(bar_w * ratio)
+            pygame.draw.rect(win, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h))
+            pygame.draw.rect(win, (210, 20, 4), (bar_x, bar_y, cur_w, bar_h))
+            pygame.draw.rect(win, (255, 255, 255), (bar_x, bar_y, bar_w, bar_h), 2)
+        elif self.boss_hp <= 0 and self.boss_defeated:
+            text = font.render("BOSS DEFEATED", True, (255, 255, 255))
+            win.blit(text, (10, 680))
+
+    def draw_gem(self, win):
+        if self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
 
     def reset(self):
         self.__init__()
