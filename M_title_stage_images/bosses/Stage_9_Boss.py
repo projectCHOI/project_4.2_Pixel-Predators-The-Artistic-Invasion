@@ -88,69 +88,94 @@ class Stage9Boss:
     def move(self, player_pos=None):
         if not self.boss_active:
             return
-
         self.move_timer += 1
-
         if self.phase == 1:
-            radius = 100
-            speed = 0.02
+            radius, speed = 100, 0.02
         elif self.phase == 2:
-            radius = 150
-            speed = 0.03
+            radius, speed = 150, 0.03
         elif self.phase == 3:
-            # 나선 궤도
             radius = 100 + 50 * math.sin(self.move_timer * 0.05)
             speed = 0.04
         else:
-            # 플레이어 중심 회전 (보스가 플레이어를 도는 느낌)
             if player_pos:
                 px, py = player_pos
-                radius = 80
-                speed = 0.05
+                radius, speed = 80, 0.05
                 self.boss_pos[0] = px + math.cos(self.move_timer * speed) * radius
                 self.boss_pos[1] = py + math.sin(self.move_timer * speed) * radius
                 return
-            
-        self.spawn_minions()
-
-
-        # 일반 회전 운동
-        center_x, center_y = 640, 360  # 화면 중심
+        center_x, center_y = 640, 360
         self.boss_pos[0] = center_x + math.cos(self.move_timer * speed) * radius
         self.boss_pos[1] = center_y + math.sin(self.move_timer * speed) * radius
 
-    def spawn_minions(self):
+    def spawn_minions(self, player_pos):
         if not self.boss_active:
             return
-
         current_time = pygame.time.get_ticks()
         if current_time - self.last_minion_spawn_time >= self.minion_spawn_interval:
             self.last_minion_spawn_time = current_time
-
-            minion_count = 1
-            if self.phase == 2:
-                minion_count = 2
-            elif self.phase >= 3:
-                minion_count = 3
-
+            minion_count = self.phase
             for _ in range(minion_count):
                 offset_x = random.randint(-100, 100)
                 offset_y = random.randint(-100, 100)
                 spawn_x = max(0, min(1240, self.boss_pos[0] + offset_x))
                 spawn_y = max(0, min(680, self.boss_pos[1] + offset_y))
-
-                minion_type = random.choice(["A", "B", "C"])  # 필요시 phase별로 고정도 가능
-
-                minion = {
+                minion_type = random.choice(["A", "B", "C"])
+                self.minions.append({
                     'type': minion_type,
                     'pos': [spawn_x, spawn_y],
-                    'opacity': 255,
-                    'spawn_time': current_time,
                     'hp': 2,
                     'last_attack_time': current_time,
+                    'angle': 0,
+                    'center': [spawn_x, spawn_y],
+                    'radius': 50,
                     'attacks': []
-                }
-                self.minions.append(minion)
+                })
+
+    def update_minion_behavior(self, player_pos):
+        for minion in self.minions:
+            mtype = minion['type']
+            if mtype == "A":
+                minion['pos'][0] += random.randint(-2, 2)
+                minion['pos'][1] += random.randint(-2, 2)
+                minion['attacks'] = [{'pos': minion['pos'][:], 'dir': [-4, 0]}]
+            elif mtype == "B":
+                dx = player_pos[0] - minion['pos'][0]
+                dy = player_pos[1] - minion['pos'][1]
+                dist = math.hypot(dx, dy)
+                if dist:
+                    dx /= dist
+                    dy /= dist
+                    minion['pos'][0] += dx * 2
+                    minion['pos'][1] += dy * 2
+            elif mtype == "C":
+                minion['angle'] += 5
+                rad = math.radians(minion['angle'])
+                cx, cy = minion['center']
+                r = minion['radius']
+                minion['pos'][0] = cx + math.cos(rad) * r
+                minion['pos'][1] = cy + math.sin(rad) * r
+                minion['attacks'] = [
+                    {'pos': minion['pos'][:], 'dir': [-5, 0]},
+                    {'pos': minion['pos'][:], 'dir': [-5, -3]},
+                    {'pos': minion['pos'][:], 'dir': [-5, 3]},
+                ]
+
+    def update_minion_attacks(self):
+        for minion in self.minions:
+            new_attacks = []
+            for atk in minion['attacks']:
+                atk['pos'][0] += atk['dir'][0]
+                atk['pos'][1] += atk['dir'][1]
+                if 0 <= atk['pos'][0] <= 1280 and 0 <= atk['pos'][1] <= 720:
+                    new_attacks.append(atk)
+            minion['attacks'] = new_attacks
+
+    def draw_minion_attacks(self, win):
+        for minion in self.minions:
+            for atk in minion['attacks']:
+                rotated_image = pygame.transform.rotate(self.minion_attack_image, 0)
+                rect = rotated_image.get_rect(center=atk['pos'])
+                win.blit(rotated_image, rect)
 
     def update_attacks(self, player_pos, is_invincible=False):
         new_attacks = []
