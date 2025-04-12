@@ -361,21 +361,6 @@ def generate_enemies(level):
         directions = [(0, 1), (0, -1)]
         sizes = [40, 60]
         num_enemies = random.randint(1, 4)
-    elif level == 10:
-        speed = 10
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(1, 4)
-    elif level == 11:
-        speed = 10
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(1, 4)
-    elif level == 12:
-        speed = 10
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(1, 4)
 
     enemies = []
 

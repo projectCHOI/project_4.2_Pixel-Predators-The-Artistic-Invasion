@@ -15,14 +15,14 @@ def load_image(*path_parts, size=None):
 
 class Stage9Boss:
     def __init__(self):
-        self.boss_image = load_image("bosses", "boss_stage9.png", size=(180, 180))
+        self.boss_image = load_image("bosses", "boss_stage9_S.png", size=(180, 180))
         self.attack_images = {
             "phase1": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)),
             "phase2": load_image("boss_skilles", "boss_stage9_b.png", size=(40, 40)),
             "phase3": load_image("boss_skilles", "boss_stage9_c.png", size=(40, 40)),
             "phase4": load_image("boss_skilles", "boss_stage9_d.png", size=(40, 40))
         }
-        self.minion_attack_image = load_image("boss_skilles", "boss_stage9_e.png", size=(20, 20))
+        self.minion_attack_image = load_image("boss_skilles", "boss_stage9_N.png", size=(20, 20))
         self.gem_image = load_image("items", "mob_Jewelry_9.png", size=(40, 40))
 
         self.max_boss_hp = 100
