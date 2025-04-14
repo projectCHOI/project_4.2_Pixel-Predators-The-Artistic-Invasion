@@ -22,7 +22,7 @@ class Stage9Boss:
             "phase3": load_image("boss_skilles", "boss_stage9_c.png", size=(40, 40)),
             "phase4": load_image("boss_skilles", "boss_stage9_d.png", size=(40, 40))
         }
-        self.minion_attack_image = load_image("boss_skilles", "boss_stage9_N.png", size=(20, 20))
+        self.minion_attack_image = load_image("bosses", "boss_stage9_N.png", size=(20, 20))
         self.gem_image = load_image("items", "mob_Jewelry_9.png", size=(40, 40))
 
         self.max_boss_hp = 100
