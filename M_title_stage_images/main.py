@@ -3,6 +3,7 @@ import random
 import math
 import os
 
+from bosses.Stage_test_Boss import Stage0Boss
 # 필요한 보스 클래스를 모두 임포트합니다.
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
@@ -149,22 +150,24 @@ invincible_duration = 3000  # 무적 시간 (밀리초)
 # 보스 초기화 함수 정의
 def initialize_boss(level):
     if level == 1:
-        return Stage1Boss()
+        return Stage0Boss()
     elif level == 2:
-        return Stage2Boss()
+        return Stage1Boss()
     elif level == 3:
-        return Stage3Boss()  
+        return Stage2Boss()  
     elif level == 4:
-        return Stage4Boss()
+        return Stage3Boss()
     elif level == 5:
-        return Stage5Boss()
+        return Stage4Boss()
     elif level == 6:
-        return Stage6Boss()
+        return Stage5Boss()
     elif level == 7:
-        return Stage7Boss()
+        return Stage6Boss()
     elif level == 8:
-        return Stage8Boss()
+        return Stage7Boss()
     elif level == 9:
+        return Stage8Boss()
+    elif level == 10:
         return Stage9Boss()
     else:
         return None
@@ -357,6 +360,12 @@ def generate_enemies(level):
         sizes = [40, 60]
         num_enemies = random.randint(1, 4)
     elif level == 9:
+        speed = 10
+        directions = [(0, 1), (0, -1)]
+        sizes = [40, 60]
+        num_enemies = random.randint(1, 4)
+    # 임시
+    elif level == 10:
         speed = 10
         directions = [(0, 1), (0, -1)]
         sizes = [40, 60]
