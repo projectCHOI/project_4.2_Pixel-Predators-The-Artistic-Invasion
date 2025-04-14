@@ -229,8 +229,6 @@ class Stage9Boss:
                 win.blit(self.boss_image, self.boss_pos)
         else:
             win.blit(self.boss_image, self.boss_pos)
-        for minion in self.minions:
-            win.blit(self.boss_image, minion['pos'])
 
     def draw_attacks(self, win):
         for atk in self.boss_attacks:
