@@ -51,7 +51,7 @@ class Stage0Boss:
         self.last_minion_spawn_time = 0
 
     def check_appear(self, seconds, current_level):
-        if current_level == 0 and not self.boss_active and seconds >= 10:
+        if current_level == 1 and not self.boss_active and seconds >= 10:
             self.boss_active = True
             self.boss_appeared = True
             self.move_timer = 0

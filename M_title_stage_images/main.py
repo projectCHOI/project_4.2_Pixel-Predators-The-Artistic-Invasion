@@ -3,8 +3,7 @@ import random
 import math
 import os
 
-from bosses.Stage_test_Boss import Stage0Boss
-# 필요한 보스 클래스를 모두 임포트합니다.
+# 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
 from bosses.Stage_3_Boss import Stage3Boss
@@ -140,7 +139,7 @@ except FileNotFoundError:
 
 # 게임 변수 초기화
 level = 1
-max_level = 13
+max_level = 9
 run = True
 game_active = False
 invincible = False
@@ -150,24 +149,22 @@ invincible_duration = 3000  # 무적 시간 (밀리초)
 # 보스 초기화 함수 정의
 def initialize_boss(level):
     if level == 1:
-        return Stage0Boss()
-    elif level == 2:
         return Stage1Boss()
+    elif level == 2:
+        return Stage2Boss()
     elif level == 3:
-        return Stage2Boss()  
+        return Stage3Boss()  
     elif level == 4:
-        return Stage3Boss()
-    elif level == 5:
         return Stage4Boss()
-    elif level == 6:
+    elif level == 5:
         return Stage5Boss()
-    elif level == 7:
+    elif level == 6:
         return Stage6Boss()
-    elif level == 8:
+    elif level == 7:
         return Stage7Boss()
-    elif level == 9:
+    elif level == 8:
         return Stage8Boss()
-    elif level == 10:
+    elif level == 9:
         return Stage9Boss()
     else:
         return None
