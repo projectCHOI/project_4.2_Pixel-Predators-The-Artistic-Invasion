@@ -69,6 +69,56 @@ class Stage9Boss:
         self.boss_hit_start_time = 0
         self.boss_invincible_duration = 500
 
+    def move(self):
+        current_time = pygame.time.get_ticks()
+
+        if self.boss_move_state == "entering":
+            # 등장: 위에서 아래로 직선 이동
+            if self.boss_pos[1] < self.enter_target_pos[1]:
+                self.boss_pos[1] += self.boss_speed
+            else:
+                self.boss_pos[1] = self.enter_target_pos[1]
+                self.boss_move_state = "choosing"
+        
+        elif self.boss_move_state == "choosing":
+            self.current_pattern = random.choice(self.patterns)
+            self.pattern_direction = "forward"
+            self.pattern_timer = current_time
+            self.boss_move_state = "patterning"
+        
+        elif self.boss_move_state == "patterning":
+            start = self.current_pattern["start"]
+            end = self.current_pattern["end"]
+            if self.pattern_direction == "backward":
+                start, end = end, start
+
+            total_distance = end[0] - start[0]
+            elapsed = (current_time - self.pattern_timer) / 1000  # 초 단위
+            move_fraction = min(elapsed / 1.5, 1)  # 1.5초간 이동
+
+            # 보스의 x 이동
+            new_x = start[0] + (end[0] - start[0]) * move_fraction
+            wave_offset = math.sin(current_time * self.wave_frequency) * self.wave_amplitude
+            new_y = start[1] + (end[1] - start[1]) * move_fraction + wave_offset
+
+            self.boss_pos = [new_x, new_y]
+
+            if move_fraction >= 1:
+                # 이동 종료 → 대기 상태로 전환
+                self.boss_move_state = "waiting"
+                self.pattern_timer = current_time
+                self.pattern_duration = 3000 if self.pattern_direction == "forward" else 2000
+        
+        elif self.boss_move_state == "waiting":
+            if current_time - self.pattern_timer >= self.pattern_duration:
+                if self.pattern_direction == "forward":
+                    self.pattern_direction = "backward"
+                    self.boss_move_state = "patterning"
+                    self.pattern_timer = current_time
+                else:
+                    # 패턴 종료 후 새 패턴 선택
+                    self.boss_move_state = "choosing"
+                    
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
 
