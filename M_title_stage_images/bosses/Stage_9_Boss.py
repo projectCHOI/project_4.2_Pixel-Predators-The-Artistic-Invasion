@@ -1,6 +1,7 @@
 import pygame
 import os
 import math
+import random
 
 # 경로 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,13 +28,31 @@ class Stage9Boss:
         self.gem_image = load_image("items", "mob_Jewelry_9.png", size=(40, 40))
 
         # 기본 속성 설정
-        self.boss_pos = [1400, 300]  # 화면 우측 바깥에서 등장
+        self.boss_pos = [600, -100]
+        self.boss_speed = 5
         self.boss_hp = 100
         self.max_boss_hp = 100
         self.boss_active = False
         self.boss_appeared = False
         self.boss_defeated = False
         self.stage_cleared = False
+
+        # 보스 등장
+        self.boss_move_state = "entering"
+        self.enter_target_pos = [600, 160]
+        self.patterns = [
+            {"start": (600, 160), "end": (200, 300)},
+            {"start": (600, 160), "end": (600, 300)},
+            {"start": (600, 160), "end": (1000, 300)},
+        ]
+        self.current_pattern = None
+        self.pattern_direction = "forward"
+        self.pattern_start_time = 0
+        self.pattern_duration = 0
+        self.elapsed_pattern_time = 0
+        self.wave_amplitude = 40
+        self.wave_frequency = 0.01
+        self.pattern_timer = pygame.time.get_ticks()
 
         # 공격 관련
         self.boss_attacks = []
