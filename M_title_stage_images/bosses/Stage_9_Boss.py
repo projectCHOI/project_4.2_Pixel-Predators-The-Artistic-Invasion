@@ -60,7 +60,8 @@ class Stage9Boss:
         self.boss_phase = 1
         self.attack_cooldown = 2000
         self.last_attack_time = 0
-
+        # 조작 반전 효과 종료 시간
+        self.input_reversed_until = 0
         # 보석
         self.gem_active = False
         self.gem_pos = None
@@ -119,7 +120,55 @@ class Stage9Boss:
                 else:
                     # 패턴 종료 후 새 패턴 선택
                     self.boss_move_state = "choosing"
-                    
+
+    def attack(self, player_pos):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= self.attack_cooldown:
+            self.last_attack_time = current_time
+            bx, by = self.boss_pos[0] + 90, self.boss_pos[1] + 90  # 보스 중심
+            px, py = player_pos
+
+            # 방향 벡터 계산
+            dx, dy = px - bx, py - by
+            dist = math.hypot(dx, dy)
+            if dist != 0:
+                dx, dy = dx / dist, dy / dist
+
+            # 속도 적용
+            speed = 8
+            self.boss_attacks.append({
+                "pos": [bx, by],
+                "dir": [dx * speed, dy * speed],
+                "angle": math.degrees(math.atan2(dy, dx))
+            })
+
+    def update_attacks(self, player_pos, is_invincible=False):
+        new_attacks = []
+        player_hit = False
+        effect_triggered = False
+        current_time = pygame.time.get_ticks()
+
+        for attack in self.boss_attacks:
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1]
+            bx, by = attack['pos']
+
+            if 0 <= bx <= 1280 and 0 <= by <= 720:
+                if not is_invincible and self.check_energy_ball_collision((bx, by), player_pos):
+                    player_hit = True
+                    effect_triggered = True  # 키 반전 트리거
+                else:
+                    new_attacks.append(attack)
+
+        self.boss_attacks = new_attacks
+
+        # 키 반전 효과 적용 (5초)
+        if effect_triggered:
+            self.input_reversed_until = current_time + 5000
+            return 1  # 데미지 1 또는 추가 효과
+
+        return 0
+
     def draw(self, win):
         win.blit(self.boss_image, self.boss_pos)
 
