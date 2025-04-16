@@ -17,14 +17,15 @@ def load_image(*path_parts, size=None):
 class Stage9Boss:
     def __init__(self):
         # 이미지 로드
-        self.boss_image = load_image("bosses", "boss_stage9_S.png", size=(180, 180))
-        self.minion_attack_image = load_image("bosses", "boss_stage9_N.png", size=(60, 60))
-        self.attack_images = {
+        self.boss_image = load_image("bosses", "boss_stage9_S.png", size=(180, 180)) # 보스 이미지
+        self.minion_image = load_image("bosses", "boss_stage9_N.png", size=(60, 60)) # 미니언 이미지
+        self.attack_images = load_image("boss_skilles", "boss_stage90_b.png", size=(60, 60)) # 보스 공격 이미지     
+        self.minion_attack_image = {
             "phase1": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)),
             "phase2": load_image("boss_skilles", "boss_stage9_b.png", size=(40, 40)),
             "phase3": load_image("boss_skilles", "boss_stage9_c.png", size=(40, 40)),
             "phase4": load_image("boss_skilles", "boss_stage9_d.png", size=(40, 40))
-        }
+        } # 미니언 공격 이미지
         self.gem_image = load_image("items", "mob_Jewelry_9.png", size=(40, 40))
 
         # 기본 속성 설정
