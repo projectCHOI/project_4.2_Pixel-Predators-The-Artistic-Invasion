@@ -45,12 +45,12 @@ class Stage1Boss:
         # 미니언 리스트 초기화
         self.minions = []
         self.minion_phases = {
-    1: {"start": (1300, 180), "stop": (1000, 350), "end": (1300, 520)},
-    2: {"start": (1000, 850), "stop": (700, 500), "end": (1300, 850)},
-    3: {"start": (125, -150), "stop": (620, 400), "end": (260, 850)},
-    4: {"start": (-150, 400), "stop": (300, 540), "end": (520, 850)},
-    5: {"start": (-150, 700), "stop": (330, 360), "end": (-150, 140)},
-    }
+            1: {"start": (1300, 180), "stop": (1000, 350), "end": (1300, 520)},
+            2: {"start": (1000, 850), "stop": (700, 500), "end": (1300, 850)},
+            3: {"start": (125, -150), "stop": (620, 400), "end": (260, 850)},
+            4: {"start": (-150, 400), "stop": (300, 540), "end": (520, 850)},
+            5: {"start": (-150, 700), "stop": (330, 360), "end": (-150, 140)},
+            }
         self.last_minion_spawn_time = pygame.time.get_ticks()
 
         self.current_pattern = None
@@ -183,7 +183,32 @@ class Stage1Boss:
             pygame.draw.rect(win, (255, 255, 255), (80, 680, max_width, height), 2)
 
     # 미니언
+    def spawn_minions(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_minion_spawn_time >= 5000:
+            self.last_minion_spawn_time = current_time
+            phase = random.randint(1, 5)
+            p = self.minion_phases[phase]
+            direction = self._get_direction(p["start"], p["stop"])
+            minion = {
+                "phase": phase,
+                "pos": list(p["start"]),
+                "state": "entering",
+                "target_pos": p["stop"],
+                "exit_pos": p["end"],
+                "speed": 4,
+                "direction": direction,
+                "wait_timer": None,
+            }
+            self.minions.append(minion)
 
+    def _get_direction(self, start, end):
+        dx = end[0] - start[0]
+        dy = end[1] - start[1]
+        dist = math.hypot(dx, dy)
+        if dist == 0:
+            return [0, 0]
+        return [dx / dist, dy / dist]
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
