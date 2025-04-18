@@ -605,21 +605,38 @@ while run:
 
         # boss8의 플레이어 이동
         player_speed = boss.get_player_speed()
+        # boss9의 효과
+        input_reversed = hasattr(boss, "is_input_reversed") and boss.is_input_reversed()
 
         # 플레이어 이동 처리
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            player_pos[0] -= player_speed
-            player_image = player_image2
-        if keys[pygame.K_d]:
-            player_pos[0] += player_speed
-            player_image = player_image1
-        if keys[pygame.K_w]:
-            player_pos[1] -= player_speed
-            player_image = player_image1
-        if keys[pygame.K_s]:
-            player_pos[1] += player_speed
-            player_image = player_image2
+        if not input_reversed:
+            if keys[pygame.K_a]:
+                player_pos[0] -= player_speed
+                player_image = player_image2
+            if keys[pygame.K_d]:
+                player_pos[0] += player_speed
+                player_image = player_image1
+            if keys[pygame.K_w]:
+                player_pos[1] -= player_speed
+                player_image = player_image1
+            if keys[pygame.K_s]:
+                player_pos[1] += player_speed
+                player_image = player_image2
+        # boss9 반전 상태
+        else:
+            if keys[pygame.K_d]:
+                player_pos[0] -= player_speed
+                player_image = player_image2
+            if keys[pygame.K_a]:
+                player_pos[0] += player_speed
+                player_image = player_image1
+            if keys[pygame.K_s]:
+                player_pos[1] -= player_speed
+                player_image = player_image1
+            if keys[pygame.K_w]:
+                player_pos[1] += player_speed
+                player_image = player_image2
 
         # 플레이어가 화면 밖으로 나가지 않도록 제한
         player_pos[0] = max(0, min(player_pos[0], win_width - player_width))
