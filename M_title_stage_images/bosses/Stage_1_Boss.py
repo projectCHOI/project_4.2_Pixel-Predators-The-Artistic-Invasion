@@ -42,6 +42,17 @@ class Stage1Boss:
             {"start": (600, 160), "end": (600, 300)},
             {"start": (600, 160), "end": (1000, 300)}
         ]
+        # 미니언 리스트 초기화
+        self.minions = []
+        self.minion_phases = {
+    1: {"start": (1300, 180), "stop": (1000, 350), "end": (1300, 520)},
+    2: {"start": (1000, 850), "stop": (700, 500), "end": (1300, 850)},
+    3: {"start": (125, -150), "stop": (620, 400), "end": (260, 850)},
+    4: {"start": (-150, 400), "stop": (300, 540), "end": (520, 850)},
+    5: {"start": (-150, 700), "stop": (330, 360), "end": (-150, 140)},
+    }
+        self.last_minion_spawn_time = pygame.time.get_ticks()
+
         self.current_pattern = None
         self.pattern_direction = "forward"
         self.pattern_timer = pygame.time.get_ticks()
@@ -170,6 +181,9 @@ class Stage1Boss:
             pygame.draw.rect(win, (50, 50, 50), (80, 680, max_width, height))
             pygame.draw.rect(win, (210, 20, 4), (80, 680, int(max_width * ratio), height))
             pygame.draw.rect(win, (255, 255, 255), (80, 680, max_width, height), 2)
+
+    # 미니언
+
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
