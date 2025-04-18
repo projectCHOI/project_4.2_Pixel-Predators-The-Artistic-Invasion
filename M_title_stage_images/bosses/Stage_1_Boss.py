@@ -209,6 +209,36 @@ class Stage1Boss:
         if dist == 0:
             return [0, 0]
         return [dx / dist, dy / dist]
+    
+    def update_minion_behavior(self):
+        current_time = pygame.time.get_ticks()
+        for minion in self.minions[:]:
+            pos = minion["pos"]
+            speed = minion["speed"]
+
+            if minion["state"] == "entering":
+                self._move_towards(minion, minion["target_pos"])
+                if self._is_arrived(pos, minion["target_pos"]):
+                    minion["state"] = "stopping"
+                    minion["wait_timer"] = current_time
+
+            elif minion["state"] == "stopping":
+                if current_time - minion["wait_timer"] >= 1000:  # 1초 정지
+                    minion["state"] = "exiting"
+                    minion["direction"] = self._get_direction(pos, minion["exit_pos"])
+
+            elif minion["state"] == "exiting":
+                self._move_towards(minion, minion["exit_pos"])
+                if self._is_arrived(pos, minion["exit_pos"]):
+                    self.minions.remove(minion)  # 화면 밖으로 나가면 제거
+
+    def _move_towards(self, minion, target):
+        dir = minion["direction"]
+        minion["pos"][0] += dir[0] * minion["speed"]
+        minion["pos"][1] += dir[1] * minion["speed"]
+
+    def _is_arrived(self, pos, target, tolerance=10):
+        return math.hypot(pos[0] - target[0], pos[1] - target[1]) <= tolerance
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
