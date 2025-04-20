@@ -927,6 +927,7 @@ while run:
             boss.draw_minion_attacks(win)
             boss.update_minion_behavior()
             boss.update_minion_attacks()
+            damage = boss.check_minion_collision(player_pos)
         elif boss and boss.gem_active:
             boss.draw_gem(win)
 
