@@ -215,22 +215,31 @@ class Stage1Boss:
         for minion in self.minions[:]:
             pos = minion["pos"]
             speed = minion["speed"]
+            phase = minion["phase"]
 
             if minion["state"] == "entering":
                 self._move_towards(minion, minion["target_pos"])
                 if self._is_arrived(pos, minion["target_pos"]):
                     minion["state"] = "stopping"
                     minion["wait_timer"] = current_time
+                    minion["attack_timer"] = current_time
 
             elif minion["state"] == "stopping":
-                if current_time - minion["wait_timer"] >= 1000:  # 1초 정지
-                    minion["state"] = "exiting"
-                    minion["direction"] = self._get_direction(pos, minion["exit_pos"])
+                if current_time - minion["wait_timer"] >= 1000:
+                    if minion["shots_fired"] < 3:
+                        if current_time - minion["attack_timer"] >= 1000:
+                            self._minion_attack(minion)
+                            minion["attack_timer"] = current_time
+                            minion["shots_fired"] += 1
+                    else:
+                        if current_time - minion["attack_timer"] >= 1000:
+                            minion["state"] = "exiting"
+                            minion["direction"] = self._get_direction(pos, minion["exit_pos"])
 
             elif minion["state"] == "exiting":
                 self._move_towards(minion, minion["exit_pos"])
                 if self._is_arrived(pos, minion["exit_pos"]):
-                    self.minions.remove(minion)  # 화면 밖으로 나가면 제거
+                    self.minions.remove(minion)
 
     def _move_towards(self, minion, target):
         dir = minion["direction"]
