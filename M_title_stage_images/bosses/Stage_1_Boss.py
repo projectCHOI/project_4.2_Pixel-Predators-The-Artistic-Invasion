@@ -241,6 +241,39 @@ class Stage1Boss:
                 if self._is_arrived(pos, minion["exit_pos"]):
                     self.minions.remove(minion)
 
+    def _minion_attack(self, minion):
+        phase = minion["phase"]
+        cx, cy = minion["pos"]
+        if phase == 1:
+            angles = [-60 + i * 12 for i in range(11)]
+        elif phase == 2:
+            angles = [i * 18 for i in range(20)]
+        elif phase == 3:
+            base = pygame.time.get_ticks() % 360
+            angles = [(base + i * 18) % 360 for i in range(20)]
+        elif phase == 4:
+            angles = [60 - i * 12 for i in range(11)]
+        elif phase == 5:
+            angles = [-30 + i * 30 for i in range(3)]
+        else:
+            angles = []
+
+        for angle in angles:
+            rad = math.radians(angle)
+            dx = math.cos(rad) * 6
+            dy = math.sin(rad) * 6
+            minion["attacks"].append({"pos": [cx, cy], "dir": [dx, dy]})
+
+    def update_minion_attacks(self):
+        for minion in self.minions:
+            new_attacks = []
+            for atk in minion["attacks"]:
+                atk["pos"][0] += atk["dir"][0]
+                atk["pos"][1] += atk["dir"][1]
+                if 0 <= atk["pos"][0] <= 1280 and 0 <= atk["pos"][1] <= 720:
+                    new_attacks.append(atk)
+            minion["attacks"] = new_attacks
+
     def _move_towards(self, minion, target):
         dir = minion["direction"]
         minion["pos"][0] += dir[0] * minion["speed"]
@@ -259,7 +292,11 @@ class Stage1Boss:
 
     def draw_minion_attacks(self, win):
         for minion in self.minions:
-            win.blit(self.minion_image, minion["pos"])
+            phase_key = f"phase{minion["phase"]}"
+            for atk in minion["attacks"]:
+                rotated_image = pygame.transform.rotate(self.minion_attack_image[phase_key], 0)
+                rect = rotated_image.get_rect(center=atk["pos"])
+                win.blit(rotated_image, rect)
 
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
