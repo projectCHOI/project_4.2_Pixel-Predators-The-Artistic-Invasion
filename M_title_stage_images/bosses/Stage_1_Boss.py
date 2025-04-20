@@ -240,6 +240,18 @@ class Stage1Boss:
     def _is_arrived(self, pos, target, tolerance=10):
         return math.hypot(pos[0] - target[0], pos[1] - target[1]) <= tolerance
 
+    def check_minion_collision(self, player_pos):
+        player_rect = pygame.Rect(player_pos[0], player_pos[1], 50, 50)
+        for minion in self.minions:
+            minion_rect = pygame.Rect(minion["pos"][0], minion["pos"][1], 60, 60)
+            if player_rect.colliderect(minion_rect):
+                return 2  # 데미지 2
+        return 0
+
+    def draw_minion_attacks(self, win):
+        for minion in self.minions:
+            win.blit(self.minion_image, minion["pos"])
+
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time < self.boss_invincible_duration):
@@ -289,15 +301,3 @@ class Stage1Boss:
 
     def get_player_speed(self):
         return 10
-
-    def spawn_minions(self):
-        pass
-
-    def update_minion_behavior(self):
-        pass
-
-    def update_minion_attacks(self):
-        pass
-
-    def draw_minion_attacks(self, win):
-        pass
