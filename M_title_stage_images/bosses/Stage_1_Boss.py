@@ -298,6 +298,14 @@ class Stage1Boss:
                 rect = rotated_image.get_rect(center=atk["pos"])
                 win.blit(rotated_image, rect)
 
+    def check_minion_attack_collision(self, player_pos):
+        player_rect = pygame.Rect(player_pos[0], player_pos[1], 50, 50)
+        for minion in self.minions:
+            for atk in minion["attacks"]:
+                if player_rect.collidepoint(atk["pos"]):
+                    return 1
+        return 0
+    
     def check_hit(self, attacks):
         current_time = pygame.time.get_ticks()
         if self.boss_hit and (current_time - self.boss_hit_start_time < self.boss_invincible_duration):
