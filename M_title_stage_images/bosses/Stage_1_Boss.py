@@ -198,10 +198,83 @@ class Stage1Boss:
                 "exit_pos": p["end"],
                 "speed": 4,
                 "direction": direction,
-                "wait_timer": None,
+                 "wait_timer": None,
+                 "attack_timer": current_time,
+                 "shots_fired": 0,               
+                 "attacks": []                  
             }
             self.minions.append(minion)
 
+    def update_minion_behavior(self):
+        current_time = pygame.time.get_ticks()
+        for minion in self.minions[:]:
+            pos = minion["pos"]
+            speed = minion["speed"]
+            phase = minion["phase"]
+
+            if minion["state"] == "entering":
+                # 이동 후 정지 상태 진입
+                self._move_towards(minion, minion["target_pos"])
+                if self._is_arrived(pos, minion["target_pos"]):
+                    minion["state"] = "stopping"
+                    minion["wait_timer"] = current_time
+                    minion["attack_timer"] = current_time  # 공격 시작 시간 초기화
+                    minion["shots_fired"] = 0            # 공격 횟수 초기화
+
+            elif minion["state"] == "stopping":
+                # 1초 정지 후 공격 시작
+                if current_time - minion["wait_timer"] < 1000:
+                    continue
+                # 3회 공격
+                if minion["shots_fired"] < 3:
+                    if current_time - minion["attack_timer"] >= 1000:
+                        self._minion_attack(minion)
+                        minion["attack_timer"] = current_time
+                        minion["shots_fired"] += 1
+                else:
+                    # 마지막 공격 후 1초 대기 후 퇴장
+                    if current_time - minion["attack_timer"] >= 1000:
+                        minion["state"] = "exiting"
+                        minion["direction"] = self._get_direction(pos, minion["exit_pos"])
+
+            elif minion["state"] == "exiting":
+                # 퇴장 경로로 이동 후 제거
+                self._move_towards(minion, minion["exit_pos"])
+                if self._is_arrived(pos, minion["exit_pos"]):
+                    self.minions.remove(minion)
+
+    def _spawn_minion_attack(self, minion):
+        speed = 6
+        x, y = minion['pos']
+        ph = minion['phase']
+        bullets = []
+        if ph == 1:
+            for i in range(11):
+                angle = 135 + i * (90 / 10)
+                rad = math.radians(angle)
+                bullets.append({'pos': [x, y], 'dir': [math.cos(rad) * speed, math.sin(rad) * speed]})
+        elif ph == 2:
+            for i in range(20):
+                angle = i * 18
+                rad = math.radians(angle)
+                bullets.append({'pos': [x, y], 'dir': [math.cos(rad) * speed, math.sin(rad) * speed]})
+        elif ph == 3:
+            offset = (minion['attacks_done'] * 10) % 360
+            for i in range(20):
+                angle = offset + i * 18
+                rad = math.radians(angle)
+                bullets.append({'pos': [x, y], 'dir': [math.cos(rad) * speed, math.sin(rad) * speed]})
+        elif ph == 4:
+            for i in range(11):
+                angle = -45 + i * (90 / 10)
+                rad = math.radians(angle)
+                bullets.append({'pos': [x, y], 'dir': [math.cos(rad) * speed, math.sin(rad) * speed]})
+        elif ph == 5:
+            for angle in [-15, 0, 15]:
+                rad = math.radians(angle)
+                bullets.append({'pos': [x, y], 'dir': [math.cos(rad) * speed, math.sin(rad) * speed]})
+        minion['attacks'].extend(bullets)
+    
     def _get_direction(self, start, end):
         dx = end[0] - start[0]
         dy = end[1] - start[1]
