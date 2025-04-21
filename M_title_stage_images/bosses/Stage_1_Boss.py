@@ -16,7 +16,7 @@ def load_image(*path_parts, size=None):
 class Stage1Boss:
     def __init__(self):
         self.boss_image = load_image("bosses", "boss_stage9_S.png", size=(180, 180))
-        self.minion_image = load_image("boss_skilles", "boss_stage9_N.png", size=(60, 60))
+        self.minion_image = load_image("bosses", "boss_stage9_N.png", size=(60, 60))
         self.attack_image = load_image("boss_skilles", "boss_stage90_b.png", size=(60, 60))
         self.minion_attack_image = {
             "phase1": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)),
