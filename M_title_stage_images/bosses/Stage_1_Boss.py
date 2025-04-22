@@ -114,24 +114,25 @@ class Stage1Boss:
                 else:
                     self.boss_move_state = "choosing"
 
-    def attack(self, player_pos=None):
-        if player_pos is not None:
-            self.player_pos = player_pos
-        if not self.player_pos:
+    def attack(self):
+        if self.player_pos is None:
             return
 
         current_time = pygame.time.get_ticks()
         if current_time - self.last_attack_time >= self.attack_cooldown:
             self.last_attack_time = current_time
             bx, by = self.boss_pos[0] + 90, self.boss_pos[1] + 90
-            px, py = player_pos
             px, py = self.player_pos
             dx, dy = px - bx, py - by
             dist = math.hypot(dx, dy)
             if dist != 0:
                 dx, dy = dx / dist, dy / dist
             speed = 8
-            self.boss_attacks.append({"pos": [bx, by], "dir": [dx * speed, dy * speed], "angle": math.degrees(math.atan2(dy, dx))})
+            self.boss_attacks.append({
+                "pos": [bx, by], 
+                "dir": [dx * speed, dy * speed], 
+                "angle": math.degrees(math.atan2(dy, dx))
+                })
 
     def update_attacks(self, player_pos, is_invincible=False):
         self.player_pos = player_pos
