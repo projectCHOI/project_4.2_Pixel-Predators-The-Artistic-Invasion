@@ -171,6 +171,10 @@ class Stage1Boss:
             else:
                 win.blit(self.boss_image, self.boss_pos)
 
+    def draw_minions(self, win):
+        for minion in self.minions:
+            win.blit(self.minion_image, minion["pos"])
+
     def draw_attacks(self, win):
         for attack in self.boss_attacks:
             rotated = pygame.transform.rotate(self.attack_image, attack["angle"])
