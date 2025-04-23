@@ -924,6 +924,7 @@ while run:
             boss.draw_attacks(win)
             boss.draw_health_bar(win, font)
             # 미니 보스
+            boss.draw_minions(win)
             boss.draw_minion_attacks(win)
             boss.update_minion_behavior()
             boss.update_minion_attacks()
