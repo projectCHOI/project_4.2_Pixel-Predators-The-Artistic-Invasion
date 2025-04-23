@@ -23,7 +23,8 @@ class Stage1Boss:
             "phase1": load_image("boss_skilles", "boss_stage9_a.png", size=(40, 40)),
             "phase2": load_image("boss_skilles", "boss_stage9_b.png", size=(40, 40)),
             "phase3": load_image("boss_skilles", "boss_stage9_c.png", size=(40, 40)),
-            "phase4": load_image("boss_skilles", "boss_stage9_d.png", size=(40, 40))
+            "phase4": load_image("boss_skilles", "boss_stage9_d.png", size=(40, 40)),
+            "phase5": load_image("boss_skilles", "boss_stage9_e.png", size=(40, 40))
         }
         self.gem_image = load_image("items", "mob_Jewelry_9.png", size=(40, 40))
 
