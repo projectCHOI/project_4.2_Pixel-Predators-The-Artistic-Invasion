@@ -278,5 +278,8 @@ class Stage1Boss:
             return True
         return False
 
+    def draw_minions(self, win):
+        pass
+
     def get_player_speed(self):
         return 10
