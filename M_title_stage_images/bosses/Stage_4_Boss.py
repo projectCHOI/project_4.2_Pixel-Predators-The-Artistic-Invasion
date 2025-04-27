@@ -238,5 +238,11 @@ class Stage4Boss:
             return True
         return False
 
+    def draw_minions(self, win):
+        pass
+    
+    def check_minion_collision(self, player_pos):
+        return 0
+    
     def get_player_speed(self):
         return 10

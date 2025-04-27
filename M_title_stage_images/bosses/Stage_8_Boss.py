@@ -385,3 +385,9 @@ class Stage8Boss:
         if rect.clipline(line):
             return True
         return False
+
+    def draw_minions(self, win):
+        pass
+    
+    def check_minion_collision(self, player_pos):
+        return 0

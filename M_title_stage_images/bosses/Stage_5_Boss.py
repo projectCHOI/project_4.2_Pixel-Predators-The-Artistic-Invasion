@@ -418,6 +418,12 @@ class Stage5Boss:
         self.boss_appeared = False
         self.state = "appear"
         self.state_start_time = pygame.time.get_ticks()
-   
+
+    def draw_minions(self, win):
+        pass
+    
+    def check_minion_collision(self, player_pos):
+        return 0
+    
     def get_player_speed(self):
         return 10
