@@ -682,16 +682,22 @@ while run:
             # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
             if boss.gem_active:
                 if boss.check_gem_collision(player_pos):
-                    level += 1  # 다음 스테이지로 이동
+                    level += 1
+                    if level > 9:  # Stage 9을 끝낸 다음이라면
+                        game_active = False
+                        game_over = True
+                        game_over_reason = "victory"
+                        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
+                        continue
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
-                    boss = initialize_boss(level)  # 다음 레벨에 맞는 보스 초기화
+                    boss = initialize_boss(level)
                     if boss:
                         boss.reset()
-                    enemies = []  # 적 목록 초기화
-                    start_ticks = pygame.time.get_ticks()  # 스테이지 시작 시간 갱신
+                    enemies = []
+                    start_ticks = pygame.time.get_ticks()
                     stage_start_ticks = pygame.time.get_ticks()
-                    intro_screen(level)  # 다음 스테이지 인트로 화면 표시
-                    continue  # 루프의 나머지 부분을 건너뛰고 다음 스테이지로 이동
+                    intro_screen(level)
+                    continue
 
         # 적 이동 및 행동 처리
         for enemy in enemies:
