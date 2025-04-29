@@ -221,6 +221,12 @@ def draw_end_screen():
     if game_end_time is not None:
         time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
         win.blit(time_text, (580, 340))
+    # 종료 난이도
+    if level == 9 and game_over_reason == "victory":
+        stage_text = font.render("ALL CLEAR", True, (255, 255, 0))  # 노란색으로
+    else:
+        stage_text = font.render(f"Stage {level}", True, (255, 255, 0))  # 노란색으로
+    win.blit(stage_text, (580, 380))
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
