@@ -227,6 +227,15 @@ def draw_end_screen():
     else:
         stage_text = font.render(f"Stage {level}", True, (255, 255, 0))  # 노란색으로
     win.blit(stage_text, (580, 380))
+    
+    # 보석 이미지 출력 (가로 정렬)
+    gem_size = 40
+    start_x = (win_width - (len(collected_gems) * (gem_size + 10))) // 2
+    y = 440  # 버튼보다 위
+
+    for i, gem_img in enumerate(collected_gems):
+        scaled_img = pygame.transform.scale(gem_img, (gem_size, gem_size))
+        win.blit(scaled_img, (start_x + i * (gem_size + 10), y)) 
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
@@ -681,7 +690,7 @@ while run:
 
             # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
             collected_gems = []
-            
+
             if boss.gem_active:
                 if boss.check_gem_collision(player_pos):
                     if hasattr(boss, 'gem_image'):
