@@ -145,6 +145,7 @@ game_active = False
 invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
+collected_gems = [] # 보석 획득
 
 # 보스 초기화 함수 정의
 def initialize_boss(level):
@@ -228,14 +229,15 @@ def draw_end_screen():
         stage_text = font.render(f"Stage {level}", True, (255, 255, 0))  # 노란색으로
     win.blit(stage_text, (580, 380))
     
-    # 보석 이미지 출력 (가로 정렬)
+    # 보석 이미지 출력
     gem_size = 40
     start_x = (win_width - (len(collected_gems) * (gem_size + 10))) // 2
-    y = 440  # 버튼보다 위
+    y = 440  # 버튼 위쪽
 
     for i, gem_img in enumerate(collected_gems):
         scaled_img = pygame.transform.scale(gem_img, (gem_size, gem_size))
-        win.blit(scaled_img, (start_x + i * (gem_size + 10), y)) 
+        win.blit(scaled_img, (start_x + i * (gem_size + 10), y))
+
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
@@ -688,15 +690,12 @@ while run:
             # 보스가 공격받았는지 체크
             boss.check_hit(attacks)
 
-            # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
-            collected_gems = []
-
             if boss.gem_active:
                 if boss.check_gem_collision(player_pos):
                     if hasattr(boss, 'gem_image'):
                         collected_gems.append(boss.gem_image)
                     level += 1
-                    if level > 9:  # Stage 9을 끝낸 다음이라면
+                    if level > 9:
                         game_active = False
                         game_over = True
                         game_over_reason = "victory"
