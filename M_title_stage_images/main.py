@@ -680,8 +680,12 @@ while run:
             boss.check_hit(attacks)
 
             # 보스의 보석과 플레이어의 충돌 체크 및 스테이지 진행
+            collected_gems = []
+            
             if boss.gem_active:
                 if boss.check_gem_collision(player_pos):
+                    if hasattr(boss, 'gem_image'):
+                        collected_gems.append(boss.gem_image)
                     level += 1
                     if level > 9:  # Stage 9을 끝낸 다음이라면
                         game_active = False
