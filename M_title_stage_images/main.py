@@ -202,7 +202,8 @@ selected_option = "main"  # 기본값
 
 def draw_end_screen():
     global selected_option
-
+    global game_end_time
+    
     if game_over_reason == "victory":
         image = victory_image
     elif game_over_reason == "game_over":
