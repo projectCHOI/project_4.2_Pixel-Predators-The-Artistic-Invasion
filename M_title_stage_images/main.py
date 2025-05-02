@@ -230,7 +230,7 @@ def draw_end_screen():
     if level == 9 and game_over_reason == "victory":
         stage_text = font.render("ALL CLEAR", True, (255, 255, 0))  # 노란색으로
     else:
-        stage_text = font.render(f"Stage {level}", True, (255, 255, 0))  # 노란색으로
+        stage_text = font.render(f"플레이 Stage {level}", True, (255, 255, 0))  # 노란색으로
     win.blit(stage_text, (580, 380))
     
     # 보석 이미지 출력
