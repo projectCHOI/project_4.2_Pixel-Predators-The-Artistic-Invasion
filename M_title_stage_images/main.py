@@ -513,6 +513,8 @@ while run:
         if not game_over:
             title_screen()
         else:
+            if game_end_time is None:
+                game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
             draw_end_screen()
 
         for event in pygame.event.get():
