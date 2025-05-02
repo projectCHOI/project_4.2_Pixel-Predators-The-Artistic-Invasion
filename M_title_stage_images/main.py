@@ -219,6 +219,9 @@ def draw_end_screen():
     win.blit(enemy_text, (580, 300))
 
     # 게임 시간 표시
+    if game_over and game_end_time is None:
+        game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
+
     if game_end_time is not None:
         time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
         win.blit(time_text, (580, 340))
