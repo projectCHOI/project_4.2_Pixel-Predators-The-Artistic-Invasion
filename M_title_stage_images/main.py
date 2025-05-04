@@ -215,23 +215,41 @@ def draw_end_screen():
 
     win.blit(image, (0, 0))
 
-    # 제거한 적 수 표시
-    enemy_text = font.render(f"제거한 적 : {enemies_defeated}", True, (255, 255, 255))
-    win.blit(enemy_text, (580, 340))
+    # 제거한 적 텍스트 분리 렌더링
+    enemy_text1 = font.render("제거한 적 :", True, (255, 255, 255))
+    enemy_text2 = font.render(str(enemies_defeated), True, (255, 255, 0))
+    x = 580 
+    y = 340
+    win.blit(enemy_text1, (x, y))
+    win.blit(enemy_text2, (x + enemy_text1.get_width() + 10, y))
 
     # 게임 시간 표시
     if game_over and game_end_time is None:
         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
 
     if game_end_time is not None:
-        time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
-        win.blit(time_text, (580, 380))
+        time_text1 = font.render("게임 시간 :", True, (255, 255, 255))
+        time_text2 = font.render(f"{game_end_time}초", True, (255, 255, 0))
+
+        x = 580
+        y = 380
+
+        win.blit(time_text1, (x, y))
+        win.blit(time_text2, (x + time_text1.get_width() + 10, y))
+
     # 종료 난이도
+    x = 580
+    y = 420
+
     if level == 9 and game_over_reason == "victory":
-        stage_text = font.render("ALL CLEAR", True, (255, 255, 0))  # 노란색으로
+        stage_text = font.render("ALL CLEAR", True, (255, 255, 0))
+        win.blit(stage_text, (x, y))
     else:
-        stage_text = font.render(f"플레이 Stage {level}", True, (255, 255, 0))  # 노란색으로
-    win.blit(stage_text, (580, 420))
+        stage_label = font.render("도전 단계 :", True, (255, 255, 255))
+        stage_value = font.render(f"Stage {level}", True, (255, 255, 0))
+
+    win.blit(stage_label, (x, y))
+    win.blit(stage_value, (x + stage_label.get_width() + 10, y))
     
     # 보석 이미지 출력
     gem_size = 40
