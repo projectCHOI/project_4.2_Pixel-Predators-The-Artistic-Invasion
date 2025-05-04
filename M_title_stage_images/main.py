@@ -527,6 +527,11 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
     for enemy in enemies:
         enemy_pos, enemy_size, enemy_type, _, _, _, _, enemy_image, _ = enemy
         win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+    # 그룹 유닛 그리기
+    for unit in group_units:
+        pos, size, _, _, _, _, _, image, _, _, _, alive = unit
+        if alive:
+            win.blit(image, (pos[0], pos[1]))
     # 아이템 및 플레이어 그리기
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
@@ -906,6 +911,28 @@ while run:
             if not hit:
                 new_enemies.append(enemy)
         enemies = new_enemies
+
+        # 그룹 유닛 충돌 체크
+        new_group = []
+        group_ids_to_kill = set()
+
+        for unit in group_units:
+            pos, size, _, _, _, _, _, _, _, group_id, index_in_group, alive = unit
+            if not alive:
+                new_group.append(unit)
+                continue
+            hit = False
+            for atk in attacks:
+                if check_attack_collision(atk[0], atk[1], pos, size):
+                    if index_in_group == 0:
+                        group_ids_to_kill.add(group_id)  # 앞 유닛이 맞으면 그룹 전체 죽이기
+                    hit = True
+                    break
+            if not hit:
+                new_group.append(unit)
+
+        # 그룹 전체 사망 처리
+        group_units = [u if u[9] not in group_ids_to_kill else [*u[:11], 0] for u in new_group]
 
         # 플레이어와 적의 충돌 체크
         if not invincible:
