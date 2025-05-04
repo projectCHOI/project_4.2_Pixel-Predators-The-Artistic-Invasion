@@ -403,6 +403,24 @@ def generate_enemies(level):
 
     enemies = []
 
+    if level >= 4 and random.random() < 0.4:  # 40% 등장
+        base_x = random.randint(100, win_width - 100)
+        base_y = 0
+        group_id = random.randint(1000, 9999)
+        for i in range(5):
+            if i == 0:
+                size = 50  # 앞 유닛
+            else:
+                size = 30  # 뒤 유닛
+            enemy_type = "group_unit"
+            pos = [base_x, base_y + i * (size + 5)]
+            direction = [0, 0]
+            image = enemy_images["down"]
+            enemies.append([
+                pos, size, enemy_type, direction, 3, None, 0, image, 3, group_id, i, 1
+            ])
+        return enemies
+    
     for _ in range(num_enemies):
         direction = random.choice(directions)
         size = random.choice(sizes)
