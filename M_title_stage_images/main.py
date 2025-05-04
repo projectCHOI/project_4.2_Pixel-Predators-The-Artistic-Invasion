@@ -200,6 +200,10 @@ time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
 
 selected_option = "main"  # 기본값
 
+# group_units 업로드
+group_units = []  # 그룹 단위 적 리스트
+group_last_action_time = {}
+
 def draw_end_screen():
     global selected_option
     global game_end_time
@@ -699,6 +703,32 @@ while run:
         if random.random() < 0.02:  # 2% 확률로 적 생성
             new_enemies = generate_enemies(level)
             enemies.extend(new_enemies)
+
+        # 그룹 단위 유닛 생성
+        if random.random() < 0.02:
+            group_id = pygame.time.get_ticks()  
+            group_start_x = random.randint(100, win_width - 100)
+            group_start_y = 0  
+
+            for i in range(5):
+                size = 50 if i == 0 else 30
+                image = sentinel_shooter_left if size == 50 else ambush_striker_left
+                unit = [
+                    [group_start_x, group_start_y + i * (size + 5)],  # pos
+                    size,
+                    "group_unit",   # type
+                    [0, 1],         # 기본 아래 방향
+                    3,              # speed
+                    None,
+                    0,
+                    image,
+                    3,              # original speed
+                    group_id,       # 그룹 ID
+                    i,              # 몇 번째 유닛인지 (0~4)
+                    1               # alive: 1 = 살아있음
+                ]
+                group_units.append(unit)
+            group_last_action_time[group_id] = pygame.time.get_ticks()
 
         # bomb 적 생성
         if level in bomb_stages and pygame.time.get_ticks() - bomb_last_appear_time > bomb_appear_interval:
