@@ -829,6 +829,44 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
+        # 그룹 유닛 행동 처리
+        current_time = pygame.time.get_ticks()
+        new_group_units = []
+
+        for unit in group_units:
+            pos, size, enemy_type, direction, speed, _, _, image, _, group_id, index_in_group, alive = unit
+
+            if not alive:
+                continue
+
+            # 이동
+            dx, dy = random.choice([-1, 0, 1]), random.choice([-1, 0, 1])
+            pos[0] += dx * speed
+            pos[1] += dy * speed
+            pos[0] = max(0, min(pos[0], win_width - size))
+            pos[1] = max(0, min(pos[1], win_height - size))
+
+            # 공격 (2.5초 주기)
+            if current_time - group_last_action_time[group_id] >= 2500:
+                group_last_action_time[group_id] = current_time
+
+                if index_in_group == 0:  # 맨 앞 유닛은 원형 공격
+                    for angle in range(0, 360, 30):
+                        rad = math.radians(angle)
+                        dx, dy = math.cos(rad), math.sin(rad)
+                        energy_balls.append([pos[0] + size//2, pos[1] + size//2, "green", [dx, dy]])
+                else:  # 뒤에 있는 유닛은 플레이어를 향한 에너지볼
+                    dx = player_pos[0] - pos[0]
+                    dy = player_pos[1] - pos[1]
+                    dist = math.hypot(dx, dy)
+                    if dist != 0:
+                        energy_balls.append([pos[0] + size//2, pos[1] + size//2, "green", [dx/dist, dy/dist]])
+
+            unit[0] = pos
+            new_group_units.append(unit)
+
+        group_units = new_group_units
+
         # 공격 이동 및 위치 업데이트
         new_attacks = []
         for attack in attacks:
