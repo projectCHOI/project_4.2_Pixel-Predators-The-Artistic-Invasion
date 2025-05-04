@@ -217,7 +217,7 @@ def draw_end_screen():
 
     # 제거한 적 수 표시
     enemy_text = font.render(f"제거한 적 : {enemies_defeated}", True, (255, 255, 255))
-    win.blit(enemy_text, (580, 300))
+    win.blit(enemy_text, (580, 340))
 
     # 게임 시간 표시
     if game_over and game_end_time is None:
@@ -225,18 +225,18 @@ def draw_end_screen():
 
     if game_end_time is not None:
         time_text = font.render(f"게임 시간 : {game_end_time}초", True, (255, 255, 255))
-        win.blit(time_text, (580, 340))
+        win.blit(time_text, (580, 380))
     # 종료 난이도
     if level == 9 and game_over_reason == "victory":
         stage_text = font.render("ALL CLEAR", True, (255, 255, 0))  # 노란색으로
     else:
         stage_text = font.render(f"플레이 Stage {level}", True, (255, 255, 0))  # 노란색으로
-    win.blit(stage_text, (580, 380))
+    win.blit(stage_text, (580, 420))
     
     # 보석 이미지 출력
     gem_size = 40
     start_x = (win_width - (len(collected_gems) * (gem_size + 10))) // 2
-    y = 440  # 버튼 위쪽
+    y = 480  # 버튼 위쪽
 
     for i, gem_img in enumerate(collected_gems):
         scaled_img = pygame.transform.scale(gem_img, (gem_size, gem_size))
@@ -245,8 +245,8 @@ def draw_end_screen():
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
-    main_x = 240 
-    continue_x = 880
+    main_x = 330 
+    continue_x = 790
     y = 580
 
     # Main 버튼
