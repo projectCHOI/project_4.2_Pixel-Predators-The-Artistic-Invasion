@@ -426,12 +426,23 @@ def generate_enemies(level):
         return enemies
     
     for _ in range(num_enemies):
-        direction = random.choice(directions)
         size = random.choice(sizes)
+        direction = random.choice(directions)
         pos = [0, 0]
         image = enemy_images["up"]
 
-        if direction == (0, 1):  # 상단에서
+        if size == 20:
+            enemy_type = "approach_and_shoot"
+            spawn_y = random.choice([650, 100])          
+            pos = [win_width + 10, spawn_y]               
+            direction = (-1, 0)                           
+            image = enemy_images["left"]                  
+            enemies.append([pos, size, enemy_type,
+                            direction, speed,
+                            None, 0, image, speed])
+            continue
+
+        if direction == (0, 1):    # 위쪽에서
             pos = [random.randint(0, win_width - size), 0]
             if size == 40:
                 image = enemy_images["up"]
@@ -439,7 +450,8 @@ def generate_enemies(level):
                 image = ambush_striker_up
             else:
                 image = sentinel_shooter_left
-        elif direction == (0, -1):  # 하단에서
+
+        elif direction == (0, -1): # 아래쪽에서
             pos = [random.randint(0, win_width - size), win_height - size]
             if size == 40:
                 image = enemy_images["down"]
@@ -447,7 +459,8 @@ def generate_enemies(level):
                 image = ambush_striker_down
             else:
                 image = sentinel_shooter_left
-        elif direction == (1, 0):  # 좌측에서
+
+        elif direction == (1, 0):  # 왼쪽에서
             pos = [0, random.randint(0, win_height - size)]
             if size == 40:
                 image = enemy_images["left"]
@@ -455,7 +468,8 @@ def generate_enemies(level):
                 image = ambush_striker_left
             else:
                 image = sentinel_shooter_right
-        elif direction == (-1, 0):  # 우측에서
+
+        elif direction == (-1, 0): # 오른쪽에서
             pos = [win_width - size, random.randint(0, win_height - size)]
             if size == 40:
                 image = enemy_images["right"]
@@ -465,19 +479,28 @@ def generate_enemies(level):
                 image = sentinel_shooter_right
 
         if size == 40:
+            # 직선 이동 후 사라짐
             enemy_type = "move_and_disappear"
-        elif size == 60:
-            target_pos = [random.randint(100, win_width - 100), random.randint(100, win_height - 100)]  # 랜덤한 화면 내 특정 장소
-            direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-            length = math.hypot(direction_vector[0], direction_vector[1])
-            direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
-            enemy_type = "move_and_shoot"
-            enemies.append([pos, size, enemy_type, direction_normalized, speed, target_pos, 0, image, speed])
-            continue
-        elif size == 20:
-            enemy_type = "approach_and_shoot"
 
-        enemies.append([pos, size, enemy_type, direction, speed, None, 0, image, speed])  # original_speed 추가
+        elif size == 60:
+            # 지정 위치 이동 후 발사
+            target_pos = [
+                random.randint(100, win_width - 100),
+                random.randint(100, win_height - 100)
+            ]
+            dx, dy = target_pos[0] - pos[0], target_pos[1] - pos[1]
+            length = math.hypot(dx, dy)
+            direction_normalized = [dx/length, dy/length]
+            enemy_type = "move_and_shoot"
+            enemies.append([pos, size, enemy_type,
+                            direction_normalized, speed,
+                            target_pos, 0, image, speed])
+            continue
+
+        else:
+            enemy_type = "move_and_disappear"
+
+        enemies.append([pos, size, enemy_type, direction, speed, None, 0, image, speed])
 
     return enemies
 
