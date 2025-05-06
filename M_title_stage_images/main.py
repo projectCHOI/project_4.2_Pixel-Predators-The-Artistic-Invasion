@@ -913,7 +913,9 @@ while run:
         # 공격과 적의 충돌 처리
         new_enemies = []
         for enemy in enemies:
-            enemy_pos, enemy_size, _, _, _, _, _, enemy_image, _ = enemy
+            enemy_pos   = enemy[0]
+            enemy_size  = enemy[1]
+            enemy_image = enemy[7]
             hit = False
             for attack in attacks:
                 start, end, thickness, color = attack
