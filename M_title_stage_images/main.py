@@ -522,37 +522,50 @@ def draw_dashboard(elapsed_stage_time):
     win.blit(enemies_defeated_text, (win_width - enemies_defeated_text.get_width() - 10, 10))  # 오른쪽 상단에 표시
 
 # 화면에 객체 그리기 함수
-def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time, collision_image=None, speed_item_pos=None, power_item_pos=None, heal_item_pos=None, heal_item_image=None):
-    win.blit(background_image, (0, 0))  # 배경 그리기
-    # 적 그리기
+def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
+                 collision_image=None, speed_item_pos=None, power_item_pos=None,
+                 heal_item_pos=None, heal_item_image=None):
+    # 배경
+    win.blit(background_image, (0, 0))
+
+    # 적 그리기 (가변 길이 대응)
     for enemy in enemies:
-        enemy_pos   = enemy[0]
-        enemy_image = enemy[7]
-        win.blit(enemy_image, (enemy_pos[0], enemy_pos[1]))
+        pos = enemy[0]
+        img = enemy[7]
+        win.blit(img, (pos[0], pos[1]))
+
     # 그룹 유닛 그리기
     for unit in group_units:
         pos, size, _, _, _, _, _, image, _, _, _, alive = unit
         if alive:
             win.blit(image, (pos[0], pos[1]))
-    # 아이템 및 플레이어 그리기
+
+    # 아이템
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
     if power_item_pos:
         win.blit(power_item_image, power_item_pos)
     if heal_item_pos and heal_item_image:
         win.blit(heal_item_image, heal_item_pos)
+
+    # 플레이어
     win.blit(player_image, (player_pos[0], player_pos[1]))
     if collision_image:
         win.blit(collision_image, (player_pos[0], player_pos[1]))
-    # 에너지 볼 및 공격 그리기
+
+    # 에너지 볼
     for ball in energy_balls:
         color = YELLOW if ball[2] == "yellow" else GREEN
         pygame.draw.circle(win, color, (int(ball[0]), int(ball[1])), 5)
+
+    # 공격선
     for attack in attacks:
         pygame.draw.line(win, attack[3], attack[0], attack[1], attack[2])
-    # 마우스 위치 그리기
+
+    # 마우스 위치 표시
     pygame.draw.circle(win, RED, mouse_pos, 5)
-    # 대시보드 그리기
+
+    # 대시보드
     draw_dashboard(elapsed_stage_time)
 
 # 게임 루프
