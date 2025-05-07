@@ -14,6 +14,14 @@ from bosses.Stage_7_Boss import Stage7Boss
 from bosses.Stage_8_Boss import Stage8Boss
 from bosses.Stage_9_Boss import Stage9Boss
 
+# enemy_behaviors 임포트
+from enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
+from enemy_behaviors.move_and_shoot     import generate as gen_move_and_shoot
+from enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoot
+from enemy_behaviors.bomb               import generate as gen_bomb
+from enemy_behaviors.group_unit         import generate as gen_group_unit
+
+
 pygame.init()
 
 # 윈도우 설정
