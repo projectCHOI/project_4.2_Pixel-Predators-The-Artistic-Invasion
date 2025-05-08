@@ -19,7 +19,6 @@ def load_image(*path_parts, size=None):
 
 # 폭탄 이미지
 enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=(40, 40))
-# ——————————————————————————————————————————————
 
 # 폭탄 등장 스테이지
 BOMB_STAGES = {2, 3, 5, 7, 11}
