@@ -361,11 +361,7 @@ def intro_screen(stage):
 
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level):
-    enemies = []
-    num_enemies = 0
-    speed = 10
-    directions = [(0, 1)]  # 초기 방향: 아래쪽
-    sizes = [40]
+    args = (level, win_width, win_height)
 
     if level == 1:
         speed = random.randint(10, 12)
