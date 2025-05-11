@@ -17,48 +17,47 @@ def load_image(*path_parts, size=None):
         img = pygame.transform.scale(img, size)
     return img
 
-# 폭탄 이미지
-enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=(40, 40))
-
-# 폭탄 등장 스테이지
-BOMB_STAGES = {2, 3, 5, 7, 11}
-# 등장 가능 방향
-DIRECTIONS = ["left", "right", "up", "down"]
-# 고정 속성
+# 폭탄 설정
 SIZE = 40
 SPEED = 9
+enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=(SIZE, SIZE))
+
+# 등장 조건
+BOMB_STAGES = {2, 3, 5, 7, 11}
+DIRECTIONS = ["left", "right", "up", "down"]
 
 def generate(level, win_width, win_height):
-
     enemies = []
+
     if level in BOMB_STAGES:
         direction = random.choice(DIRECTIONS)
 
-        # 시작 위치
+        # 화면 가장자리 스폰
         if direction == "left":
             pos = [0, random.randint(0, win_height - SIZE)]
         elif direction == "right":
             pos = [win_width - SIZE, random.randint(0, win_height - SIZE)]
         elif direction == "up":
             pos = [random.randint(0, win_width - SIZE), 0]
-        else:  # "down"
+        else:  # down
             pos = [random.randint(0, win_width - SIZE), win_height - SIZE]
 
-        # 플레이어 방향 벡터 계산
+        # 목표
         target = [win_width // 2, win_height // 2]
         dx, dy = target[0] - pos[0], target[1] - pos[1]
         dist = math.hypot(dx, dy) or 1
         dir_norm = [dx / dist, dy / dist]
 
         enemies.append([
-            pos,             # [x, y]
-            SIZE,            # 크기
-            "bomb",          # 타입
-            dir_norm,        # 이동 벡터
-            SPEED,           # 속도
-            None,            # target_pos (미사용)
-            0,               # shots_fired (미사용)
-            enemy_bomb_image,# 이미지 참조
-            SPEED            # original_speed
+            pos,               
+            SIZE,              
+            "bomb",            
+            dir_norm,          
+            SPEED,             
+            None,              
+            0,                 
+            enemy_bomb_image,  
+            SPEED              
         ])
+
     return enemies
