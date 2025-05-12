@@ -361,56 +361,61 @@ def intro_screen(stage):
 
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level):
+    enemies = []
     args = (level, win_width, win_height)
 
     if level == 1:
-        speed = random.randint(10, 12)
-        directions = [(0, 1), (0, -1)]
-        sizes = [20]
-        # sizes = [40, 60]
-        num_enemies = random.randint(3, 8)
+        enemies += gen_move_and_disappear(*args)
+    
     elif level == 2:
-        speed = random.randint(10, 12)
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(3, 8)
-    elif level == 3:
-        speed = random.randint(10, 12)
-        directions = [(0, 1), (0, -1)]
-        sizes = [40, 60]
-        num_enemies = random.randint(3, 8)
-    elif level == 4:
-        speed = random.randint(10, 16)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 24)
-    elif level == 5:
-        speed = random.randint(10, 16)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 24)
-    elif level == 6:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(6, 26)
-    elif level == 7:
-        speed = random.randint(10, 18)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
-    elif level == 8:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(8, 30)
-    elif level == 9:
-        speed = random.randint(10, 20)
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-        sizes = [20, 40, 60]
-        num_enemies = random.randint(10, 32)
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
 
-    enemies = []
+    elif level == 3:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+
+    elif level == 4:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+
+    elif level == 5:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+        enemies += gen_bomb(*args)
+
+    elif level == 6:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+
+    elif level == 7:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+        enemies += gen_bomb(*args)
+
+    elif level == 8:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+
+    elif level == 9:
+        enemies += gen_move_and_disappear(*args)
+        enemies += gen_move_and_shoot(*args)
+        enemies += gen_approach_and_shoot(*args)
+        enemies += gen_group_unit(*args)
+        enemies += gen_bomb(*args)
+
+    return enemies
 
     if level >= 4 and random.random() < 0.4:  # 40% 등장
         base_x = random.randint(100, win_width - 100)
