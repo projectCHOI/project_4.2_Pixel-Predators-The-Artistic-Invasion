@@ -360,21 +360,23 @@ def intro_screen(stage):
     pygame.time.delay(3000)  # 3초 대기
 
 # 스테이지 설정에 따라 적을 생성하는 함수
-def generate_enemies(level):
+def generate_enemies(level, player_pos):
     enemies = []
     args = (level, win_width, win_height)
 
     if level == 1:
         enemies += gen_move_and_disappear(*args)
-    
+
     elif level == 2:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
+        enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 3:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
         enemies += gen_approach_and_shoot(*args)
+        enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 4:
         enemies += gen_move_and_disappear(*args)
@@ -387,7 +389,7 @@ def generate_enemies(level):
         enemies += gen_move_and_shoot(*args)
         enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
-        enemies += gen_bomb(*args)
+        enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 6:
         enemies += gen_move_and_disappear(*args)
@@ -400,7 +402,7 @@ def generate_enemies(level):
         enemies += gen_move_and_shoot(*args)
         enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
-        enemies += gen_bomb(*args)
+        enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 8:
         enemies += gen_move_and_disappear(*args)
@@ -413,7 +415,7 @@ def generate_enemies(level):
         enemies += gen_move_and_shoot(*args)
         enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
-        enemies += gen_bomb(*args)
+        enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     return enemies
 
@@ -730,7 +732,7 @@ while run:
 
         # 적 생성
         if random.random() < 0.02:  # 2% 확률로 적 생성
-            new_enemies = generate_enemies(level)
+            new_enemies = generate_enemies(level, player_pos)
             enemies.extend(new_enemies)
 
         # 그룹 단위 유닛 생성
