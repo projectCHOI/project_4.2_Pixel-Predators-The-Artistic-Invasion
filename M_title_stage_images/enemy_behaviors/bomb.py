@@ -26,7 +26,7 @@ enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=(SIZE, SIZE))
 BOMB_STAGES = {2, 3, 5, 7, 11}
 DIRECTIONS = ["left", "right", "up", "down"]
 
-def generate(level, win_width, win_height):
+def generate(level, win_width, win_height, player_pos):
     enemies = []
 
     if level in BOMB_STAGES:
@@ -39,12 +39,11 @@ def generate(level, win_width, win_height):
             pos = [win_width - SIZE, random.randint(0, win_height - SIZE)]
         elif direction == "up":
             pos = [random.randint(0, win_width - SIZE), 0]
-        else:  # down
+        else:
             pos = [random.randint(0, win_width - SIZE), win_height - SIZE]
 
         # 목표
-        target = [win_width // 2, win_height // 2]
-        dx, dy = target[0] - pos[0], target[1] - pos[1]
+        dx, dy = player_pos[0] - pos[0], player_pos[1] - pos[1]
         dist = math.hypot(dx, dy) or 1
         dir_norm = [dx / dist, dy / dist]
 
