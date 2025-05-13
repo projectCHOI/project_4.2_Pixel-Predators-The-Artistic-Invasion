@@ -172,10 +172,6 @@ attack_speed = 20
 attack_power = 1  # 플레이어의 공격력 추가
 enemies_defeated = 0  # 제거된 적의 수
 
-# 마우스 클릭 추적
-mouse_down_time = 0
-mouse_held = False
-
 # 게임 오버 상태 및 이유
 game_over = False
 game_over_reason = None  # "victory", "game_over", "time_over"
@@ -187,10 +183,6 @@ game_over_image = load_image("stages", "Stage15_GameOver.JPG", size=(1280, 720))
 time_over_image = load_image("stages", "Stage16_TimeOver.JPG", size=(1280, 720))
 
 selected_option = "main"  # 기본값
-
-# group_units 업로드
-group_units = []  # 그룹 단위 적 리스트
-group_last_action_time = {}
 
 def draw_end_screen():
     global selected_option
@@ -398,31 +390,6 @@ def generate_enemies(level, player_pos):
         enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     return enemies
-
-# bomb 적 등장 설정
-bomb_stages = [2, 3, 5, 7, 11]
-bomb_appear_interval = 10000  # 10초 간격으로 등장
-bomb_last_appear_time = 0
-bomb_directions = ["left", "right", "up", "down"]
-
-# bomb 적 추가 함수
-def add_bomb_enemy():
-    direction = random.choice(bomb_directions)
-    size = 40
-    pos = [0, 0]
-    if direction == "left":
-        pos = [0, random.randint(0, win_height - size)]
-    elif direction == "right":
-        pos = [win_width - size, random.randint(0, win_height - size)]
-    elif direction == "up":
-        pos = [random.randint(0, win_width - size), 0]
-    elif direction == "down":
-        pos = [random.randint(0, win_width - size), win_height - size]
-    target_pos = [win_width // 2, win_height // 2]  # 중심을 향하도록 설정
-    direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-    length = math.hypot(direction_vector[0], direction_vector[1])
-    direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
-    enemies.append([pos, size, "bomb", direction_normalized, 9, None, 0, enemy_bomb_image, 9])  # enemy_bomb 추가
 
 # 대시보드 그리기 함수
 def draw_dashboard(elapsed_stage_time):
@@ -635,11 +602,6 @@ while run:
         # 플레이어가 화면 밖으로 나가지 않도록 제한
         player_pos[0] = max(0, min(player_pos[0], win_width - player_width))
         player_pos[1] = max(0, min(player_pos[1], win_height - player_height))
-
-        # 적 생성
-        if random.random() < 0.02:  # 2% 확률로 적 생성
-            new_enemies = generate_enemies(level, player_pos)
-            enemies.extend(new_enemies)
 
 
         # 보스 등장 체크 및 행동 처리
@@ -856,9 +818,6 @@ while run:
                     break
             if not hit:
                 new_group.append(unit)
-
-        # 그룹 전체 사망 처리
-        group_units = [u if u[9] not in group_ids_to_kill else [*u[:11], 0] for u in new_group]
 
         # 플레이어와 적의 충돌 체크
         if not invincible:
