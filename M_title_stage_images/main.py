@@ -102,26 +102,6 @@ heal_item_chance = 0.2  # 20% 확률
 # 초기 플레이어 이미지
 player_image = player_image1
 
-# 적 이미지 로드 및 크기 조정
-enemy_images = {
-    "up": load_image("enemies", "mob_enemy_Relentless Charger_1.png", size=image_size),
-    "down": load_image("enemies", "mob_enemy_Relentless Charger_2.png", size=image_size),
-    "left": load_image("enemies", "mob_enemy_Relentless Charger_3.png", size=image_size),
-    "right": load_image("enemies", "mob_enemy_Relentless Charger_4.png", size=image_size)
-}
-
-# 새로운 적 이미지 로드 및 크기 조정
-sentinel_shooter_right = load_image("enemies", "mob_enemy_Sentinel Shooter_right.png", size=image_size)
-sentinel_shooter_left = load_image("enemies", "mob_enemy_Sentinel Shooter_left.png", size=image_size)
-
-ambush_striker_up = load_image("enemies", "mob_enemy_Ambush Striker_1.png", size=image_size)
-ambush_striker_down = load_image("enemies", "mob_enemy_Ambush Striker_2.png", size=image_size)
-ambush_striker_left = load_image("enemies", "mob_enemy_Ambush Striker_3.png", size=image_size)
-ambush_striker_right = load_image("enemies", "mob_enemy_Ambush Striker_4.png", size=image_size)
-
-# 자폭 적 이미지 로드 및 크기 조정
-enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=image_size)
-
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -419,80 +399,6 @@ def generate_enemies(level, player_pos):
 
     return enemies
 
-    if level >= 4 and random.random() < 0.4:  # 40% 등장
-        base_x = random.randint(100, win_width - 100)
-        base_y = 0
-        group_id = random.randint(1000, 9999)
-        for i in range(5):
-            if i == 0:
-                size = 50  # 앞 유닛
-            else:
-                size = 30  # 뒤 유닛
-            enemy_type = "group_unit"
-            pos = [base_x, base_y + i * (size + 5)]
-            direction = [0, 0]
-            image = enemy_images["down"]
-            enemies.append([
-                pos, size, enemy_type, direction, 3, None, 0, image, 3, group_id, i, 1
-            ])
-        return enemies
-    
-    for _ in range(num_enemies):
-        direction = random.choice(directions)
-        size = random.choice(sizes)
-        pos = [0, 0]
-        image = enemy_images["up"]
-
-        if direction == (0, 1):  # 상단에서
-            pos = [random.randint(0, win_width - size), 0]
-            if size == 40:
-                image = enemy_images["up"]
-            elif size == 60:
-                image = ambush_striker_up
-            else:
-                image = sentinel_shooter_left
-        elif direction == (0, -1):  # 하단에서
-            pos = [random.randint(0, win_width - size), win_height - size]
-            if size == 40:
-                image = enemy_images["down"]
-            elif size == 60:
-                image = ambush_striker_down
-            else:
-                image = sentinel_shooter_left
-        elif direction == (1, 0):  # 좌측에서
-            pos = [0, random.randint(0, win_height - size)]
-            if size == 40:
-                image = enemy_images["left"]
-            elif size == 60:
-                image = ambush_striker_left
-            else:
-                image = sentinel_shooter_right
-        elif direction == (-1, 0):  # 우측에서
-            pos = [win_width - size, random.randint(0, win_height - size)]
-            if size == 40:
-                image = enemy_images["right"]
-            elif size == 60:
-                image = ambush_striker_right
-            else:
-                image = sentinel_shooter_right
-
-        if size == 40:
-            enemy_type = "move_and_disappear"
-        elif size == 60:
-            target_pos = [random.randint(100, win_width - 100), random.randint(100, win_height - 100)]  # 랜덤한 화면 내 특정 장소
-            direction_vector = [target_pos[0] - pos[0], target_pos[1] - pos[1]]
-            length = math.hypot(direction_vector[0], direction_vector[1])
-            direction_normalized = [direction_vector[0] / length, direction_vector[1] / length]
-            enemy_type = "move_and_shoot"
-            enemies.append([pos, size, enemy_type, direction_normalized, speed, target_pos, 0, image, speed])
-            continue
-        elif size == 20:
-            enemy_type = "approach_and_shoot"
-
-        enemies.append([pos, size, enemy_type, direction, speed, None, 0, image, speed])  # original_speed 추가
-
-    return enemies
-
 # bomb 적 등장 설정
 bomb_stages = [2, 3, 5, 7, 11]
 bomb_appear_interval = 10000  # 10초 간격으로 등장
@@ -735,36 +641,6 @@ while run:
             new_enemies = generate_enemies(level, player_pos)
             enemies.extend(new_enemies)
 
-        # 그룹 단위 유닛 생성
-        if random.random() < 0.02:
-            group_id = pygame.time.get_ticks()  
-            group_start_x = random.randint(100, win_width - 100)
-            group_start_y = 0  
-
-            for i in range(5):
-                size = 50 if i == 0 else 30
-                image = sentinel_shooter_left if size == 50 else ambush_striker_left
-                unit = [
-                    [group_start_x, group_start_y + i * (size + 5)],  # pos
-                    size,
-                    "group_unit",   # type
-                    [0, 1],         # 기본 아래 방향
-                    3,              # speed
-                    None,
-                    0,
-                    image,
-                    3,              # original speed
-                    group_id,       # 그룹 ID
-                    i,              # 몇 번째 유닛인지 (0~4)
-                    1               # alive: 1 = 살아있음
-                ]
-                group_units.append(unit)
-            group_last_action_time[group_id] = pygame.time.get_ticks()
-
-        # bomb 적 생성
-        if level in bomb_stages and pygame.time.get_ticks() - bomb_last_appear_time > bomb_appear_interval:
-            add_bomb_enemy()
-            bomb_last_appear_time = pygame.time.get_ticks()
 
         # 보스 등장 체크 및 행동 처리
         if boss:
