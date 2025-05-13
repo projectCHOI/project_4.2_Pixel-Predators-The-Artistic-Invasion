@@ -3,6 +3,9 @@ import random
 import math
 import os
 
+pygame.init()
+pygame.display.set_mode((1, 1))
+
 # 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
@@ -20,9 +23,6 @@ from enemy_behaviors.move_and_shoot     import generate as gen_move_and_shoot
 from enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoot
 from enemy_behaviors.bomb               import generate as gen_bomb
 from enemy_behaviors.group_unit         import generate as gen_group_unit
-
-
-pygame.init()
 
 # 윈도우 설정
 win_width, win_height = 1280, 720
