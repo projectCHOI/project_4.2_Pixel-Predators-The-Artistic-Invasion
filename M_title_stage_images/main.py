@@ -29,10 +29,8 @@ win_width, win_height = 1280, 720
 win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 
-# BASE_DIR은 프로젝트의 루트 디렉토리
+# 경로 및 이미지 로딩 함수 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-# 이미지의 기본 경로를 정의합니다.
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
 # 이미지 로딩 함수
@@ -53,13 +51,12 @@ except ImportError:
     pygame.quit()
     exit()
 
-# 이미지 크기 설정
+# 플레이어 이미지 로드
 image_size = (50, 50)
 player_width, player_height = image_size
-
-# 플레이어 이미지 로드
 player_image1 = load_image("player", "mob_me1_png.png", size=image_size)
 player_image2 = load_image("player", "mob_me2_png.png", size=image_size)
+player_image = player_image1
 
 # 충돌 시 이미지 로드(duration=시간)
 collision_images = {
@@ -99,9 +96,6 @@ heal_item_pos = None
 current_heal_item_image = None
 heal_item_chance = 0.2  # 20% 확률
 
-# 초기 플레이어 이미지
-player_image = player_image1
-
 # 색상 정의
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -118,9 +112,9 @@ original_player_speed = player_speed
 # 게임 설정
 clock = pygame.time.Clock()
 font_path = os.path.join(BASE_DIR, "assets", "fonts", "SLEIGothicOTF.otf")
-font_size = 30  # 폰트 크기
+font_size = 30
 try:
-    font = pygame.font.Font(font_path, font_size)  # 폰트 설정
+    font = pygame.font.Font(font_path, font_size)
 except FileNotFoundError:
     pygame.quit()
     exit()
@@ -137,26 +131,16 @@ collected_gems = [] # 보석 획득
 
 # 보스 초기화 함수 정의
 def initialize_boss(level):
-    if level == 1:
-        return Stage1Boss()
-    elif level == 2:
-        return Stage2Boss()
-    elif level == 3:
-        return Stage3Boss()  
-    elif level == 4:
-        return Stage4Boss()
-    elif level == 5:
-        return Stage5Boss()
-    elif level == 6:
-        return Stage6Boss()
-    elif level == 7:
-        return Stage7Boss()
-    elif level == 8:
-        return Stage8Boss()
-    elif level == 9:
-        return Stage9Boss()
-    else:
-        return None
+    if level == 1: return Stage1Boss()
+    elif level == 2: return Stage2Boss()
+    elif level == 3: return Stage3Boss()
+    elif level == 4: return Stage4Boss()
+    elif level == 5: return Stage5Boss()
+    elif level == 6: return Stage6Boss()
+    elif level == 7: return Stage7Boss()
+    elif level == 8: return Stage8Boss()
+    elif level == 9: return Stage9Boss()
+    else: return None
 
 # 처음에는 보스가 없을 수 있으므로 None으로 초기화합니다.
 boss = initialize_boss(level)
@@ -417,12 +401,6 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
         pos = enemy[0]
         img = enemy[7]
         win.blit(img, (pos[0], pos[1]))
-
-    # 그룹 유닛 그리기
-    for unit in group_units:
-        pos, size, _, _, _, _, _, image, _, _, _, alive = unit
-        if alive:
-            win.blit(image, (pos[0], pos[1]))
 
     # 아이템
     if speed_item_pos:
@@ -720,44 +698,6 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
-        # 그룹 유닛 행동 처리
-        current_time = pygame.time.get_ticks()
-        new_group_units = []
-
-        for unit in group_units:
-            pos, size, enemy_type, direction, speed, _, _, image, _, group_id, index_in_group, alive = unit
-
-            if not alive:
-                continue
-
-            # 이동
-            dx, dy = random.choice([-1, 0, 1]), random.choice([-1, 0, 1])
-            pos[0] += dx * speed
-            pos[1] += dy * speed
-            pos[0] = max(0, min(pos[0], win_width - size))
-            pos[1] = max(0, min(pos[1], win_height - size))
-
-            # 공격 (2.5초 주기)
-            if current_time - group_last_action_time[group_id] >= 2500:
-                group_last_action_time[group_id] = current_time
-
-                if index_in_group == 0:  # 맨 앞 유닛은 원형 공격
-                    for angle in range(0, 360, 30):
-                        rad = math.radians(angle)
-                        dx, dy = math.cos(rad), math.sin(rad)
-                        energy_balls.append([pos[0] + size//2, pos[1] + size//2, "green", [dx, dy]])
-                else:  # 뒤에 있는 유닛은 플레이어를 향한 에너지볼
-                    dx = player_pos[0] - pos[0]
-                    dy = player_pos[1] - pos[1]
-                    dist = math.hypot(dx, dy)
-                    if dist != 0:
-                        energy_balls.append([pos[0] + size//2, pos[1] + size//2, "green", [dx/dist, dy/dist]])
-
-            unit[0] = pos
-            new_group_units.append(unit)
-
-        group_units = new_group_units
-
         # 공격 이동 및 위치 업데이트
         new_attacks = []
         for attack in attacks:
@@ -799,25 +739,6 @@ while run:
             if not hit:
                 new_enemies.append(enemy)
         enemies = new_enemies
-
-        # 그룹 유닛 충돌 체크
-        new_group = []
-        group_ids_to_kill = set()
-
-        for unit in group_units:
-            pos, size, _, _, _, _, _, _, _, group_id, index_in_group, alive = unit
-            if not alive:
-                new_group.append(unit)
-                continue
-            hit = False
-            for atk in attacks:
-                if check_attack_collision(atk[0], atk[1], pos, size):
-                    if index_in_group == 0:
-                        group_ids_to_kill.add(group_id)  # 앞 유닛이 맞으면 그룹 전체 죽이기
-                    hit = True
-                    break
-            if not hit:
-                new_group.append(unit)
 
         # 플레이어와 적의 충돌 체크
         if not invincible:
