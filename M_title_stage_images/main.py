@@ -451,6 +451,7 @@ while run:
 
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                     enemies = []
+                    enemies = generate_enemies(level, player_pos)
                     stage_start_ticks = pygame.time.get_ticks()
                     intro_screen(level)
                     attacks = []
@@ -486,6 +487,7 @@ while run:
 
                         player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                         enemies = []
+                        enemies = generate_enemies(level, player_pos)
                         stage_start_ticks = pygame.time.get_ticks()
                         intro_screen(level)
                         attacks = []
