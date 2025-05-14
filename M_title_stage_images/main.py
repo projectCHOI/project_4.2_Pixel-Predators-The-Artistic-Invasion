@@ -318,7 +318,6 @@ def intro_screen(stage):
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level, player_pos):
     enemies = []
-    enemies = generate_enemies(level, player_pos)
 
     args = (level, win_width, win_height)
 
