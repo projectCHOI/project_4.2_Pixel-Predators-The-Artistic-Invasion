@@ -25,7 +25,21 @@ enemy_image_right = load_image("enemies", "mob_enemy_Relentless Charger_4.png", 
 def generate(level, win_width, win_height):
     enemies = []
 
-    if random.random() > 0.6: #60% 확률
+    stage_spawn_chances = {
+        1: 0.6,
+        2: 0.6,
+        3: 0.6,
+        4: 0.7,
+        5: 0.7,
+        2: 0.7,
+        3: 0.8,
+        4: 0.8,
+        5: 0.8,
+        }
+                
+    spawn_chance = stage_spawn_chances.get(level, 0.1)
+
+    if random.random() > spawn_chance:
         return enemies
     
     # 이동 속도를 10~12 사이에서 무작위로 설정
