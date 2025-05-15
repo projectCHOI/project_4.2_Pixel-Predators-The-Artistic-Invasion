@@ -27,17 +27,17 @@ def generate(level, win_width, win_height):
 
     if random.random() > 0.6: #60% 확률
         return enemies
-
-    # 스테이지별 속도 및 개수 설정
-    speed = random.randint(10, 12)
-    num_enemies = random.randint(3, 8)
+    
+    # 이동 속도를 10~12 사이에서 무작위로 설정
+    speed = random.randint(6, 10)
+    # 등장 수 3~8 사이에서 무작위로 설정
+    num_enemies = random.randint(4, 16)
 
     # 사방향 이동 지원
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
     for _ in range(num_enemies):
         direction = random.choice(directions)
-        # 방향에 따라 시작 위치와 이미지 선택
         if direction == (0, 1):  # 위에서 아래
             pos = [random.randint(0, win_width - SIZE), 0]
             image = enemy_image_up
