@@ -23,8 +23,10 @@ enemy_image_left  = load_image("enemies", "mob_enemy_Relentless Charger_3.png", 
 enemy_image_right = load_image("enemies", "mob_enemy_Relentless Charger_4.png", size=(SIZE, SIZE))
 
 def generate(level, win_width, win_height):
-
     enemies = []
+
+    if random.random() > 0.6: #60% 확률
+        return enemies
 
     # 스테이지별 속도 및 개수 설정
     speed = random.randint(10, 12)
