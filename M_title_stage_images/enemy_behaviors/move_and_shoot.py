@@ -26,12 +26,32 @@ ambush_striker_right = load_image("enemies", "mob_enemy_Ambush Striker_4.png", s
 
 
 def generate(level, win_width, win_height):
-
     enemies = []
+
+    stage_spawn_chances = {
+        1: 0.3,
+        2: 0.4,
+        3: 0.5,
+        4: 0.6,
+        5: 0.7,
+        6: 0.8,
+        7: 0.9,
+        8: 0.9,
+        9: 0.95,
+    }
+
+    spawn_chance = stage_spawn_chances.get(level, 0.0)
+
+    if random.random() > spawn_chance:
+        return enemies
+
+    # 이동 속도를 10~16 사이에서 무작위로 설정
     speed = random.randint(10, 16)
+    # 등장 수 6~24 사이에서 무작위로 설정
     num_enemies = random.randint(6, 24)
 
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+
     for _ in range(num_enemies):
         direction = random.choice(directions)
         # 시작 위치와 이미지 선택
