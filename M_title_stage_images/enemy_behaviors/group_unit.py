@@ -23,8 +23,8 @@ SPACING = 5  # 유닛 간 y 간격
 SPEED = 3
 GROUP_COUNT = 5
 
-front_image = load_image("enemies", "mob_enemy_Sentinel Shooter_left.png", size=(FRONT_SIZE, FRONT_SIZE))
-back_image  = load_image("enemies", "mob_enemy_Ambush Striker_3.png", size=(BACK_SIZE, BACK_SIZE))
+front_image = load_image("enemies", "mob_enemy_group_unit_1.png", size=(FRONT_SIZE, FRONT_SIZE))
+back_image  = load_image("enemies", "mob_enemy_group_unit_2.png", size=(BACK_SIZE, BACK_SIZE))
 
 def generate(level, win_width, win_height):
     enemies = []
