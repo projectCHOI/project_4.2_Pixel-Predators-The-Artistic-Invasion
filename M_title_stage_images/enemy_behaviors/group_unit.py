@@ -47,27 +47,29 @@ def generate(level, win_width, win_height):
 
 
     group_id = random.randint(1000, 9999)
-
-
     base_x = random.randint(100, win_width - FRONT_SIZE - 100)
     base_y = 0
+    spawn_time = pygame.time.get_ticks()
 
     # 유닛 생성 (1 front + 4 back)
     for i in range(GROUP_COUNT):
-        if i == 0:
-            size = FRONT_SIZE
-            image = front_image
-        else:
-            size = BACK_SIZE
-            image = back_image
+        size = FRONT_SIZE if i == 0 else BACK_SIZE
+        image = front_image if i == 0 else back_image
 
-        pos = [base_x, base_y + i * (size + SPACING)]
-        direction = [0, 1]  # 기본 아래 방향
+        base_pos = [base_x, base_y + i * (size + SPACING)]
+        wave_offset = random.uniform(0, 2 * math.pi)
+        amplitude = 50
 
+        t = (pygame.time.get_ticks() - spawn_time) / 500
+        x = base_pos[0] + amplitude * math.sin(t + wave_offset)
+        y = base_pos[1] + SPEED * t
+        pos = [x, y]
+        
         enemies.append([
             pos,            # [x, y]
             size,           # 유닛 크기
             "group_unit",   # 타입
+            [0, 1],
             direction,      # 이동 방향
             SPEED,          # 속도
             None,           # target_pos (미사용)
