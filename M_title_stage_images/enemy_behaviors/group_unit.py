@@ -1,6 +1,7 @@
 import random
 import os
 import pygame
+import math
 
 # 이미지 로딩
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -64,6 +65,8 @@ def generate(level, win_width, win_height):
         x = base_pos[0] + amplitude * math.sin(t + wave_offset)
         y = base_pos[1] + SPEED * t
         pos = [x, y]
+        
+        direction = [0, 1] 
         
         enemies.append([
             pos,            # [x, y]
