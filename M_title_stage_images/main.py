@@ -702,6 +702,36 @@ while run:
                     pos[0] += direction_normalized[0] * speed
                     pos[1] += direction_normalized[1] * speed
 
+            elif enemy_type == "group_unit":
+                now = pygame.time.get_ticks()
+
+                # 실시간 위치 업데이트 (사인 곡선 이동)
+                t = (now - enemy[14]) / 500
+                enemy[0][0] = enemy[13][0] + 50 * math.sin(t + enemy[12])  # 좌우 흔들림
+                enemy[0][1] = enemy[13][1] + SPEED * t
+
+                # 공격 타이밍 도달 시
+                if now - enemy[6] >= enemy[15]:
+                    enemy[6] = now  # last_attack_time 갱신
+
+                    if enemy[10] == 0:  # 전열 유닛 (index == 0)
+                        directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)]
+                        for d in directions:
+                            energy_balls.append([
+                                enemy[0][0] + enemy[1] // 2,
+                                enemy[0][1] + enemy[1] // 2,
+                                "green",
+                                [d[0] * 3, d[1] * 3]  # 속도 3
+                            ])
+                    else:  # 후열 유닛
+                        for d in [(-1, 0), (1, 0)]:  # 좌, 우
+                            energy_balls.append([
+                                enemy[0][0] + enemy[1] // 2,
+                                enemy[0][1] + enemy[1] // 2,
+                                "yellow",
+                                [d[0] * 5, d[1] * 5]  # 속도 5
+                            ])
+
         # 공격 이동 및 위치 업데이트
         new_attacks = []
         for attack in attacks:
