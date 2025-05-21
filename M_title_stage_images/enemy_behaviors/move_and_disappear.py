@@ -1,3 +1,4 @@
+# 일직선으로 이동 후 화면 밖으로 사라지는 적
 import random
 import os
 import pygame

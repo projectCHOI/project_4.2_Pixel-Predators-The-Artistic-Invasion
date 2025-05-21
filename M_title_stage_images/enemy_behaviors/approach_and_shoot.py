@@ -1,3 +1,4 @@
+# 일정 거리까지 접근 후 유도형 공격을 하는 적
 import random
 import os
 import pygame

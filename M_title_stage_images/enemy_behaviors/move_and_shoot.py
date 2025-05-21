@@ -1,3 +1,4 @@
+# 목표 지점까지 이동 후 멈춰서 사격하는 적
 import random
 import os
 import pygame
