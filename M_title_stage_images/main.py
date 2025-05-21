@@ -454,6 +454,8 @@ while run:
                     enemies = []
                     enemies = generate_enemies(level, player_pos)
                     stage_start_ticks = pygame.time.get_ticks()
+                    last_enemy_spawn_time = pygame.time.get_ticks()
+                    enemy_spawn_interval = 3000  # 3초마다 적 생성
                     intro_screen(level)
                     attacks = []
                     energy_balls = []
@@ -484,6 +486,8 @@ while run:
                         game_over = False
                         game_over_reason = None
                         start_ticks = pygame.time.get_ticks()
+                        last_enemy_spawn_time = pygame.time.get_ticks()
+                        enemy_spawn_interval = 3000
                         game_active = True
 
                         player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
