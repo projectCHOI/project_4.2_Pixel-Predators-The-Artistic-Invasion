@@ -1,3 +1,4 @@
+# 여러 유닛으로 구성된 집단 적
 import random
 import os
 import pygame

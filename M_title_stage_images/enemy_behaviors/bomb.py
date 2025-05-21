@@ -1,3 +1,4 @@
+# 플레이어를 향해 돌진하는 폭탄형 적
 import random
 import math
 import os
