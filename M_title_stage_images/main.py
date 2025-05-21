@@ -592,7 +592,13 @@ while run:
         # 보스 등장 체크 및 행동 처리
         if boss:
             boss.check_appear(total_seconds, level)
-
+            
+            # 3초마다 적 생성
+            now = pygame.time.get_ticks()
+            if now - last_enemy_spawn_time >= enemy_spawn_interval:
+                new_enemies = generate_enemies(level, player_pos)
+                enemies.extend(new_enemies)
+                last_enemy_spawn_time = now
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
                 boss.move()  # 보스 이동
