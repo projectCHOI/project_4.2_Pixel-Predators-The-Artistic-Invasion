@@ -45,7 +45,7 @@ def generate(level, win_width, win_height):
     
     # 이동 속도를 10~12 사이에서 무작위로 설정
     speed = random.randint(6, 10)
-    # 등장 수 3~8 사이에서 무작위로 설정
+    # 등장 수 4~16 사이에서 무작위로 설정
     num_enemies = random.randint(4, 16)
 
     # 사방향 이동 지원

@@ -45,10 +45,10 @@ def generate(level, win_width, win_height):
     if random.random() > spawn_chance:
         return enemies
 
-    # 이동 속도를 10~18 사이에서 무작위로 설정
-    speed = random.randint(10, 18)
-    # 등장 수 6~26 사이에서 무작위로 설정
-    num_enemies = random.randint(6, 26)
+    # 이동 속도를 4~6 사이에서 무작위로 설정
+    speed = random.randint(4, 6)
+    # 등장 수 3~6 사이에서 무작위로 설정
+    num_enemies = random.randint(3, 6)
 
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 

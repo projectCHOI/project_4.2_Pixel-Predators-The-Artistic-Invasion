@@ -48,8 +48,8 @@ def generate(level, win_width, win_height):
 
     # 이동 속도를 10~16 사이에서 무작위로 설정
     speed = random.randint(10, 16)
-    # 등장 수 6~24 사이에서 무작위로 설정
-    num_enemies = random.randint(6, 24)
+    # 등장 수 5~10 사이에서 무작위로 설정
+    num_enemies = random.randint(5, 10)
 
     directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
