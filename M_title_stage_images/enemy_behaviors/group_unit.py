@@ -31,15 +31,15 @@ back_image  = load_image("enemies", "mob_enemy_group_unit_2.png", size=(BACK_SIZ
 def generate(level, win_width, win_height):
     enemies = []
     stage_spawn_chances = {
-        1: 0.9,
-        2: 0.9,
-        3: 0.9,
+        1: 0.0,
+        2: 0.0,
+        3: 0.0,
         4: 0.4,
         5: 0.6,
         6: 0.8,
         7: 0.9,
         8: 0.95,
-        9: 1.0
+        9: 0.95
     }
 
     spawn_chance = stage_spawn_chances.get(level, 0.0)
