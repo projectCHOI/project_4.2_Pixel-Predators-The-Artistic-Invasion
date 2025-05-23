@@ -21,7 +21,7 @@ def load_image(*path_parts, size=None):
 # 폭탄 설정
 SIZE = 40
 SPEED = 9
-enemy_bomb_image = load_image("enemies", "mob_item_bomb.png", size=(SIZE, SIZE))
+enemy_bomb_image = load_image("enemies", "mob_enemy_bomb.png", size=(SIZE, SIZE))
 
 # 등장 조건
 BOMB_STAGES = {2, 3, 5, 7, 11}
