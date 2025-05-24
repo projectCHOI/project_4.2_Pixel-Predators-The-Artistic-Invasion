@@ -19,7 +19,7 @@ def load_image(*path_parts, size=None):
     return img
 
 # 이미지 로딩
-SIZE = 20
+SIZE = 30
 enemy_image_up    = load_image("enemies", "mob_enemy_Relentless Charger_1.png", size=(SIZE, SIZE))
 enemy_image_down  = load_image("enemies", "mob_enemy_Relentless Charger_2.png", size=(SIZE, SIZE))
 enemy_image_left  = load_image("enemies", "mob_enemy_Relentless Charger_3.png", size=(SIZE, SIZE))

@@ -19,7 +19,7 @@ def load_image(*path_parts, size=None):
     return img
 
 # 적 이미지
-SIZE = 60
+SIZE = 50
 ambush_striker_up    = load_image("enemies", "mob_enemy_Ambush Striker_1.png", size=(SIZE, SIZE))
 ambush_striker_down  = load_image("enemies", "mob_enemy_Ambush Striker_2.png", size=(SIZE, SIZE))
 ambush_striker_left  = load_image("enemies", "mob_enemy_Ambush Striker_3.png", size=(SIZE, SIZE))
