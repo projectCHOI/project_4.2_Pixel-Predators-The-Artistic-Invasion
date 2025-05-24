@@ -666,19 +666,21 @@ while run:
                             attack_dir = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
                             energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
                             enemy[6] += 1  # 공격 횟수 증가
+
             elif enemy_type == "approach_and_shoot":
-                now   = pygame.time.get_ticks()
+                now = pygame.time.get_ticks()
                 cycle = now % 10000
+
                 if cycle < 5000:
-                    dx   = player_pos[0] - pos[0]
-                    dy   = player_pos[1] - pos[1]
+                    dx = player_pos[0] - pos[0]
+                    dy = player_pos[1] - pos[1]
                     dist = math.hypot(dx, dy)
                     if dist != 0:
-                        dir_norm = [dx/dist, dy/dist]
+                        dir_norm = [dx / dist, dy / dist]
                         if dist > 200:
                             move_dist = min(speed, dist - 200)
-                            pos[0]   += dir_norm[0] * move_dist
-                            pos[1]   += dir_norm[1] * move_dist
+                            pos[0] += dir_norm[0] * move_dist
+                            pos[1] += dir_norm[1] * move_dist
                         last_shot = enemy[6]
                         if now - last_shot >= 1000:
                             energy_balls.append([
@@ -687,21 +689,8 @@ while run:
                                 dir_norm
                             ])
                             enemy[6] = now
-
                 else:
-                    if len(enemy) == 9:
-                        # [rand_x, rand_y]
-                        enemy.append([random.choice([-1,1]), random.choice([-1,1])])
-                    bounce_dir = enemy[9]
-
-                    if pos[0] <= 0 or pos[0] >= win_width - size:
-                        bounce_dir[0] *= -1
-                    if pos[1] <= 0 or pos[1] >= win_height - size:
-                        bounce_dir[1] *= -1
-
-                    # 실제 이동
-                    pos[0] = max(0, min(pos[0], win_width - size))
-                    pos[1] = max(0, min(pos[1], win_height - size))
+                    pos[1] += speed # 5초 이후 퇴장
 
             elif enemy_type == "bomb":
                 target_pos = [player_pos[0], player_pos[1]]
