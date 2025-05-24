@@ -766,6 +766,8 @@ while run:
                         current_heal_item_image = random.choice(heal_item_images)
                     break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
             if not hit:
+                if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
+                    continue
                 new_enemies.append(enemy)
         enemies = new_enemies
 
