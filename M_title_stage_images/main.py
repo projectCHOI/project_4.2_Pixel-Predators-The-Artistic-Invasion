@@ -332,45 +332,38 @@ def generate_enemies(level, player_pos):
     elif level == 3:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 4:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
 
     elif level == 5:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
         enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 6:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
 
     elif level == 7:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
         enemies += gen_bomb(level, win_width, win_height, player_pos)
 
     elif level == 8:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
 
     elif level == 9:
         enemies += gen_move_and_disappear(*args)
         enemies += gen_move_and_shoot(*args)
-        enemies += gen_approach_and_shoot(*args)
         enemies += gen_group_unit(*args)
         enemies += gen_bomb(level, win_width, win_height, player_pos)
 
