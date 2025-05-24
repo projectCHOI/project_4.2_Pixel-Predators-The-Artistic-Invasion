@@ -593,12 +593,15 @@ while run:
         if boss:
             boss.check_appear(total_seconds, level)
             
-            # 3초마다 적 생성
+            # 적 생성
             now = pygame.time.get_ticks()
             if now - last_enemy_spawn_time >= enemy_spawn_interval:
-                new_enemies = generate_enemies(level, player_pos)
-                enemies.extend(new_enemies)
-                last_enemy_spawn_time = now
+                approach_exists = any(e[2] == "approach_and_shoot" for e in enemies)
+                if not approach_exists:
+                    new_enemies = gen_approach_and_shoot(level, win_width, win_height)
+                    enemies.extend(new_enemies)
+                    last_enemy_spawn_time = now
+
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
                 boss.move()  # 보스 이동
