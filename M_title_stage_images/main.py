@@ -495,6 +495,36 @@ while run:
                             boss.reset()
                         stage_duration = get_stage_duration(level)
 
+elif selected_option == "continue":
+    current_health = 3
+    enemies_defeated = 0
+    player_speed = original_player_speed
+    power_item_active = 0
+    game_over = False
+    game_over_reason = None
+    start_ticks = pygame.time.get_ticks()
+    last_enemy_spawn_time = pygame.time.get_ticks()
+    enemy_spawn_interval = 3000
+    game_active = True
+
+    player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
+    enemies = []
+    enemies = generate_enemies(level, player_pos)
+
+    # ✅ 처음 시작할 때 approach_and_shoot 적이 없다면 한 번 생성
+    if not any(e[2] == "approach_and_shoot" for e in enemies):
+        enemies.extend(gen_approach_and_shoot(level, win_width, win_height))
+
+    stage_start_ticks = pygame.time.get_ticks()
+    intro_screen(level)
+    attacks = []
+    energy_balls = []
+    boss = initialize_boss(level)
+    if boss:
+        boss.reset()
+    stage_duration = get_stage_duration(level)
+
+
     else:
         # 마우스 위치 가져오기
         mouse_pos = pygame.mouse.get_pos()
