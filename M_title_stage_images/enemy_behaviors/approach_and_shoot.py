@@ -19,11 +19,11 @@ def load_image(*path_parts, size=None):
     return img
 
 # 이미지 로딩
-SIZE = 30
-enemy_image_up    = load_image("enemies", "mob_enemy_Relentless Charger_1.png", size=(SIZE, SIZE))
-enemy_image_down  = load_image("enemies", "mob_enemy_Relentless Charger_2.png", size=(SIZE, SIZE))
-enemy_image_left  = load_image("enemies", "mob_enemy_Relentless Charger_3.png", size=(SIZE, SIZE))
-enemy_image_right = load_image("enemies", "mob_enemy_Relentless Charger_4.png", size=(SIZE, SIZE))
+SIZE = 40
+enemy_image_up    = load_image("enemies", "mob_enemy_Sentinel Shooter_left.png", size=(SIZE, SIZE))
+enemy_image_down  = load_image("enemies", "mob_enemy_Sentinel Shooter_right.png", size=(SIZE, SIZE))
+enemy_image_left  = load_image("enemies", "mob_enemy_Sentinel Shooter_left.png", size=(SIZE, SIZE))
+enemy_image_right = load_image("enemies", "mob_enemy_Sentinel Shooter_right.png", size=(SIZE, SIZE))
 
 # 적 생성 함수
 def generate(level, win_width, win_height):
