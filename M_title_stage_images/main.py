@@ -598,6 +598,13 @@ while run:
                 if not approach_exists:
                     new_enemies = gen_approach_and_shoot(level, win_width, win_height)
                     enemies.extend(new_enemies)
+
+            now = pygame.time.get_ticks()
+            if now - last_enemy_spawn_time >= enemy_spawn_interval:
+                move_disappear_exists = any(e[2] == "move_and_disappear" for e in enemies)
+                if now - last_enemy_spawn_time >= enemy_spawn_interval:
+                    enemies.extend(generate_enemies(level, player_pos))
+
                     last_enemy_spawn_time = now
 
             # 보스가 활성화된 경우 처리
