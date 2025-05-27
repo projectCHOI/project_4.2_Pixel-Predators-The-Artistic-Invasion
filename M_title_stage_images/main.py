@@ -129,6 +129,14 @@ invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
 collected_gems = [] # 보석 획득
 
+# 각 적 타입별 마지막 생성 시간
+enemy_last_spawn_time = {
+    "move_and_disappear": 0,
+    "move_and_shoot": 0,
+    "approach_and_shoot": 0,
+    "group_unit": 0
+}
+
 # 보스 초기화 함수 정의
 def initialize_boss(level):
     if level == 1: return Stage1Boss()
