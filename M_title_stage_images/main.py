@@ -593,16 +593,26 @@ while run:
             
             # 적 생성
             now = pygame.time.get_ticks()
-            if now - last_enemy_spawn_time >= enemy_spawn_interval:
-                if not any(e[2] == "approach_and_shoot" for e in enemies):
-                    enemies.extend(gen_approach_and_shoot(level, win_width, win_height))
+
+            if now - enemy_last_spawn_time["move_and_disappear"] >= enemy_spawn_intervals["move_and_disappear"]:
                 if not any(e[2] == "move_and_disappear" for e in enemies):
                     enemies.extend(gen_move_and_disappear(level, win_width, win_height))
+                    enemy_last_spawn_time["move_and_disappear"] = now
+
+            if now - enemy_last_spawn_time["move_and_shoot"] >= enemy_spawn_intervals["move_and_shoot"]:
                 if not any(e[2] == "move_and_shoot" for e in enemies):
                     enemies.extend(gen_move_and_shoot(level, win_width, win_height))
+                    enemy_last_spawn_time["move_and_shoot"] = now
+
+            if now - enemy_last_spawn_time["approach_and_shoot"] >= enemy_spawn_intervals["approach_and_shoot"]:
+                if not any(e[2] == "approach_and_shoot" for e in enemies):
+                    enemies.extend(gen_approach_and_shoot(level, win_width, win_height))
+                    enemy_last_spawn_time["approach_and_shoot"] = now
+
+            if now - enemy_last_spawn_time["group_unit"] >= enemy_spawn_intervals["group_unit"]:
                 if not any(e[2] == "group_unit" for e in enemies):
                     enemies.extend(gen_group_unit(level, win_width, win_height))
-                last_enemy_spawn_time = now
+                    enemy_last_spawn_time["group_unit"] = now
 
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
