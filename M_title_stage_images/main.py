@@ -136,6 +136,13 @@ enemy_last_spawn_time = {
     "approach_and_shoot": 0,
     "group_unit": 0
 }
+# 각 적 타입별 생성 간격 (단위: ms)
+enemy_spawn_intervals = {
+    "move_and_disappear": 3000,
+    "move_and_shoot": 5000,
+    "approach_and_shoot": 6000,
+    "group_unit": 8000
+}
 
 # 보스 초기화 함수 정의
 def initialize_boss(level):
