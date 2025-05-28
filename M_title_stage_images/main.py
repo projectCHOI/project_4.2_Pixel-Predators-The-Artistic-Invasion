@@ -609,25 +609,17 @@ while run:
             # 적 생성
             now = pygame.time.get_ticks()
 
-            if now - enemy_last_spawn_time["move_and_disappear"] >= enemy_spawn_intervals["move_and_disappear"]:
-                if not any(e[2] == "move_and_disappear" for e in enemies):
-                    enemies.extend(gen_move_and_disappear(level, win_width, win_height))
-                    enemy_last_spawn_time["move_and_disappear"] = now
-
-            if now - enemy_last_spawn_time["move_and_shoot"] >= enemy_spawn_intervals["move_and_shoot"]:
-                if not any(e[2] == "move_and_shoot" for e in enemies):
-                    enemies.extend(gen_move_and_shoot(level, win_width, win_height))
-                    enemy_last_spawn_time["move_and_shoot"] = now
-
-            if now - enemy_last_spawn_time["approach_and_shoot"] >= enemy_spawn_intervals["approach_and_shoot"]:
-                if not any(e[2] == "approach_and_shoot" for e in enemies):
-                    enemies.extend(gen_approach_and_shoot(level, win_width, win_height))
-                    enemy_last_spawn_time["approach_and_shoot"] = now
-
-            if now - enemy_last_spawn_time["group_unit"] >= enemy_spawn_intervals["group_unit"]:
-                if not any(e[2] == "group_unit" for e in enemies):
-                    enemies.extend(gen_group_unit(level, win_width, win_height))
-                    enemy_last_spawn_time["group_unit"] = now
+            for enemy_type, generator, condition in [
+                ("move_and_disappear", gen_move_and_disappear, lambda e: e[2] == "move_and_disappear"),
+                ("move_and_shoot",     gen_move_and_shoot,     lambda e: e[2] == "move_and_shoot"),
+                ("approach_and_shoot", gen_approach_and_shoot, lambda e: e[2] == "approach_and_shoot"),
+                ("group_unit",         gen_group_unit,         lambda e: e[2] == "group_unit")
+            ]:
+                if now - enemy_last_spawn_time[enemy_type] >= enemy_spawn_intervals[enemy_type]:
+                    if not any(condition(e) for e in enemies):
+                        new_enemies = generator(level, win_width, win_height)
+                        enemies.extend(new_enemies)
+                        enemy_last_spawn_time[enemy_type] = now
 
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
