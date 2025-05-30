@@ -688,6 +688,8 @@ while run:
                             attack_dir = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
                             energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
                             enemy[6] += 1  # 공격 횟수 증가
+                    else:
+                        pos[1] -= speed
 
             elif enemy_type == "approach_and_shoot":
                 now = pygame.time.get_ticks()
