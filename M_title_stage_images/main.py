@@ -796,6 +796,8 @@ while run:
             if not hit:
                 if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
                     continue
+                if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
+                    continue
                 new_enemies.append(enemy)
         enemies = new_enemies
 
