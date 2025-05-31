@@ -728,10 +728,10 @@ while run:
             elif enemy_type == "group_unit":
                 now = pygame.time.get_ticks()
 
-                # 실시간 위치 업데이트 (사인 곡선 이동)
-                t = (now - enemy[14]) / 500
+                # 사인 곡선 이동
+                t = (now - enemy[14]) / 300
                 enemy[0][0] = enemy[13][0] + 50 * math.sin(t + enemy[12])
-                enemy[0][1] = enemy[13][1] + enemy[4] * t
+                enemy[0][1] = enemy[13][1] + enemy[4] * t * 1.5
 
                 # 공격 타이밍 도달 시
                 if now - enemy[6] >= enemy[15]:
