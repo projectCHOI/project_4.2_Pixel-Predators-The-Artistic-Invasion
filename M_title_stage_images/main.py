@@ -689,7 +689,7 @@ while run:
                             energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
                             enemy[6] += 1  # 공격 횟수 증가
                     else:
-                        pos[1] -= speed
+                        pass
 
             elif enemy_type == "approach_and_shoot":
                 now = pygame.time.get_ticks()
@@ -795,8 +795,6 @@ while run:
                     break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
             if not hit:
                 if enemy[2] == "approach_and_shoot" and enemy[0][1] + enemy[1] < 0:
-                    continue
-                if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
                 new_enemies.append(enemy)
         enemies = new_enemies
