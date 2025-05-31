@@ -759,15 +759,24 @@ while run:
         new_attacks = []
         for attack in attacks:
             start, end, thickness, color = attack
-            direction = (end[0] - start[0], end[1] - start[1])
-            length = math.hypot(direction[0], direction[1])
-            if length == 0:
-                continue
-            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
-            new_end = (start[0] + direction[0], start[1] + direction[1])
-            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
-                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness, attack[3]))
-        attacks = new_attacks
+            if check_attack_collision(start, end, enemy_pos, enemy_size):
+                hit = True
+                enemies_defeated += 1
+
+                # 공격당했을 경우 파편 생성
+                if enemy[2] == "bomb" and len(enemy) > 9 and enemy[9]:  # explode_on_death == True
+                    fragment_directions = [
+                        (-1, 0), (1, 0), (0, -1), (0, 1),
+                        (-1, -1), (-1, 1), (1, -1), (1, 1)
+                    ]
+                    for d in fragment_directions:
+                        energy_balls.append([
+                            enemy_pos[0] + enemy_size // 2,
+                            enemy_pos[1] + enemy_size // 2,
+                            "yellow",               # 색상
+                            [d[0] * 6, d[1] * 6]    # 속도
+                        ])
+                break
 
         # 공격과 적의 충돌 처리
         new_enemies = []

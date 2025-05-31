@@ -57,7 +57,8 @@ def generate(level, win_width, win_height, player_pos):
             None,              
             0,                 
             enemy_bomb_image,  
-            SPEED              
+            SPEED,
+            True              
         ])
 
     return enemies
