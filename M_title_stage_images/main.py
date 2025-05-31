@@ -714,7 +714,7 @@ while run:
                             ])
                             enemy[6] = now
                 else:
-                    pos[1] += speed # 5초 이후 퇴장
+                    pos[1] -= speed # 5초 이후 위로 퇴장
 
             elif enemy_type == "bomb":
                 target_pos = [player_pos[0], player_pos[1]]
@@ -794,7 +794,7 @@ while run:
                         current_heal_item_image = random.choice(heal_item_images)
                     break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
             if not hit:
-                if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
+                if enemy[2] == "approach_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
                 if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
