@@ -85,3 +85,12 @@ def generate_purple_bullets(center_pos):
         })
 
     return bullets
+
+def update_purple_bullets(bullets, now, win_width, win_height, duration=5000):
+    updated = []
+    for b in bullets:
+        b["pos"][0] += b["vel"][0]
+        b["pos"][1] += b["vel"][1]
+        if now - b["spawn_time"] <= duration:
+            updated.append(b)
+    return updated
