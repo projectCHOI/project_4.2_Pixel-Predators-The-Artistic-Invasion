@@ -170,6 +170,7 @@ attacks = []
 attack_speed = 20
 attack_power = 1  # 플레이어의 공격력 추가
 enemies_defeated = 0  # 제거된 적의 수
+fragments = []  # bomb 적의 파편 저장 리스트
 
 # 게임 오버 상태 및 이유
 game_over = False
