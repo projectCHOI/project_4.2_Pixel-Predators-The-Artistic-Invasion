@@ -764,18 +764,21 @@ while run:
                 enemies_defeated += 1
 
                 # 공격당했을 경우 파편 생성
-                if enemy[2] == "bomb" and len(enemy) > 9 and enemy[9]:  # explode_on_death == True
-                    fragment_directions = [
-                        (-1, 0), (1, 0), (0, -1), (0, 1),
-                        (-1, -1), (-1, 1), (1, -1), (1, 1)
-                    ]
-                    for d in fragment_directions:
-                        energy_balls.append([
-                            enemy_pos[0] + enemy_size // 2,
-                            enemy_pos[1] + enemy_size // 2,
-                            "yellow",               # 색상
-                            [d[0] * 6, d[1] * 6]    # 속도
-                        ])
+                if enemy[2] == "bomb" and enemy[9]:  # explode_on_death
+                    if len(enemy) > 10 and isinstance(enemy[10], dict):
+                        frag_info = enemy[10]
+                        directions = [
+                            (-1, 0), (1, 0), (0, -1), (0, 1),
+                            (-1, -1), (-1, 1), (1, -1), (1, 1)
+                        ]
+                        for d in directions[:frag_info["count"]]:
+                            fragments.append([
+                                enemy[0][0] + enemy[1] // 2 - frag_info["size"] // 2,
+                                enemy[0][1] + enemy[1] // 2 - frag_info["size"] // 2,
+                                [d[0] * frag_info["speed"], d[1] * frag_info["speed"]],
+                                frag_info["image_path"],
+                                frag_info["size"]
+                            ])
                 break
 
         # 공격과 적의 충돌 처리
