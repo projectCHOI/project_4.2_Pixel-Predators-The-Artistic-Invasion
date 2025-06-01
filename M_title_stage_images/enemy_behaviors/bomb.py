@@ -23,6 +23,10 @@ SIZE = 40
 SPEED = 9
 enemy_bomb_image = load_image("enemies", "mob_enemy_bomb.png", size=(SIZE, SIZE))
 
+# 보라색 탄환 설정
+PURPLE_BULLET_SIZE = 20
+PURPLE_BULLET_IMAGE = load_image("enemies", "mob_enemy_bomb.png", size=(PURPLE_BULLET_SIZE, PURPLE_BULLET_SIZE))
+
 # 등장 조건
 BOMB_STAGES = {2, 3, 5, 7, 11}
 DIRECTIONS = ["left", "right", "up", "down"]
