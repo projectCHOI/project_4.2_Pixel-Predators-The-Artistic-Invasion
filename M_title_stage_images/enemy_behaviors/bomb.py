@@ -58,7 +58,13 @@ def generate(level, win_width, win_height, player_pos):
             0,                 
             enemy_bomb_image,  
             SPEED,
-            True              
+            True,
+            {
+                "count": 8,
+                "speed": 6,
+                "size": 30,
+                "image_path": ["enemies", "mob_enemy_bomb.png"]
+            }              
         ])
 
     return enemies
