@@ -68,3 +68,20 @@ def generate(level, win_width, win_height, player_pos):
         ])
 
     return enemies
+
+def generate_purple_bullets(center_pos):
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)]
+    speed = 5
+    now = pygame.time.get_ticks()
+    bullets = []
+
+    for d in directions:
+        vel = [d[0] * speed, d[1] * speed]
+        bullets.append({
+            "pos": [center_pos[0], center_pos[1]],  # 시작 위치
+            "vel": vel,                              # 속도 벡터
+            "image": PURPLE_BULLET_IMAGE,            # 이미지
+            "spawn_time": now                        # 생성 시간
+        })
+
+    return bullets

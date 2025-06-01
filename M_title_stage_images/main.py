@@ -170,7 +170,6 @@ attacks = []
 attack_speed = 20
 attack_power = 1  # 플레이어의 공격력 추가
 enemies_defeated = 0  # 제거된 적의 수
-fragments = []  # bomb 적의 파편 저장 리스트
 
 # 게임 오버 상태 및 이유
 game_over = False
@@ -690,7 +689,7 @@ while run:
                             energy_balls.append([pos[0] + size // 2, pos[1] + size // 2, "yellow", attack_dir])
                             enemy[6] += 1  # 공격 횟수 증가
                     else:
-                        pass
+                        pos[1] -= speed
 
             elif enemy_type == "approach_and_shoot":
                 now = pygame.time.get_ticks()
@@ -715,7 +714,7 @@ while run:
                             ])
                             enemy[6] = now
                 else:
-                    pos[1] -= speed # 5초 이후 위로 퇴장
+                    pos[1] += speed # 5초 이후 퇴장
 
             elif enemy_type == "bomb":
                 target_pos = [player_pos[0], player_pos[1]]
@@ -760,27 +759,15 @@ while run:
         new_attacks = []
         for attack in attacks:
             start, end, thickness, color = attack
-            if check_attack_collision(start, end, enemy_pos, enemy_size):
-                hit = True
-                enemies_defeated += 1
-
-                # 공격당했을 경우 파편 생성
-                if enemy[2] == "bomb" and enemy[9]:  # explode_on_death
-                    if len(enemy) > 10 and isinstance(enemy[10], dict):
-                        frag_info = enemy[10]
-                        directions = [
-                            (-1, 0), (1, 0), (0, -1), (0, 1),
-                            (-1, -1), (-1, 1), (1, -1), (1, 1)
-                        ]
-                        for d in directions[:frag_info["count"]]:
-                            fragments.append([
-                                enemy[0][0] + enemy[1] // 2 - frag_info["size"] // 2,
-                                enemy[0][1] + enemy[1] // 2 - frag_info["size"] // 2,
-                                [d[0] * frag_info["speed"], d[1] * frag_info["speed"]],
-                                frag_info["image_path"],
-                                frag_info["size"]
-                            ])
-                break
+            direction = (end[0] - start[0], end[1] - start[1])
+            length = math.hypot(direction[0], direction[1])
+            if length == 0:
+                continue
+            direction = (direction[0] / length * attack_speed, direction[1] / length * attack_speed)
+            new_end = (start[0] + direction[0], start[1] + direction[1])
+            if 0 <= new_end[0] <= win_width and 0 <= new_end[1] <= win_height:
+                new_attacks.append((new_end, (new_end[0] + direction[0], new_end[1] + direction[1]), thickness, attack[3]))
+        attacks = new_attacks
 
         # 공격과 적의 충돌 처리
         new_enemies = []
@@ -807,7 +794,9 @@ while run:
                         current_heal_item_image = random.choice(heal_item_images)
                     break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
             if not hit:
-                if enemy[2] == "approach_and_shoot" and enemy[0][1] + enemy[1] < 0:
+                if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
+                    continue
+                if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
                 new_enemies.append(enemy)
         enemies = new_enemies
