@@ -170,6 +170,7 @@ attacks = []
 attack_speed = 20
 attack_power = 1  # 플레이어의 공격력 추가
 enemies_defeated = 0  # 제거된 적의 수
+purple_bullets = []
 
 # 게임 오버 상태 및 이유
 game_over = False
@@ -798,6 +799,10 @@ while run:
                     continue
                 if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
+                if enemy[2] == "bomb":
+                    from enemy_behaviors.bomb import generate_purple_bullets
+                    center = [enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2]
+                    purple_bullets.extend(generate_purple_bullets(center))
                 new_enemies.append(enemy)
         enemies = new_enemies
 
