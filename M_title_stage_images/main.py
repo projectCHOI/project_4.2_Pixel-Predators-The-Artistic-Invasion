@@ -412,6 +412,10 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
         img = enemy[7]
         win.blit(img, (pos[0], pos[1]))
 
+    # 보라색 탄환
+    for bullet in purple_bullets:
+        win.blit(bullet["image"], bullet["pos"])
+
     # 아이템
     if speed_item_pos:
         win.blit(speed_item_image, speed_item_pos)
@@ -904,6 +908,11 @@ while run:
                         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
                 else:
                     new_energy_balls.append(ball)
+
+        # "bomb"
+        from enemy_behaviors.bomb import update_purple_bullets
+        purple_bullets = update_purple_bullets(purple_bullets, pygame.time.get_ticks(), win_width, win_height)
+
         energy_balls = new_energy_balls
 
         # 미니언과 플레이어 충돌 체크
