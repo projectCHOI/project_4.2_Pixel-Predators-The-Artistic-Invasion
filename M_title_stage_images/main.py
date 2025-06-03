@@ -781,34 +781,35 @@ while run:
             enemy_size  = enemy[1]
             enemy_image = enemy[7]
             hit = False
+
             for attack in attacks:
                 start, end, thickness, color = attack
                 if check_attack_collision(start, end, enemy_pos, enemy_size):
                     hit = True
-                    enemies_defeated += 1  # 제거된 적의 수 증가
+                    enemies_defeated += 1
+
+                    # bomb 
+                    if enemy[2] == "bomb":
+                        from enemy_behaviors.bomb import generate_purple_bullets
+                        center = [enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2]
+                        purple_bullets.extend(generate_purple_bullets(center))
+
                     # 아이템 생성 로직
-                    # 스피드 아이템 생성
                     if enemy_size == 20 and random.random() < speed_item_chance and not speed_item_active:
                         speed_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 공격력 증가 아이템 생성
                     if enemy_size == 40 and random.random() < power_item_chance and power_item_active < 4:
                         power_item_pos = (enemy_pos[0], enemy_pos[1])
-                    # 체력 회복 아이템 생성
                     if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
                         heal_item_pos = (enemy_pos[0], enemy_pos[1])
                         current_heal_item_image = random.choice(heal_item_images)
-                    break  # 한 번 맞으면 해당 적에 대한 충돌 체크 중단
+                    break
+
             if not hit:
                 if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
                     continue
                 if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
-                if enemy[2] == "bomb":
-                    from enemy_behaviors.bomb import generate_purple_bullets
-                    center = [enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2]
-                    purple_bullets.extend(generate_purple_bullets(center))
                 new_enemies.append(enemy)
-        enemies = new_enemies
 
         # 플레이어와 적의 충돌 체크
         if not invincible:
