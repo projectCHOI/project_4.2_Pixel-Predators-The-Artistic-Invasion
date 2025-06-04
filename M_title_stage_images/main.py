@@ -785,6 +785,8 @@ while run:
             for attack in attacks:
                 start, end, thickness, color = attack
                 if check_attack_collision(start, end, enemy_pos, enemy_size):
+                    print("HIT 발생", "type:", enemy[2], "pos:", enemy_pos)
+                    
                     hit = True
                     enemies_defeated += 1
 
