@@ -787,6 +787,9 @@ while run:
                 if check_attack_collision(start, end, enemy_pos, enemy_size):
                     print("HIT 발생", "type:", enemy[2], "pos:", enemy_pos)
                     
+                    if enemy[2] == "bomb":
+                        print("bomb 적 처리")
+
                     hit = True
                     enemies_defeated += 1
 
