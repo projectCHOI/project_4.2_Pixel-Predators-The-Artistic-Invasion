@@ -95,6 +95,17 @@ def update_purple_bullets(bullets, now, win_width, win_height, duration=5000):
     for b in bullets:
         b["pos"][0] += b["vel"][0]
         b["pos"][1] += b["vel"][1]
-        if now - b["spawn_time"] <= duration:
-            updated.append(b)
+        
+        # 지속시간 확인
+        if now - b["spawn_time"] > duration:
+            continue
+        
+        # 화면 경계 확인 (보라색 탄환은 크기 20 기준)
+        x, y = b["pos"]
+        if x < -20 or x > win_width or y < -20 or y > win_height:
+            continue
+
+        # 살아남은 탄환만 유지
+        updated.append(b)
+
     return updated
