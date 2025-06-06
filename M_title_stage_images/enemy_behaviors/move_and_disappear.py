@@ -27,16 +27,16 @@ def generate(level, win_width, win_height):
     enemies = []
 
     stage_spawn_chances = {
-        1: 0.6,
-        2: 0.6,
-        3: 0.6,
+        1: 0.7,
+        2: 0.7,
+        3: 0.7,
         4: 0.7,
         5: 0.7,
-        2: 0.7,
-        3: 0.8,
-        4: 0.8,
-        5: 0.8,
-        }
+        6: 0.7,
+        7: 0.7,
+        8: 0.7,
+        9: 0.7
+    }
                 
     spawn_chance = stage_spawn_chances.get(level, 0.1)
 

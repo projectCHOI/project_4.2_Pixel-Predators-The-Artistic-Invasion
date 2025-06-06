@@ -818,7 +818,7 @@ while run:
         if not invincible:
             collision = check_collision(player_pos, enemies)
             if collision:
-                if collision == "bomb":  # bomb 충돌 시 즉시 사망
+                if collision == "bomb":
                     current_health = 0
                     collision_image = collision_images[1]["image"]
                     collision_effect_duration = collision_images[1]["duration"]
