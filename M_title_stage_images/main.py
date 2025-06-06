@@ -624,7 +624,6 @@ while run:
                 ("bomb", gen_bomb, lambda e: e[2] == "bomb")
             ]:
                 if now - enemy_last_spawn_time[enemy_type] >= enemy_spawn_intervals[enemy_type]:
-                    if not any(condition(e) for e in enemies):
                         if enemy_type == "bomb":
                             new_enemies = generator(level, win_width, win_height, player_pos)
                         else:
