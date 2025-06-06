@@ -780,21 +780,17 @@ while run:
             enemy_pos   = enemy[0]
             enemy_size  = enemy[1]
             enemy_image = enemy[7]
+            enemy_type  = enemy[2]
             hit = False
 
             for attack in attacks:
                 start, end, thickness, color = attack
                 if check_attack_collision(start, end, enemy_pos, enemy_size):
-                    print("HIT 발생", "type:", enemy[2], "pos:", enemy_pos)
-                    
-                    if enemy[2] == "bomb":
-                        print("bomb 적 처리")
-
                     hit = True
                     enemies_defeated += 1
 
-                    # bomb 
-                    if enemy[2] == "bomb":
+                    # bomb
+                    if enemy_type == "bomb":
                         from enemy_behaviors.bomb import generate_purple_bullets
                         center = [enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2]
                         purple_bullets.extend(generate_purple_bullets(center))
@@ -807,14 +803,16 @@ while run:
                     if enemy_size == 20 and random.random() < heal_item_chance and current_health < max_health:
                         heal_item_pos = (enemy_pos[0], enemy_pos[1])
                         current_heal_item_image = random.choice(heal_item_images)
-                    break
+                    break 
 
             if not hit:
-                if enemy[2] == "approach_and_shoot" and enemy[0][1] > win_height:
+                if enemy_type == "approach_and_shoot" and enemy[0][1] > win_height:
                     continue
-                if enemy[2] == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
+                if enemy_type == "move_and_shoot" and enemy[0][1] + enemy[1] < 0:
                     continue
                 new_enemies.append(enemy)
+
+        enemies = new_enemies
 
         # 플레이어와 적의 충돌 체크
         if not invincible:
