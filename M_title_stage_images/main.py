@@ -625,10 +625,14 @@ while run:
             ]:
                 if now - enemy_last_spawn_time[enemy_type] >= enemy_spawn_intervals[enemy_type]:
                     if not any(condition(e) for e in enemies):
-                        new_enemies = generator(level, win_width, win_height, player_pos)
+                        if enemy_type == "bomb":
+                            new_enemies = generator(level, win_width, win_height, player_pos)
+                        else:
+                            new_enemies = generator(level, win_width, win_height)
+
                         enemies.extend(new_enemies)
                         enemy_last_spawn_time[enemy_type] = now
-                        
+
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
                 boss.move()  # 보스 이동
