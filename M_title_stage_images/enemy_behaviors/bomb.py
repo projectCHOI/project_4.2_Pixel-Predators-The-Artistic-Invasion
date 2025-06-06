@@ -28,11 +28,15 @@ PURPLE_BULLET_SIZE = 20
 PURPLE_BULLET_IMAGE = load_image("enemies", "mob_enemy_bomb.png", size=(PURPLE_BULLET_SIZE, PURPLE_BULLET_SIZE))
 
 # 등장 조건
-BOMB_STAGES = {2, 3, 5, 7, 11}
+BOMB_STAGES = {2, 3, 5, 7}
 DIRECTIONS = ["left", "right", "up", "down"]
 
 def generate(level, win_width, win_height, player_pos):
     enemies = []
+    
+    BOMB_STAGES = {2, 3, 5, 7}
+    if level not in BOMB_STAGES:
+        return enemies
 
     if level in BOMB_STAGES:
         direction = random.choice(DIRECTIONS)

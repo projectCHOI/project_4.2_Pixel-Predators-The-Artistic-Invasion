@@ -134,14 +134,16 @@ enemy_last_spawn_time = {
     "move_and_disappear": 0,
     "move_and_shoot": 0,
     "approach_and_shoot": 0,
-    "group_unit": 0
+    "group_unit": 0,
+    "bomb": 0
 }
 # 각 적 타입별 생성 간격 (단위: ms)
 enemy_spawn_intervals = {
     "move_and_disappear": 3000,
     "move_and_shoot": 5000,
     "approach_and_shoot": 6000,
-    "group_unit": 8000
+    "group_unit": 8000,
+    "bomb": 10000
 }
 
 # 보스 초기화 함수 정의
@@ -618,14 +620,15 @@ while run:
                 ("move_and_disappear", gen_move_and_disappear, lambda e: e[2] == "move_and_disappear"),
                 ("move_and_shoot",     gen_move_and_shoot,     lambda e: e[2] == "move_and_shoot"),
                 ("approach_and_shoot", gen_approach_and_shoot, lambda e: e[2] == "approach_and_shoot"),
-                ("group_unit",         gen_group_unit,         lambda e: e[2] == "group_unit")
+                ("group_unit",         gen_group_unit,         lambda e: e[2] == "group_unit"),
+                ("bomb", gen_bomb, lambda e: e[2] == "bomb")
             ]:
                 if now - enemy_last_spawn_time[enemy_type] >= enemy_spawn_intervals[enemy_type]:
                     if not any(condition(e) for e in enemies):
-                        new_enemies = generator(level, win_width, win_height)
+                        new_enemies = generator(level, win_width, win_height, player_pos)
                         enemies.extend(new_enemies)
                         enemy_last_spawn_time[enemy_type] = now
-
+                        
             # 보스가 활성화된 경우 처리
             if boss.boss_active:
                 boss.move()  # 보스 이동

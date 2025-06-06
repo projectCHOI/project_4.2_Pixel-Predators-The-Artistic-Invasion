@@ -22,7 +22,7 @@ def load_image(*path_parts, size=None):
 FRONT_SIZE = 50
 BACK_SIZE = 30
 SPACING = 5
-SPEED = 1.5
+SPEED = 6
 GROUP_COUNT = 5
 
 front_image = load_image("enemies", "mob_enemy_group_unit_1.png", size=(FRONT_SIZE, FRONT_SIZE))
@@ -36,10 +36,10 @@ def generate(level, win_width, win_height):
         3: 0.0,
         4: 0.4,
         5: 0.6,
-        6: 0.8,
-        7: 0.9,
-        8: 0.95,
-        9: 0.95
+        6: 0.7,
+        7: 0.7,
+        8: 0.7,
+        9: 0.7
     }
 
     spawn_chance = stage_spawn_chances.get(level, 0.0)

@@ -35,10 +35,10 @@ def generate(level, win_width, win_height):
         3: 0.5,
         4: 0.6,
         5: 0.7,
-        6: 0.8,
-        7: 0.9,
-        8: 0.9,
-        9: 0.95,
+        6: 0.7,
+        7: 0.7,
+        8: 0.7,
+        9: 0.7,
     }
 
     spawn_chance = stage_spawn_chances.get(level, 0.0)
