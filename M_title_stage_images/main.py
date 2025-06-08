@@ -5,6 +5,7 @@ import os
 
 pygame.init()
 pygame.display.set_mode((1, 1))
+pygame.mixer.init() # 음악
 
 # 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
