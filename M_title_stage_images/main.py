@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import os
+import sys # 음악
 
 # 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
@@ -22,13 +23,19 @@ from enemy_behaviors.bomb               import generate as gen_bomb
 from enemy_behaviors.group_unit         import generate as gen_group_unit
 
 # BGM 임포트
+sys.path.append(os.path.join(os.path.dirname(__file__), "assets", "sounds"))
 from bgm_controller import BGMController
+
 pygame.init()
 
+# Pygame 초기화
+pygame.init()
+
+# BGM 컨트롤러 생성
 bgm = BGMController()
 
-pygame.display.set_mode((1, 1))
-pygame.mixer.init() # 음악
+# title 음악 재생
+bgm.play("title")
 
 bgm.play("stage1_music.mp3")
 # 윈도우 설정
