@@ -25,6 +25,9 @@ from enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoo
 from enemy_behaviors.bomb               import generate as gen_bomb
 from enemy_behaviors.group_unit         import generate as gen_group_unit
 
+# BGM 임포트
+from audio.bgm_controller import BGMController
+
 # 윈도우 설정
 win_width, win_height = 1280, 720
 win = pygame.display.set_mode((win_width, win_height))
