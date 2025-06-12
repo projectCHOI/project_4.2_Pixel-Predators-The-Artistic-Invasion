@@ -29,3 +29,33 @@ class BGMController:
 
     def resume(self):
         pygame.mixer.music.unpause()
+
+
+import pygame
+import os
+import sys
+
+# bgm_controller 모듈 임포트
+sys.path.append(os.path.join(os.path.dirname(__file__), "assets", "sounds"))
+from bgm_controller import BGMController
+
+# Pygame 초기화
+pygame.init()
+
+# BGM 컨트롤러 생성
+bgm = BGMController()
+
+# 예시: 타이틀 화면 음악 재생
+bgm.play("title")
+
+# 예시: 스테이지 시작
+def start_stage(stage_num):
+    bgm.play(f"stage_{stage_num}")
+
+# 예시: 게임 종료
+def handle_gameover():
+    bgm.play("gameover", loop=False)
+
+# 예시: 게임 승리
+def handle_victory():
+    bgm.play("victory", loop=False)
