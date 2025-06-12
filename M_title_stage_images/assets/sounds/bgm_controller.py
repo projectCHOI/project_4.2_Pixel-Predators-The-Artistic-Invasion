@@ -31,31 +31,55 @@ class BGMController:
         pygame.mixer.music.unpause()
 
 
+# M_title_stage_images/assets/sounds/bgm_controller.py
+
 import pygame
 import os
-import sys
 
-# bgm_controller 모듈 임포트
-sys.path.append(os.path.join(os.path.dirname(__file__), "assets", "sounds"))
-from bgm_controller import BGMController
+class BGMController:
+    def __init__(self):
+        pygame.mixer.init()
+        self.base_path = os.path.dirname(os.path.abspath(__file__))  # sounds 폴더
+        self.current_track = None
 
-# Pygame 초기화
-pygame.init()
+        self.tracks = {
+            "title": "title.mp3",
+            "loading": "stage_loading.mp3",
+            "stage_1": "stage_1.mp3",
+            "stage_2": "stage_2.mp3",
+            "stage_3": "stage_3.mp3",
+            "stage_4": "stage_4.mp3",
+            "stage_5": "stage_5.mp3",
+            "stage_6": "stage_6.mp3",
+            "stage_7": "stage_7.mp3",
+            "stage_8": "stage_8.mp3",
+            "stage_9": "stage_9.mp3",
+            "gameover": "gameover.mp3",
+            "victory": "victory.mp3"
+        }
 
-# BGM 컨트롤러 생성
-bgm = BGMController()
+    def play(self, name, loop=True, volume=1.0):
+        if name not in self.tracks:
+            print(f"[BGM] '{name}' 트랙 없음")
+            return
 
-# 예시: 타이틀 화면 음악 재생
-bgm.play("title")
+        path = os.path.join(self.base_path, self.tracks[name])
 
-# 예시: 스테이지 시작
-def start_stage(stage_num):
-    bgm.play(f"stage_{stage_num}")
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.stop()
 
-# 예시: 게임 종료
-def handle_gameover():
-    bgm.play("gameover", loop=False)
+        try:
+            pygame.mixer.music.load(path)
+            pygame.mixer.music.set_volume(volume)
+            pygame.mixer.music.play(-1 if loop else 0)
+            self.current_track = name
+            print(f"[BGM] Playing: {name}")
+        except Exception as e:
+            print(f"[BGM] 오류 발생: {e}")
 
-# 예시: 게임 승리
-def handle_victory():
-    bgm.play("victory", loop=False)
+    def stop(self):
+        pygame.mixer.music.stop()
+        self.current_track = None
+
+    def is_playing(self):
+        return pygame.mixer.music.get_busy()
