@@ -23,21 +23,21 @@ from enemy_behaviors.bomb               import generate as gen_bomb
 from enemy_behaviors.group_unit         import generate as gen_group_unit
 
 # BGM 임포트
-sys.path.append(os.path.join(os.path.dirname(__file__), "assets", "sounds"))
-from bgm_controller import BGMController
-
-pygame.init()
-
-# Pygame 초기화
+from assets.sounds.bgm_controller import BGMController
 pygame.init()
 
 # BGM 컨트롤러 생성
 bgm = BGMController()
 
-# title 음악 재생
+# 타이틀 화면에서 재생
 bgm.play("title")
 
-bgm.play("stage1_music.mp3")
+# 스테이지 1 시작 시
+bgm.play("stage_1")
+
+# 종료 또는 게임 오버
+bgm.play("gameover", loop=False)
+
 # 윈도우 설정
 win_width, win_height = 1280, 720
 win = pygame.display.set_mode((win_width, win_height))
