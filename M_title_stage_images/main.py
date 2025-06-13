@@ -4,6 +4,11 @@ import math
 import os
 from assets.sounds.bgm_controller import BGMController
 
+# 윈도우 설정
+win_width, win_height = 1280, 720
+win = pygame.display.set_mode((win_width, win_height))
+pygame.display.set_caption("The Artistic Invasion")
+
 # 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
 from bosses.Stage_2_Boss import Stage2Boss
@@ -22,8 +27,7 @@ from enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoo
 from enemy_behaviors.bomb               import generate as gen_bomb
 from enemy_behaviors.group_unit         import generate as gen_group_unit
 
-# BGM 임포트
-from assets.sounds.bgm_controller import BGMController
+# Pygame 초기화
 pygame.init()
 
 # BGM 컨트롤러 생성
@@ -35,11 +39,6 @@ bgm.play("title")  # 타이틀 음악 재생
 
 # 종료 또는 게임 오버
 bgm.play("gameover", loop=False)
-
-# 윈도우 설정
-win_width, win_height = 1280, 720
-win = pygame.display.set_mode((win_width, win_height))
-pygame.display.set_caption("The Artistic Invasion")
 
 # 경로 및 이미지 로딩 함수 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
