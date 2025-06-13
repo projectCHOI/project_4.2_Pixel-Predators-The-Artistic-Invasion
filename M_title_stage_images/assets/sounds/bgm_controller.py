@@ -9,7 +9,7 @@ class BGMController:
 
         # BGM 목록
         self.tracks = {
-            "title": "title.mp3",
+            "title": "title.wav",            # wav
             "loading": "stage_loading.mp3",
             "stage_1": "stage_1.mp3",
             "stage_2": "stage_2.mp3",
