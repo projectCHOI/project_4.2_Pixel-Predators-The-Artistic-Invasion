@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 import os
-import sys # 음악
+from assets.sounds.bgm_controller import BGMController
 
 # 필요한 보스 클래스 임포트
 from bosses.Stage_1_Boss import Stage1Boss
@@ -28,12 +28,10 @@ pygame.init()
 
 # BGM 컨트롤러 생성
 bgm = BGMController()
-
-# 타이틀 화면에서 재생
-bgm.play("title")
+bgm.play("title")  # 타이틀 음악 재생
 
 # 스테이지 1 시작 시
-bgm.play("stage_1")
+# bgm.play("stage_1")
 
 # 종료 또는 게임 오버
 bgm.play("gameover", loop=False)
