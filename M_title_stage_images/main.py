@@ -32,16 +32,13 @@ pygame.init()
 
 # BGM 컨트롤러 생성
 bgm = BGMController()
-bgm.play("title")  # 타이틀 음악 재생
-bgm.play("stage_1")
-bgm.play("stage_2")
-bgm.play("stage_3")
-bgm.play("stage_4")
-bgm.play("stage_5")
-bgm.play("stage_6")
-bgm.play("stage_7")
-bgm.play("stage_8")
-bgm.play("stage_9")
+current_state = "title"  # 초기 상태
+
+def set_bgm(new_state):
+    global current_state
+    if current_state != new_state:
+        current_state = new_state
+        bgm.play(new_state)
 
 # 종료 또는 게임 오버
 # bgm.play("gameover", loop=False)
