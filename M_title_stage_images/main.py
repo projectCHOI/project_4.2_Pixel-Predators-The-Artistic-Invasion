@@ -116,9 +116,18 @@ YELLOW = (255, 255, 0)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
+# 공격 설정
+attacks = []
+attack_speed = 20
+attack_power = 1  # 플레이어의 공격력 추가
+enemies_defeated = 0  # 제거된 적의 수
+purple_bullets = []
+energy_balls = []
+
 # 플레이어 설정
 player_speed = 10  # 속도 조정
 original_player_speed = player_speed
+player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
 
 # 게임 설정
 clock = pygame.time.Clock()
@@ -177,13 +186,6 @@ boss = initialize_boss(level)
 collision_effect_start_time = 0
 collision_image = None
 collision_effect_duration = 0
-
-# 공격 설정
-attacks = []
-attack_speed = 20
-attack_power = 1  # 플레이어의 공격력 추가
-enemies_defeated = 0  # 제거된 적의 수
-purple_bullets = []
 
 # 게임 오버 상태 및 이유
 game_over = False
