@@ -32,12 +32,13 @@ pygame.init()
 
 # BGM 컨트롤러 생성
 bgm = BGMController()
-current_state = "title"  # 초기 상태
-def set_bgm(new_state):
-    global current_state
-    if current_state != new_state:
-        current_state = new_state
-        bgm.play(new_state)
+bgm.play("title")  # 타이틀 음악 재생
+
+# 스테이지 1 시작 시
+# bgm.play("stage_1")
+
+# 종료 또는 게임 오버
+# bgm.play("gameover", loop=False)
 
 # 경로 및 이미지 로딩 함수 설정
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -530,21 +531,6 @@ while run:
                         if boss:
                             boss.reset()
                         stage_duration = get_stage_duration(level)
-        
-        keys = pygame.key.get_pressed()
-        if game_over:
-            set_bgm("gameover")
-        elif game_clear:
-            set_bgm("victory")
-        elif not game_started:
-            set_bgm("title")
-        elif game_started and not stage_loaded:
-            set_bgm("loading")
-        elif stage_loaded:
-            if stage_num == 1:
-                set_bgm("stage_1")
-            elif stage_num == 2:
-                set_bgm("stage_2")
 
     else:
         # 마우스 위치 가져오기
