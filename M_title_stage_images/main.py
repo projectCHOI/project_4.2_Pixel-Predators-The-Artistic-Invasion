@@ -33,9 +33,7 @@ pygame.init()
 # BGM 컨트롤러 생성
 bgm = BGMController()
 bgm.play("title")  # 타이틀 음악 재생
-
-# 스테이지 1 시작 시
-# bgm.play("stage_1")
+bgm.play("stage_1")
 
 # 종료 또는 게임 오버
 # bgm.play("gameover", loop=False)
