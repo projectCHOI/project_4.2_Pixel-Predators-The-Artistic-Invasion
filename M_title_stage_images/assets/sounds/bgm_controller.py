@@ -9,7 +9,7 @@ class BGMController:
 
         # BGM 목록
         self.tracks = {
-            "title": "title.wav",            # wav
+            "title": "title.wav",
             "stage_1": "stage_1.mp3",
             "stage_2": "stage_2.mp3",
             "stage_3": "stage_3.mp3",
@@ -27,7 +27,7 @@ class BGMController:
         if name_or_filename in self.tracks:
             filename = self.tracks[name_or_filename]
         else:
-            filename = name_or_filename  # 직접 파일명으로 처리
+            filename = name_or_filename
 
         path = os.path.join(self.base_path, filename)
 
@@ -44,6 +44,16 @@ class BGMController:
                 print(f"[BGM] 재생 시작: {filename}")
             except Exception as e:
                 print(f"[BGM] 오류: {e}")
+
+    def update_state(self, state_name):
+        if state_name not in self.tracks:
+            print(f"[BGM] 알 수 없는 상태: {state_name}")
+            return
+
+        desired_path = os.path.join(self.base_path, self.tracks[state_name])
+
+        if self.current_track != desired_path:
+            self.play(state_name)
 
     def stop(self):
         pygame.mixer.music.stop()
