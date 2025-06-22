@@ -479,7 +479,7 @@ while run:
                     last_enemy_spawn_time = pygame.time.get_ticks()
                     enemy_spawn_interval = 3000  # 3초마다 적 생성
                     intro_screen(level)
-                    bgm.update_state(f"stage_{level}")
+                    bgm.set_game_state(f"stage_{level}")
                     attacks = []
                     energy_balls = []
                     boss = initialize_boss(level)
@@ -683,6 +683,7 @@ while run:
                     start_ticks = pygame.time.get_ticks()
                     stage_start_ticks = pygame.time.get_ticks()
                     intro_screen(level)
+                    bgm.set_game_state(f"stage_{level}")
                     continue
 
         # 적 이동 및 행동 처리
