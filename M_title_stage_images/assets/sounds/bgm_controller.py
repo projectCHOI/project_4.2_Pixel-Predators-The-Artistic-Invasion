@@ -6,6 +6,7 @@ class BGMController:
         pygame.mixer.init()
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.current_track = None
+        self.current_state = None
 
         # BGM 목록
         self.tracks = {
