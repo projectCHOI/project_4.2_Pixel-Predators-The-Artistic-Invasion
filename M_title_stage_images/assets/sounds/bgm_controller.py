@@ -68,7 +68,8 @@ class BGMController:
     def stop(self):
         pygame.mixer.music.stop()
         self.current_track = None
-
+        self.current_state = None 
+        
     def pause(self):
         pygame.mixer.music.pause()
 
