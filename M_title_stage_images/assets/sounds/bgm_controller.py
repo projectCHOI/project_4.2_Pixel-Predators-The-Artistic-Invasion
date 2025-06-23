@@ -46,6 +46,15 @@ class BGMController:
             except Exception as e:
                 print(f"[BGM] 오류: {e}")
 
+    def set_game_state(self, state_name):
+        if state_name == self.current_state:
+            return
+        if state_name not in self.tracks:
+            print(f"[BGM] 알 수 없는 상태: {state_name}")
+            return
+        self.current_state = state_name
+        self.play(state_name)
+
     def update_state(self, state_name):
         if state_name not in self.tracks:
             print(f"[BGM] 알 수 없는 상태: {state_name}")
