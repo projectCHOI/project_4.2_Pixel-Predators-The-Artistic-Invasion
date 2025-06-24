@@ -55,16 +55,6 @@ class BGMController:
         self.current_state = state_name
         self.play(state_name)
 
-    def update_state(self, state_name):
-        if state_name not in self.tracks:
-            print(f"[BGM] 알 수 없는 상태: {state_name}")
-            return
-
-        desired_path = os.path.join(self.base_path, self.tracks[state_name])
-
-        if self.current_track != desired_path:
-            self.play(state_name)
-
     def stop(self):
         pygame.mixer.music.stop()
         self.current_track = None
