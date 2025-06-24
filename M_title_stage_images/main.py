@@ -456,7 +456,7 @@ def draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage
 while run:
     if not game_active:
         if not game_over:
-            bgm.update_state("title")
+            bgm.set_game_state("title") 
             title_screen()
         else:
             if game_end_time is None:
@@ -672,7 +672,7 @@ while run:
                         game_over = True
                         game_over_reason = "victory"
                         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
-                        bgm.update_state("victory")
+                        bgm.set_game_state("victory")
                         continue
                     player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                     boss = initialize_boss(level)
@@ -950,7 +950,7 @@ while run:
                     game_over = True
                     game_over_reason = "game_over"
                     game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
-                    bgm.update_state("gameover")
+                    bgm.set_game_state("gameover") 
 
         # 미니언과 플레이어 충돌 체크
         for minion in boss.minions:
