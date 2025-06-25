@@ -462,7 +462,10 @@ while run:
             if game_end_time is None:
                 game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
             
-            bgm.set_game_state("gameover")
+            if game_over_reason == "victory":
+                bgm.set_game_state("victory")
+            else:
+                bgm.set_game_state("gameover")
             draw_end_screen()
 
         for event in pygame.event.get():
