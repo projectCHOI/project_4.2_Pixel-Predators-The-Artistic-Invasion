@@ -517,6 +517,7 @@ while run:
                         last_enemy_spawn_time = pygame.time.get_ticks()
                         enemy_spawn_interval = 3000
                         game_active = True
+                        bgm.set_game_state(f"stage_{level}")
 
                         player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_height // 2]
                         enemies = []
