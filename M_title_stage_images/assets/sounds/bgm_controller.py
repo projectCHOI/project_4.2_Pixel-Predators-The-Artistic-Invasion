@@ -11,6 +11,7 @@ class BGMController:
         # BGM 목록
         self.tracks = {
             "title": "title.wav",
+            "loading": "stage_loading.mp3",
             "stage_1": "stage_1.mp3",
             "stage_2": "stage_2.mp3",
             "stage_3": "stage_3.mp3",
