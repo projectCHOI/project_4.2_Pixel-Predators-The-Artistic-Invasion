@@ -339,6 +339,7 @@ def intro_screen(stage):
         win.fill(BLACK)
     pygame.display.update()
     pygame.time.delay(3000)
+    bgm.set_game_state(f"stage_{stage}")
 
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level, player_pos):
@@ -690,7 +691,7 @@ while run:
                     start_ticks = pygame.time.get_ticks()
                     stage_start_ticks = pygame.time.get_ticks()
                     intro_screen(level)
-                    bgm.set_game_state(f"stage_{level}")
+                    # bgm.set_game_state(f"stage_{level}") 중복?
                     continue
 
         # 적 이동 및 행동 처리
