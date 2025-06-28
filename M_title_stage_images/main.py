@@ -506,6 +506,9 @@ while run:
                         game_over = False
                         game_over_reason = None
                         game_active = False
+                        # bgm_controller.set_game_state("loading")
+                        # loading_start_time = pygame.time.get_ticks() 
+                        # game_state = "loading" 
                     elif selected_option == "continue":
                         current_health = 3
                         enemies_defeated = 0
