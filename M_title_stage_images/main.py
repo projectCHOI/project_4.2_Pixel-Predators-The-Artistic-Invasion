@@ -332,12 +332,13 @@ def title_screen():
 
 # 인트로 화면 그리기 함수
 def intro_screen(stage):
+    bgm.set_game_state("loading")
     if stage - 1 < len(stage_intro_images):
         win.blit(stage_intro_images[stage - 1], (0, 0))
     else:
-        win.fill(BLACK)  # 기본 배경 설정
+        win.fill(BLACK)
     pygame.display.update()
-    pygame.time.delay(3000)  # 3초 대기
+    pygame.time.delay(3000)
 
 # 스테이지 설정에 따라 적을 생성하는 함수
 def generate_enemies(level, player_pos):
@@ -506,9 +507,6 @@ while run:
                         game_over = False
                         game_over_reason = None
                         game_active = False
-                        # bgm_controller.set_game_state("loading")
-                        # loading_start_time = pygame.time.get_ticks() 
-                        # game_state = "loading" 
                     elif selected_option == "continue":
                         current_health = 3
                         enemies_defeated = 0
