@@ -19,8 +19,8 @@ class BGMController:
             "stage_5": "stage_5.wav",
             "stage_6": "stage_6.wav",
             "stage_7": "stage_7.wav",
-            "stage_8": "stage_8.mp3",
-            "stage_9": "stage_9.mp3",
+            "stage_8": "stage_8.wav",
+            "stage_9": "stage_9.wav",
             "gameover": "gameover.mp3",
             "victory": "victory.mp3"
         }
