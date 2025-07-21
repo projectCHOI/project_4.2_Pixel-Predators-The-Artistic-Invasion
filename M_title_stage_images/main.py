@@ -33,14 +33,14 @@ pygame.init()
 # BGM 컨트롤러 생성
 bgm = BGMController()
 
+# 경로 및 이미지 로딩 함수 설정
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
+
 # 공격 효과음 로딩
 attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
 attack_sound = pygame.mixer.Sound(attack_sound_path)
 attack_sound.set_volume(0.5)  # 볼륨 조절 (원하면 0.0 ~ 1.0 사이 조절 가능)
-
-# 경로 및 이미지 로딩 함수 설정
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
 # 이미지 로딩 함수
 def load_image(*path_parts, size=None):
