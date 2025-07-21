@@ -556,6 +556,8 @@ while run:
                 attack_end = mouse_pos
                 attack_thickness = 3
                 attack_color = attack_colors.get(power_item_active, (255, 255, 255))  # 기본값 흰색
+                # 플레이어 공격 사운드
+                attack_sound.play(maxtime=400)
 
                 if power_item_active == 0:
                     attacks.append((attack_start, attack_end, attack_thickness, attack_color))
