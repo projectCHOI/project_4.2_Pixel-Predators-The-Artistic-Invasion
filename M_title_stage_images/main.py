@@ -823,6 +823,7 @@ while run:
                 if check_attack_collision(start, end, enemy_pos, enemy_size):
                     hit = True
                     enemies_defeated += 1
+                    enemy_die_sound.play()
 
                     # bomb
                     if enemy_type == "bomb":
