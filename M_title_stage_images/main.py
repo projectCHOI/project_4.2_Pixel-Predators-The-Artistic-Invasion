@@ -42,6 +42,11 @@ attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav
 attack_sound = pygame.mixer.Sound(attack_sound_path)
 attack_sound.set_volume(0.5)  # 볼륨 조절 (원하면 0.0 ~ 1.0 사이 조절 가능)
 
+# 적 사망 효과음 로딩
+enemy_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "enemy_die.wav")
+enemy_die_sound = pygame.mixer.Sound(enemy_die_sound_path)
+enemy_die_sound.set_volume(0.5)  # 볼륨 조절 가능
+
 # 이미지 로딩 함수
 def load_image(*path_parts, size=None):
     path = os.path.join(BASE_IMAGE_PATH, *path_parts)
