@@ -832,6 +832,7 @@ while run:
 
                     # bomb
                     if enemy_type == "bomb":
+                        boom_die_sound.play()
                         from enemy_behaviors.bomb import generate_purple_bullets
                         center = [enemy_pos[0] + enemy_size // 2, enemy_pos[1] + enemy_size // 2]
                         purple_bullets.extend(generate_purple_bullets(center))
