@@ -37,6 +37,9 @@ bgm = BGMController()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
+# 플레이어 피격 효과음 로딩
+player_wound_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "player_wound.wav")
+
 # 공격 효과음 로딩
 attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
 attack_sound = pygame.mixer.Sound(attack_sound_path)
