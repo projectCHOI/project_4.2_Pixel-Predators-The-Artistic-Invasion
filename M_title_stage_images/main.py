@@ -39,6 +39,8 @@ BASE_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "images")
 
 # 플레이어 피격 효과음 로딩
 player_wound_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "player_wound.wav")
+player_wound_sound = pygame.mixer.Sound(player_wound_sound_path)
+player_wound_sound.set_volume(1.0)  # 볼륨
 
 # 공격 효과음 로딩
 attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
