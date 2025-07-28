@@ -2,6 +2,7 @@
 import pygame
 import random
 import math
+print
 
 # Import the Stage_1_Boss module
 from Stage_Boss.Stage_1_Boss import Stage1Boss
