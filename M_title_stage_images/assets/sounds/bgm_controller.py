@@ -42,7 +42,7 @@ class BGMController:
         if self.current_track != path:
             try:
                 pygame.mixer.music.load(path)
-                pygame.mixer.music.set_volume(volume)
+                pygame.mixer.music.set_volume(self.bgm_volume)
                 pygame.mixer.music.play(-1 if loop else 0)
                 self.current_track = path
                 print(f"[BGM] 재생 시작: {filename}")
