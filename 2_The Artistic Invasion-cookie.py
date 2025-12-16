@@ -1,7 +1,7 @@
 # boss test 240907
 # boss test 오리진
 # boss test
-
+# project 
 import pygame
 import random
 import math
