@@ -91,8 +91,8 @@ collision_images = {
 
 # Health 설정
 health_image = load_image("player", "mob_Life.png", size=image_size)
-max_health = 3
-current_health = 5
+max_health = 5
+current_health = 3
 
 # 스피드 아이템 설정
 speed_item_image = load_image("items", "mob_item_Slowly_2.PNG", size=image_size)
