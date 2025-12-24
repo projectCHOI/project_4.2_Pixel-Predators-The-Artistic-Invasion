@@ -7,7 +7,7 @@ class BGMController:
         self.base_path = os.path.dirname(os.path.abspath(__file__))
         self.current_track = None
         self.current_state = None
-        self.bgm_volume = 0.5
+        self.bgm_volume = 0.3
         pygame.mixer.music.set_volume(self.bgm_volume)
 
         # BGM 목록
