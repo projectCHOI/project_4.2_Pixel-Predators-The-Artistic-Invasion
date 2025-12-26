@@ -24,7 +24,7 @@ class BGMController:
             "stage_8": "stage_8.wav",
             "stage_9": "stage_9.wav",
             "gameover": "gameover.mp3",
-            "victory": "victory.mp3"
+            "victory": "victory.wav"
         }
 
     def play(self, name_or_filename, loop=True, volume=1.0):
