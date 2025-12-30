@@ -1,5 +1,4 @@
 # project_4.2_Pixel-Predators-The-Artistic-Invasion
-f
 
 ## project 4.2 주제 선정 이유
 - 기존 project4의 개선
