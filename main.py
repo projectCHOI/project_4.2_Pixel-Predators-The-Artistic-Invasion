@@ -21,11 +21,11 @@ from M_title_stage_images.bosses.Stage_8_Boss import Stage8Boss
 from M_title_stage_images.bosses.Stage_9_Boss import Stage9Boss
 
 # enemy_behaviors 임포트
-from enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
-from enemy_behaviors.move_and_shoot     import generate as gen_move_and_shoot
-from enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoot
-from enemy_behaviors.bomb               import generate as gen_bomb
-from enemy_behaviors.group_unit         import generate as gen_group_unit
+from M_title_stage_images.enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
+from M_title_stage_images.enemy_behaviors.move_and_shoot     import generate as gen_move_and_shoot
+from M_title_stage_images.enemy_behaviors.approach_and_shoot import generate as gen_approach_and_shoot
+from M_title_stage_images.enemy_behaviors.bomb               import generate as gen_bomb
+from M_title_stage_images.enemy_behaviors.group_unit         import generate as gen_group_unit
 
 # Pygame 초기화
 pygame.init()
@@ -70,7 +70,7 @@ def load_image(*path_parts, size=None):
 
 # 모듈에서 타이틀 및 스테이지 이미지 임포트
 try:
-    from title_stage_images import title_image, stage_intro_images, stage_background_images
+    from M_title_stage_images.title_stage_images import title_image, stage_intro_images, stage_background_images
 except ImportError:
     pygame.quit()
     exit()
