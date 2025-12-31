@@ -2,7 +2,7 @@ import pygame
 import random
 import math
 import os
-from assets.sounds.bgm_controller import BGMController
+from M_title_stage_images.assets.sounds.bgm_controller import BGMController
 
 # 윈도우 설정
 win_width, win_height = 1280, 720
@@ -10,15 +10,15 @@ win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 
 # 필요한 보스 클래스 임포트
-from bosses.Stage_1_Boss import Stage1Boss
-from bosses.Stage_2_Boss import Stage2Boss
-from bosses.Stage_3_Boss import Stage3Boss
-from bosses.Stage_4_Boss import Stage4Boss
-from bosses.Stage_5_Boss import Stage5Boss
-from bosses.Stage_6_Boss import Stage6Boss
-from bosses.Stage_7_Boss import Stage7Boss
-from bosses.Stage_8_Boss import Stage8Boss
-from bosses.Stage_9_Boss import Stage9Boss
+from M_title_stage_images.bosses.Stage_1_Boss import Stage1Boss
+from M_title_stage_images.bosses.Stage_2_Boss import Stage2Boss
+from M_title_stage_images.bosses.Stage_3_Boss import Stage3Boss
+from M_title_stage_images.bosses.Stage_4_Boss import Stage4Boss
+from M_title_stage_images.bosses.Stage_5_Boss import Stage5Boss
+from M_title_stage_images.bosses.Stage_6_Boss import Stage6Boss
+from M_title_stage_images.bosses.Stage_7_Boss import Stage7Boss
+from M_title_stage_images.bosses.Stage_8_Boss import Stage8Boss
+from M_title_stage_images.bosses.Stage_9_Boss import Stage9Boss
 
 # enemy_behaviors 임포트
 from enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
