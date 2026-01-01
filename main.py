@@ -34,20 +34,21 @@ pygame.init()
 bgm = BGMController()
 
 # 경로 및 이미지 로딩 함수 설정
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # 프로젝트 루트 (main.py 위치)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  
 GAME_DIR = os.path.join(BASE_DIR, "M_title_stage_images")
-## 추가
 BASE_IMAGE_PATH = os.path.join(GAME_DIR, "assets", "images")
 SOUND_DIR = os.path.join(GAME_DIR, "assets", "sounds")
 FONT_DIR  = os.path.join(GAME_DIR, "assets", "fonts")
 
 # 플레이어 피격 효과음 로딩
-player_wound_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "player_wound.wav")
+player_wound_sound_path = os.path.join(SOUND_DIR, "player_wound.wav")
+# player_wound_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "player_wound.wav")
 player_wound_sound = pygame.mixer.Sound(player_wound_sound_path)
 player_wound_sound.set_volume(1.0)  # 볼륨
 
 # 공격 효과음 로딩
-attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
+attack_sound_path       = os.path.join(SOUND_DIR, "Attack_sound.wav")
+# attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
 attack_sound = pygame.mixer.Sound(attack_sound_path)
 attack_sound.set_volume(0.4) # 볼륨
 
