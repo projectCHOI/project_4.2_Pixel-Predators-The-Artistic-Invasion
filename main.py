@@ -53,12 +53,14 @@ attack_sound = pygame.mixer.Sound(attack_sound_path)
 attack_sound.set_volume(0.4) # 볼륨
 
 # 적 사망 효과음 로딩
-enemy_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "enemy_die.wav")
+enemy_die_sound_path    = os.path.join(SOUND_DIR, "enemy_die.wav")
+# enemy_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "enemy_die.wav")
 enemy_die_sound = pygame.mixer.Sound(enemy_die_sound_path)
 enemy_die_sound.set_volume(0.6) # 볼륨
 
 # bomb 폭발 효과음 로딩
-boom_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "boom_die.wav")
+boom_die_sound_path     = os.path.join(SOUND_DIR, "boom_die.wav")
+# boom_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "boom_die.wav")
 boom_die_sound = pygame.mixer.Sound(boom_die_sound_path)
 boom_die_sound.set_volume(0.8) # 볼륨
 
