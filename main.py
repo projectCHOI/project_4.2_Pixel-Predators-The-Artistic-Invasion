@@ -150,7 +150,7 @@ player_pos = [win_width // 2 - player_width // 2, win_height // 2 - player_heigh
 
 # 게임 설정
 clock = pygame.time.Clock()
-font_path = os.path.join(BASE_DIR, "assets", "fonts", "SLEIGothicOTF.otf")
+font_path = os.path.join(FONT_DIR, "SLEIGothicOTF.otf")
 font_size = 30
 try:
     font = pygame.font.Font(font_path, font_size)
