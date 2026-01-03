@@ -967,7 +967,7 @@ while run:
                     new_energy_balls.append(ball)
 
         # "bomb"
-        from enemy_behaviors.bomb import update_purple_bullets
+        from M_title_stage_images.enemy_behaviors.bomb import update_purple_bullets
         purple_bullets = update_purple_bullets(purple_bullets, pygame.time.get_ticks(), win_width, win_height)
 
         energy_balls = new_energy_balls
