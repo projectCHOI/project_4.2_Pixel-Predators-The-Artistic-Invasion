@@ -1,14 +1,17 @@
 # project_4.2_Pixel-Predators-The-Artistic-Invasion
-
+ 
 ## project 4.2 주제 선정 이유
-- 기존 project4의 개선
-- 목표 : 약 10분 내외의 짧은 플레이 타임 동안 긴장감 넘치는 게임 경험을 제공한다.
-- 주요 기능 : 빠른 반응과 전략적인 아이템 수집을 요구하는 2D 슈팅 게임
+- 기존 project4의 개선 파이썬과 파이게임을 이용해 속도감 있는 2D 슈팅 게임을 제작했습니다.
+- 빠른 반응과 전략적인 아이템 수집을 통해 10분 내외의 긴장감 넘치는 게임 경험을 제공 하는 것이 목표입니다.
 
-## project 사용 언어 
-- Python: Pygame 라이브러리(VScode)
-- 
-- 
+## Tech Stack 
+- **Language**: Python
+- **Game Library**: Pygame
+- **IDE/Tooling**: VSCode (또는 Python 실행 환경)
+- **Assets**
+  - Images: `M_title_stage_images/assets/images`
+  - Sounds/BGM: `M_title_stage_images/assets/sounds`
+  - Fonts: `M_title_stage_images/assets/fonts`
 
 ## 게임 플레이 
 
