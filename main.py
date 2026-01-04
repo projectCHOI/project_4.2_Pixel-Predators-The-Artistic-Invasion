@@ -42,25 +42,21 @@ FONT_DIR  = os.path.join(GAME_DIR, "assets", "fonts")
 
 # 플레이어 피격 효과음 로딩
 player_wound_sound_path = os.path.join(SOUND_DIR, "player_wound.wav")
-# player_wound_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "player_wound.wav")
 player_wound_sound = pygame.mixer.Sound(player_wound_sound_path)
 player_wound_sound.set_volume(1.0)  # 볼륨
 
 # 공격 효과음 로딩
 attack_sound_path       = os.path.join(SOUND_DIR, "Attack_sound.wav")
-# attack_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "Attack_sound.wav")
 attack_sound = pygame.mixer.Sound(attack_sound_path)
 attack_sound.set_volume(0.4) # 볼륨
 
 # 적 사망 효과음 로딩
 enemy_die_sound_path    = os.path.join(SOUND_DIR, "enemy_die.wav")
-# enemy_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "enemy_die.wav")
 enemy_die_sound = pygame.mixer.Sound(enemy_die_sound_path)
 enemy_die_sound.set_volume(0.6) # 볼륨
 
 # bomb 폭발 효과음 로딩
 boom_die_sound_path     = os.path.join(SOUND_DIR, "boom_die.wav")
-# boom_die_sound_path = os.path.join(BASE_DIR, "assets", "sounds", "boom_die.wav")
 boom_die_sound = pygame.mixer.Sound(boom_die_sound_path)
 boom_die_sound.set_volume(0.8) # 볼륨
 
@@ -124,7 +120,7 @@ heal_item_images = [
 ]
 heal_item_pos = None
 current_heal_item_image = None
-heal_item_chance = 0.2  # 20% 확률
+heal_item_chance = 0.4  # 40% 확률
 
 # 색상 정의
 WHITE = (255, 255, 255)
@@ -198,7 +194,6 @@ def initialize_boss(level):
     elif level == 9: return Stage9Boss()
     else: return None
 
-# 처음에는 보스가 없을 수 있으므로 None으로 초기화합니다.
 boss = initialize_boss(level)
 
 # 충돌 효과 설정
@@ -277,7 +272,6 @@ def draw_end_screen():
     for i, gem_img in enumerate(collected_gems):
         scaled_img = pygame.transform.scale(gem_img, (gem_size, gem_size))
         win.blit(scaled_img, (start_x + i * (gem_size + 10), y))
-
 
     # 버튼 텍스트
     button_width, button_height = 180, 50
@@ -655,10 +649,8 @@ while run:
         # 보스 등장 체크 및 행동 처리
         if boss:
             boss.check_appear(total_seconds, level)
-            
             # 적 생성
             now = pygame.time.get_ticks()
-
             for enemy_type, generator, condition in [
                 ("move_and_disappear", gen_move_and_disappear, lambda e: e[2] == "move_and_disappear"),
                 ("move_and_shoot",     gen_move_and_shoot,     lambda e: e[2] == "move_and_shoot"),
@@ -719,7 +711,6 @@ while run:
                     start_ticks = pygame.time.get_ticks()
                     stage_start_ticks = pygame.time.get_ticks()
                     intro_screen(level)
-                    # bgm.set_game_state(f"stage_{level}") 중복?
                     continue
 
         # 적 이동 및 행동 처리
@@ -791,7 +782,7 @@ while run:
 
                 # 공격 타이밍 도달 시
                 if now - enemy[6] >= enemy[15]:
-                    enemy[6] = now  # last_attack_time 갱신
+                    enemy[6] = now
 
                     if enemy[10] == 0:  # 전열 유닛 (index == 0)
                         directions = [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (1, -1), (-1, 1), (1, 1)]
@@ -879,7 +870,7 @@ while run:
                     game_over = True
                     game_over_reason = "game_over"
                 else:
-#                    current_health -= 1
+                    current_health -= 1
                     current_health -= 0                    
                     invincible = True
                     invincible_start_time = pygame.time.get_ticks()
