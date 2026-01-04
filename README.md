@@ -13,8 +13,17 @@
   - Sounds/BGM: `M_title_stage_images/assets/sounds`
   - Fonts: `M_title_stage_images/assets/fonts`
 
-## 게임 플레이 
+## Game Overview 
+### 조작 방법
+- 이동: `W A S D`
+- 공격: **마우스 좌클릭**  
+  - 플레이어 중심 → 마우스 위치 방향으로 공격 라인(투사체)이 이동
+- 시작: 타이틀 화면에서 `Enter`
+- 종료 화면:
+  - 선택 이동: `A` (Main), `D` (Continue)
+  - 선택 확정: `Space`
 
+  
 ## 코드의 구성
 - 코드를 효율적으로 관리하기 위해 기능 분리
 
