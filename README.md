@@ -22,7 +22,7 @@
 - 종료 화면:
   - 선택 이동: `A` (Main), `D` (Continue)
   - 선택 확정: `Space`
-  
+
 ### 진행 방식
 - 총 **Stage 1 ~ Stage 9**
 - 스테이지마다 일반 적이 지속적으로 생성되며, 일정 시간이 지나면 **보스가 등장**
@@ -35,7 +35,16 @@
 - (구현상 `time_over` 이미지 리소스는 준비되어 있으나, main.py 기준 시간 종료 판정은 확장 여지가 있음)
 
 ---
-  
+
+## Features
+### 1) 스테이지별 적 조합 (Dynamic Enemy Composition)
+스테이지에 따라 서로 다른 적 생성 모듈을 조합하여 난이도와 패턴을 변화시킵니다.
+
+- `move_and_disappear`
+- `move_and_shoot`
+- `approach_and_shoot`
+- `group_unit`
+- `bomb`  
 ## 코드의 구성
 - 코드를 효율적으로 관리하기 위해 기능 분리
 
