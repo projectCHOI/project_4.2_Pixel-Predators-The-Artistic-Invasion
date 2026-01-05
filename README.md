@@ -45,6 +45,16 @@
 - `approach_and_shoot`
 - `group_unit`
 - `bomb`  
+
+스테이지별 구성(요약):
+- Stage 1: move_and_disappear
+- Stage 2~3: move_and_disappear + move_and_shoot + bomb
+- Stage 4: move_and_disappear + move_and_shoot + group_unit
+- Stage 5: Stage4 + bomb
+- Stage 6: move_and_disappear + move_and_shoot + group_unit
+- Stage 7: Stage6 + bomb
+- Stage 8: Stage6
+- Stage 9: Stage6 + bomb
 ## 코드의 구성
 - 코드를 효율적으로 관리하기 위해 기능 분리
 
