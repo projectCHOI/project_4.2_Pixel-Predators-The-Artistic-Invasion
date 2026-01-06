@@ -55,6 +55,24 @@
 - Stage 7: Stage6 + bomb
 - Stage 8: Stage6
 - Stage 9: Stage6 + bomb
+또한 각 적 타입은 `enemy_spawn_intervals` 기반으로 **타입별 독립 쿨타임 생성**을 수행합니다.
+
+---
+
+### 2) 보스 시스템 (Stage 1 ~ Stage 9)
+각 스테이지는 별도의 보스 클래스를 가지며, 보스는 다음과 같은 기능을 수행합니다.
+
+- 등장 조건 체크: `boss.check_appear(total_seconds, level)`
+- 이동: `boss.move()`
+- 공격 생성/업데이트: `boss.attack()`, `boss.update_attacks(player_pos, invincible)`
+- 피격 판정: `boss.check_hit(attacks)`
+- 보석(클리어 아이템) 시스템: `boss.gem_active`, `boss.check_gem_collision(player_pos)`
+
+추가로 일부 스테이지는 특수 효과가 존재합니다.
+- Boss8: `boss.get_player_speed()`로 플레이어 속도에 영향
+- Boss9: 입력 반전 상태(`is_input_reversed`) 지원
+
+---
 ## 코드의 구성
 - 코드를 효율적으로 관리하기 위해 기능 분리
 
