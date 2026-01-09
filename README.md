@@ -105,6 +105,10 @@
 - `BGMController`를 통해 상태 기반 BGM 전환
   - `title`, `loading`, `stage_1` ... `stage_9`, `gameover`, `victory`
 - 효과음:
+  - `player_wound.wav` : 플레이어 피격
+  - `Attack_sound.wav` : 플레이어 공격
+  - `enemy_die.wav` : 일반 적 처치
+  - `boom_die.wav` : bomb 적 처치
 ### 메인코드 기능 "main"
 
 ### 보스코드 기능
