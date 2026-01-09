@@ -101,6 +101,10 @@
   - 보스 미니언 및 미니언 공격 충돌
 
 ---
+### 5) 사운드 / BGM 시스템
+- `BGMController`를 통해 상태 기반 BGM 전환
+  - `title`, `loading`, `stage_1` ... `stage_9`, `gameover`, `victory`
+- 효과음:
 ### 메인코드 기능 "main"
 
 ### 보스코드 기능
