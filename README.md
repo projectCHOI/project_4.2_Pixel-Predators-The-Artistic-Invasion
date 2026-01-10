@@ -4,14 +4,14 @@
 - 기존 project4의 개선 파이썬과 파이게임을 이용해 속도감 있는 2D 슈팅 게임을 제작했습니다.
 - 빠른 반응과 전략적인 아이템 수집을 통해 10분 내외의 긴장감 넘치는 게임 경험을 제공 하는 것이 목표입니다.
 
-## Tech Stack 
+## Tech Stack
 - **Language**: Python
 - **Game Library**: Pygame
-- **IDE/Tooling**: VSCode (또는 Python 실행 환경)
+- **IDE**: Visual Studio Code
 - **Assets**
-  - Images: `M_title_stage_images/assets/images`
-  - Sounds/BGM: `M_title_stage_images/assets/sounds`
-  - Fonts: `M_title_stage_images/assets/fonts`
+  - Images: `assets/images`
+  - Sounds & BGM: `assets/sounds`
+  - Fonts: `assets/fonts`
 
 ## Game Overview 
 ### 조작 방법
