@@ -23,6 +23,20 @@
   - 선택 이동: `A` (Main), `D` (Continue)
   - 선택 확정: `Space`
 
+## Game Flow
+1. **Title**
+   - 게임 시작 대기 상태
+2. **Stage Intro**
+   - 스테이지 시작 전 인트로 이미지 출력
+3. **Stage Play**
+   - 일반 적 지속 스폰
+   - 일정 시간 후 보스 등장
+4. **Boss Battle**
+   - 보스 패턴 + 특수 기믹 대응
+5. **Clear / Game Over**
+   - 보석 획득 시 다음 스테이지
+   - Stage 9 클리어 시 Victory
+
 ### 진행 방식
 - 총 **Stage 1 ~ Stage 9**
 - 스테이지마다 일반 적이 지속적으로 생성되며, 일정 시간이 지나면 **보스가 등장**
