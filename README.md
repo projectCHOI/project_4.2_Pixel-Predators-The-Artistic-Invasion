@@ -37,6 +37,20 @@
    - 보석 획득 시 다음 스테이지
    - Stage 9 클리어 시 Victory
 
+## Core Systems
+### 1. Main Loop Architecture (`main.py`)
+- 게임 상태 관리
+  - `title / loading / stage / gameover / victory`
+- 스테이지 진행 및 레벨 관리 (Stage 1 ~ 9)
+- 적 생성 및 제거
+- 충돌 판정 (플레이어 ↔ 적 / 탄환)
+- 아이템 처리
+- 보스 연동 및 상태 전환
+- BGM 상태 기반 자동 전환
+
+`main.py`는 **게임 흐름 제어와 통합 관리**에 집중하며,  
+적/보스의 세부 로직은 개별 모듈로 분리되어 있습니다.
+
 ### 진행 방식
 - 총 **Stage 1 ~ Stage 9**
 - 스테이지마다 일반 적이 지속적으로 생성되며, 일정 시간이 지나면 **보스가 등장**
