@@ -63,3 +63,13 @@
   - **플레이어 입력 반전 디버프 5초 적용**
 - 미니언 소환 + 탄막 패턴 병행
 - 보스 처치 후 보석 획득 시 게임 최종 클리어
+
+#### 보스 책임 분리
+- `check_appear()` : 등장 조건
+- `move()` : 이동 패턴
+- `attack()` / `update_attacks()` : 공격 및 디버프
+- `spawn_minions()` / `update_minion_behavior()` : 미니언 관리
+- `check_hit()` : 피격 판정
+- `check_gem_collision()` : 스테이지 클리어
+
+---
