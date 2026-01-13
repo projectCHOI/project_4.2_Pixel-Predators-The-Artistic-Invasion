@@ -73,3 +73,14 @@
 - `check_gem_collision()` : 스테이지 클리어
 
 ---
+## Enemy Behaviors (`enemy_behaviors`)
+
+적 AI는 모두 모듈 단위로 분리되어 있으며,  
+`main.py`는 스테이지 레벨에 따라 적을 조합하여 사용합니다.
+
+### 공통 구조
+- 모든 적은 `generate()` 함수로 생성
+- 리스트 기반 데이터 구조 사용
+- `enemy_type` 문자열로 행동 분기
+
+---
