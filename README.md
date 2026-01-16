@@ -137,3 +137,13 @@
   - 에너지 탄
   - 폭탄 파편
   - 보스 미니언 및 미니언 공격
+
+  ---
+## Sound & BGM
+- `BGMController`를 이용한 상태 기반 자동 전환
+  - title / loading / stage_1 ~ stage_9 / gameover / victory
+- 효과음
+  - 플레이어 공격
+  - 피격
+  - 적 사망
+  - 폭탄 폭발
