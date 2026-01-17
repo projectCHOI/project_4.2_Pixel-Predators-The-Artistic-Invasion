@@ -123,7 +123,7 @@
 ## Item System
 ### Speed Item
 - 적 처치 시 확률 드랍
-- 일정 시간 동안 **모든 적 속도 감소**
+- 일정 시간 동안 모든 적 속도 감소
 ### Power Item
 - 공격 라인 확장
 - 최대 4단계 강화
@@ -145,7 +145,10 @@
 
   ---
 ## Sound & BGM
-- `BGMController`를 이용한 상태 기반 자동 전환
+- 본 프로젝트는 **상태 기반 BGM 제어 시스템**을 직접 구현하여,  
+- 게임 흐름에 따라 음악이 자동 전환되도록 설계되었습니다.
+### BGMController
+- `BGMController`(`bgm_controller.py`)를 이용한 상태 기반 자동 전환
   - title / loading / stage_1 ~ stage_9 / gameover / victory
 - 효과음
   - 플레이어 공격
