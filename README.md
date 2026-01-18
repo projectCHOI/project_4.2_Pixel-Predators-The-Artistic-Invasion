@@ -151,3 +151,12 @@
 - `pygame.mixer.music` 기반 단일 트랙 BGM 관리 클래스
 - 게임 상태(state)에 따라 자동으로 BGM을 전환
 - 동일한 상태에서 중복 재생 방지
+#### 주요 메서드
+- `set_game_state(state_name)`
+  - 현재 상태와 다를 경우에만 BGM 교체
+- `play(name_or_filename)`
+  - 상태명 또는 파일명 기반 재생
+- `stop() / pause() / resume()`
+  - BGM 제어
+- `is_playing()`
+  - 현재 재생 여부 확인
