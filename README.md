@@ -148,10 +148,6 @@
 - 본 프로젝트는 **상태 기반 BGM 제어 시스템**을 직접 구현하여,  
 - 게임 흐름에 따라 음악이 자동 전환되도록 설계되었습니다.
 ### BGMController
-- `BGMController`(`bgm_controller.py`)를 이용한 상태 기반 자동 전환
-  - title / loading / stage_1 ~ stage_9 / gameover / victory
-- 효과음
-  - 플레이어 공격
-  - 피격
-  - 적 사망
-  - 폭탄 폭발
+- `pygame.mixer.music` 기반 단일 트랙 BGM 관리 클래스
+- 게임 상태(state)에 따라 자동으로 BGM을 전환
+- 동일한 상태에서 중복 재생 방지
