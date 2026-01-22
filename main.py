@@ -870,8 +870,7 @@ while run:
                     game_over = True
                     game_over_reason = "game_over"
                 else:
-                    current_health -= 1
-                    current_health -= 0                    
+                    current_health -= 1                   
                     invincible = True
                     invincible_start_time = pygame.time.get_ticks()
                     collision_effect_start_time = pygame.time.get_ticks()
