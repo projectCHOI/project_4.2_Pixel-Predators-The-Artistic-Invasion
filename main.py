@@ -2,6 +2,7 @@ import pygame
 import random
 import math
 import os
+import sys
 from M_title_stage_images.assets.sounds.bgm_controller import BGMController
 
 # 윈도우 설정
@@ -10,15 +11,23 @@ win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 
 # 필요한 보스 클래스 임포트
-from M_title_stage_images.bosses.Stage_1_Boss import Stage1Boss
-from M_title_stage_images.bosses.Stage_2_Boss import Stage2Boss
-from M_title_stage_images.bosses.Stage_3_Boss import Stage3Boss
-from M_title_stage_images.bosses.Stage_4_Boss import Stage4Boss
-from M_title_stage_images.bosses.Stage_5_Boss import Stage5Boss
-from M_title_stage_images.bosses.Stage_6_Boss import Stage6Boss
-from M_title_stage_images.bosses.Stage_7_Boss import Stage7Boss
-from M_title_stage_images.bosses.Stage_8_Boss import Stage8Boss
-from M_title_stage_images.bosses.Stage_9_Boss import Stage9Boss
+from M_title_stage_images.bosses import (
+    Stage_1_Boss, Stage_2_Boss, Stage_3_Boss, Stage_4_Boss, Stage_5_Boss,
+    Stage_6_Boss, Stage_7_Boss, Stage_8_Boss, Stage_9_Boss
+)
+
+# 보스 클래스 매핑 딕셔너리
+BOSS_MAP = {
+    1: Stage_1_Boss.Stage1Boss,
+    2: Stage_2_Boss.Stage2Boss,
+    3: Stage_3_Boss.Stage3Boss,
+    4: Stage_4_Boss.Stage4Boss,
+    5: Stage_5_Boss.Stage5Boss,
+    6: Stage_6_Boss.Stage6Boss,
+    7: Stage_7_Boss.Stage7Boss,
+    8: Stage_8_Boss.Stage8Boss,
+    9: Stage_9_Boss.Stage9Boss,
+}
 
 # enemy_behaviors 임포트
 from M_title_stage_images.enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
@@ -183,16 +192,8 @@ enemy_spawn_intervals = {
 
 # 보스 초기화 함수 정의
 def initialize_boss(level):
-    if level == 1: return Stage1Boss()
-    elif level == 2: return Stage2Boss()
-    elif level == 3: return Stage3Boss()
-    elif level == 4: return Stage4Boss()
-    elif level == 5: return Stage5Boss()
-    elif level == 6: return Stage6Boss()
-    elif level == 7: return Stage7Boss()
-    elif level == 8: return Stage8Boss()
-    elif level == 9: return Stage9Boss()
-    else: return None
+    boss_class = BOSS_MAP.get(level)
+    return boss_class() if boss_class else None
 
 boss = initialize_boss(level)
 
