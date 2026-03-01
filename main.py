@@ -613,41 +613,30 @@ while run:
         input_reversed = hasattr(boss, "is_input_reversed") and boss.is_input_reversed()
 
         # 플레이어 이동 처리
+        move_mult = -1 if input_reversed else 1
+        dx, dy = 0, 0
         keys = pygame.key.get_pressed()
-        if not input_reversed:
-            if keys[pygame.K_a]:
-                player_pos[0] -= player_speed
-                player_image = player_image2
-            if keys[pygame.K_d]:
-                player_pos[0] += player_speed
-                player_image = player_image1
-            if keys[pygame.K_w]:
-                player_pos[1] -= player_speed
-                player_image = player_image1
-            if keys[pygame.K_s]:
-                player_pos[1] += player_speed
-                player_image = player_image2
-        # boss9 반전 상태
-        else:
-            if keys[pygame.K_d]:
-                player_pos[0] -= player_speed
-                player_image = player_image2
-            if keys[pygame.K_a]:
-                player_pos[0] += player_speed
-                player_image = player_image1
-            if keys[pygame.K_s]:
-                player_pos[1] -= player_speed
-                player_image = player_image1
-            if keys[pygame.K_w]:
-                player_pos[1] += player_speed
-                player_image = player_image2
+        if keys[pygame.K_a]:
+            dx -= player_speed * move_mult
+        if keys[pygame.K_d]:
+            dx += player_speed * move_mult
+        if keys[pygame.K_w]:
+            dy -= player_speed * move_mult
+        if keys[pygame.K_s]:
+            dy += player_speed * move_mult
+        player_pos[0] += dx
+        player_pos[1] += dy
 
-        # 플레이어가 화면 밖으로 나가지 않도록 제한
+        if dx < 0:
+            player_image = player_image2  # 왼쪽 이동 이미지
+        elif dx > 0:
+            player_image = player_image1  # 오른쪽 이동 이미지
+        elif dy != 0:
+            player_image = player_image1
+
         player_pos[0] = max(0, min(player_pos[0], win_width - player_width))
         player_pos[1] = max(0, min(player_pos[1], win_height - player_height))
 
-
-        # 보스 등장 체크 및 행동 처리
         if boss:
             boss.check_appear(total_seconds, level)
             # 적 생성
