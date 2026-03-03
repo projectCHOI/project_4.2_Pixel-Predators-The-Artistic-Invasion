@@ -15,3 +15,12 @@ class ResourceManager:
         if size:
             image = pygame.transform.scale(image, size)
         return image
+
+    def load_sound(self, filename, volume=1.0):
+        path = os.path.join(self.sound_dir, filename)
+        sound = pygame.mixer.Sound(path)
+        sound.set_volume(volume)
+        return sound
+
+    def get_font_path(self, filename):
+        return os.path.join(self.font_dir, filename)
