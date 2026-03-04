@@ -4,11 +4,17 @@ import math
 import os
 import sys
 from M_title_stage_images.assets.sounds.bgm_controller import BGMController
+from M_title_stage_images.config import *
+from M_title_stage_images.resource_manager import ResourceManager
+from M_title_stage_images.entities.player import Player
 
 # 윈도우 설정
 win_width, win_height = 1280, 720
 win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
+res = ResourceManager()
+player_image1 = res.load_image("player", "mob_me1_png.png", size=(50, 50))
+attack_sound = res.load_sound("Attack_sound.wav", 0.4)
 
 # 필요한 보스 클래스 임포트
 from M_title_stage_images.bosses import (
