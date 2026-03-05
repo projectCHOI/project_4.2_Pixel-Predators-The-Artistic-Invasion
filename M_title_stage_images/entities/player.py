@@ -69,3 +69,14 @@ class Player(pygame.sprite.Sprite):
             
             return True # 데미지 입음 성공
         return False
+    
+    def update(self):
+        now = pygame.time.get_ticks()
+        
+        # 무적 시간 해제 체크
+        if self.invincible and now - self.invincible_start_time > self.invincible_duration:
+            self.invincible = False
+
+        # 충돌 이미지 표시 시간 체크
+        if self.current_collision_img and now - self.collision_effect_start_time >= self.collision_effect_duration:
+            self.current_collision_img = None
