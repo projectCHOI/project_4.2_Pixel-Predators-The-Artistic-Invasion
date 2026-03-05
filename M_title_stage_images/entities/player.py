@@ -55,3 +55,17 @@ class Player(pygame.sprite.Sprite):
         if dx < 0: self.image = self.img_left
         elif dx > 0: self.image = self.img_right
 
+    def take_damage(self, amount=1):
+        if not self.invincible:
+            self.health -= amount
+            self.invincible = True
+            self.invincible_start_time = pygame.time.get_ticks()
+            
+            # 충돌 효과 설정
+            if self.health in self.collision_imgs:
+                self.current_collision_img = self.collision_imgs[self.health]
+                self.collision_effect_start_time = pygame.time.get_ticks()
+                self.collision_effect_duration = 5000 # 5초 유지
+            
+            return True # 데미지 입음 성공
+        return False
