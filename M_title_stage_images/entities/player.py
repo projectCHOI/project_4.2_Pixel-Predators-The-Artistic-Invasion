@@ -80,3 +80,14 @@ class Player(pygame.sprite.Sprite):
         # 충돌 이미지 표시 시간 체크
         if self.current_collision_img and now - self.collision_effect_start_time >= self.collision_effect_duration:
             self.current_collision_img = None
+
+    def draw(self, screen):
+        # 무적 상태일 때 깜빡임 효과 (선택 사항)
+        if self.invincible and (pygame.time.get_ticks() // 200) % 2 == 0:
+            pass # 그리지 않음으로 깜빡임 구현 가능
+        else:
+            screen.blit(self.image, self.rect)
+        
+        # 충돌 시 데미지 입은 이미지 겹쳐 그리기
+        if self.current_collision_img:
+            screen.blit(self.current_collision_img, self.rect)
