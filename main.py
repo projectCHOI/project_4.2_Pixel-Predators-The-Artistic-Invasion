@@ -7,6 +7,7 @@ from M_title_stage_images.assets.sounds.bgm_controller import BGMController
 from M_title_stage_images.config import *
 from M_title_stage_images.resource_manager import ResourceManager
 from M_title_stage_images.entities.player import Player
+from M_title_stage_images.resource_manager import ResourceManager
 
 # 윈도우 설정
 win_width, win_height = 1280, 720
