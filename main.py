@@ -14,8 +14,10 @@ win_width, win_height = 1280, 720
 win = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("The Artistic Invasion")
 res = ResourceManager()
+player = Player(res)
 player_image1 = res.load_image("player", "mob_me1_png.png", size=(50, 50))
 attack_sound = res.load_sound("Attack_sound.wav", 0.4)
+
 
 # 필요한 보스 클래스 임포트
 from M_title_stage_images.bosses import (
@@ -1010,6 +1012,16 @@ while run:
                         game_over = True
                         game_over_reason = "game_over"
                         game_end_time = (pygame.time.get_ticks() - start_ticks) // 1000
+
+while game_active:
+    player.handle_input(input_reversed=boss.is_input_reversed()) # 이동
+    player.update() # 상태 업데이트 (무적 등)
+    
+    # 충돌 체크 예시 (적 탄환과 충돌 시)
+    if not player.invincible and check_collision(player.rect, enemy_bullets):
+        player.take_damage()
+        
+    player.draw(win)
 
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
