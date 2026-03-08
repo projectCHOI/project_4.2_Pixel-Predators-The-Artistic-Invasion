@@ -29,3 +29,11 @@ class EnergyBall(pygame.sprite.Sprite):
             self.velocity = direction.normalize() * speed
         else:
             self.velocity = pygame.math.Vector2(0, speed)
+
+def update(self):
+        self.rect.centerx += self.velocity.x
+        self.rect.centery += self.velocity.y
+        
+        # 화면 경계 체크
+        if not (0 <= self.rect.centerx <= WIN_WIDTH and 0 <= self.rect.centery <= WIN_HEIGHT):
+            self.kill()
