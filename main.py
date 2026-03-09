@@ -47,6 +47,9 @@ from M_title_stage_images.enemy_behaviors.group_unit         import generate as 
 
 # Pygame 초기화
 pygame.init()
+all_sprites = pygame.sprite.Group()
+player_bullets = pygame.sprite.Group()
+enemy_bullets = pygame.sprite.Group()
 
 # BGM 컨트롤러 생성
 bgm = BGMController()
