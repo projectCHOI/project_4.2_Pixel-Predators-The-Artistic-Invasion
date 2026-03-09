@@ -569,7 +569,18 @@ while run:
                         if boss:
                             boss.reset()
                         stage_duration = get_stage_duration(level)
-
+        if keys[pygame.K_SPACE]:
+            # 공격 단계(attack_stage)에 따른 탄환 생성
+            if attack_stage == 0:
+                new_bullet = Bullet(player.rect.center, ATTACK_COLORS[0])
+                player_bullets.add(new_bullet)
+                all_sprites.add(new_bullet)
+            elif attack_stage == 1:
+                # 양옆에서 두 발 발사 등 로직 구현 가능
+                b1 = Bullet((player.rect.left, player.rect.top), ATTACK_COLORS[1])
+                b2 = Bullet((player.rect.right, player.rect.top), ATTACK_COLORS[1])
+                player_bullets.add(b1, b2)
+                all_sprites.add(b1, b2)
     else:
         # 마우스 위치 가져오기
         mouse_pos = pygame.mouse.get_pos()
