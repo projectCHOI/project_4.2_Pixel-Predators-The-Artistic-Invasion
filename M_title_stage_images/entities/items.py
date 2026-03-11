@@ -18,3 +18,20 @@ class Item(pygame.sprite.Sprite):
             
         self.rect = self.image.get_rect(center=pos)
         self.speed = 3
+
+def update(self):
+        self.rect.y += self.speed
+        if self.rect.top > WIN_HEIGHT:
+            self.kill()
+
+def apply_effect(self, player):
+        if self.type == 'heal':
+            if player.health < player.max_health:
+                player.health += 1
+                return "체력 회복!"
+        elif self.type == 'power':
+            return "공격력 강화!"
+        elif self.type == 'speed':
+            player.speed += 2
+            return "이동 속도 증가!"
+        return ""
