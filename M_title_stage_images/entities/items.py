@@ -35,3 +35,15 @@ def apply_effect(self, player):
             player.speed += 2
             return "이동 속도 증가!"
         return ""
+
+def spawn_item_by_chance(pos, res_manager):
+    rand_val = random.random()
+    
+    if rand_val < ITEM_CHANCE['speed']: # 0.1
+        return Item(pos, 'speed', res_manager)
+    elif rand_val < ITEM_CHANCE['speed'] + ITEM_CHANCE['power']: # 0.2
+        return Item(pos, 'power', res_manager)
+    elif rand_val < ITEM_CHANCE['speed'] + ITEM_CHANCE['power'] + ITEM_CHANCE['heal']: # 0.6
+        return Item(pos, 'heal', res_manager)
+    
+    return None
