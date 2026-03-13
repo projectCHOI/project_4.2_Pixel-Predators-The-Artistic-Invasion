@@ -912,6 +912,11 @@ while run:
             collision_image = None
 
         # 아이템 획득 체크
+        hit_items = pygame.sprite.spritecollide(player, item_group, True) # 닿으면 삭제(True)
+        for item in hit_items:
+            message = item.apply_effect(player)
+            print(message)
+        
         # 스피드 아이템
         if speed_item_pos:
             speed_rect = pygame.Rect(speed_item_pos[0], speed_item_pos[1], speed_item_image.get_width(), speed_item_image.get_height())
