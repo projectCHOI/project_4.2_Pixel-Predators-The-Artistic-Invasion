@@ -916,6 +916,7 @@ while run:
         for item in hit_items:
             message = item.apply_effect(player)
             print(message)
+        item_group.draw(win)
         
         # 스피드 아이템
         if speed_item_pos:
