@@ -184,6 +184,8 @@ invincible = False
 invincible_start_time = 0
 invincible_duration = 3000  # 무적 시간 (밀리초)
 collected_gems = [] # 보석 획득
+item_group = pygame.sprite.Group()
+item_group.update()
 
 # 각 적 타입별 마지막 생성 시간
 enemy_last_spawn_time = {
