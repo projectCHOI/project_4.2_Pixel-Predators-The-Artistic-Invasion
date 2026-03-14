@@ -21,3 +21,13 @@ class GameManager:
         
         # 리소스
         self.collected_gems = []
+
+    def start_game(self):
+        """게임 전체 시작 (Level 1부터)"""
+        self.level = 1
+        self.enemies_defeated = 0
+        self.collected_gems = []
+        self.game_active = True
+        self.game_over = False
+        self.start_ticks = pygame.time.get_ticks()
+        self.start_stage()
