@@ -12,3 +12,12 @@ class GameManager:
         self.game_active = False
         self.game_over = False
         self.game_over_reason = None # "victory", "game_over", "time_over"
+
+        # 시간 및 점수
+        self.start_ticks = 0
+        self.stage_start_ticks = 0
+        self.enemies_defeated = 0
+        self.game_end_time = None
+        
+        # 리소스
+        self.collected_gems = []
