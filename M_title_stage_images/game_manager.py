@@ -1,4 +1,3 @@
-# 스테이지 관리, 게임 상태(Over/Victory) 관리
 import pygame
 from M_title_stage_images.config import *
 
@@ -11,8 +10,8 @@ class GameManager:
         # 게임 상태 관리
         self.game_active = False
         self.game_over = False
-        self.game_over_reason = None # "victory", "game_over", "time_over"
-
+        self.game_over_reason = None
+        
         # 시간 및 점수
         self.start_ticks = 0
         self.stage_start_ticks = 0
@@ -23,7 +22,6 @@ class GameManager:
         self.collected_gems = []
 
     def start_game(self):
-        """게임 전체 시작 (Level 1부터)"""
         self.level = 1
         self.enemies_defeated = 0
         self.collected_gems = []
@@ -31,3 +29,18 @@ class GameManager:
         self.game_over = False
         self.start_ticks = pygame.time.get_ticks()
         self.start_stage()
+
+    def start_stage(self):
+        self.stage_start_ticks = pygame.time.get_ticks()
+        print(f"Stage {self.level} Started!")
+
+    def update(self, player_health):
+        if not self.game_active:
+            return
+        if player_health <= 0:
+            self.end_game("game_over")
+
+        elapsed = (pygame.time.get_ticks() - self.stage_start_ticks) // 1000
+        stage_duration = self.get_stage_duration()
+        if elapsed >= stage_duration:
+            self.end_game("time_over")
