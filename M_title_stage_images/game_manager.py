@@ -44,3 +44,15 @@ class GameManager:
         stage_duration = self.get_stage_duration()
         if elapsed >= stage_duration:
             self.end_game("time_over")
+
+    def get_stage_duration(self):
+        base = 600
+        reduction = (self.level - 1) * 5
+        return max(300, base - reduction)
+
+    def next_level(self):
+        if self.level < self.max_level:
+            self.level += 1
+            self.start_stage()
+        else:
+            self.end_game("victory")
