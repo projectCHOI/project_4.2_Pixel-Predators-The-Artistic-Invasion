@@ -56,3 +56,9 @@ class GameManager:
             self.start_stage()
         else:
             self.end_game("victory")
+
+    def end_game(self, reason):
+        self.game_active = False
+        self.game_over = True
+        self.game_over_reason = reason
+        self.game_end_time = (pygame.time.get_ticks() - self.start_ticks) // 1000
