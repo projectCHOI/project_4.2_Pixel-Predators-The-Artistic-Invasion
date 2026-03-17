@@ -1045,6 +1045,21 @@ while game_active:
         
     player.draw(win)
 
+manager = GameManager(res)
+
+while run:
+    if not manager.game_active:
+        if not manager.game_over:
+            # 타이틀 화면 그리기
+            draw_title_screen()
+        else:
+            # 엔드 스크린(Victory/GameOver) 그리기
+            draw_end_screen(manager.game_over_reason)
+    else:
+        # 실제 게임 플레이 루프
+        player.handle_input()
+        player.update()
+            
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
