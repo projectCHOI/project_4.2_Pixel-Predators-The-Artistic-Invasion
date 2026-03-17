@@ -1059,7 +1059,14 @@ while run:
         # 실제 게임 플레이 루프
         player.handle_input()
         player.update()
-            
+         
+        # 매니저에게 현재 플레이어 상태 전달 및 감시
+        manager.update(player.health)
+        
+        # 보스 클리어 조건 만족 시
+        if boss_defeated:
+            manager.next_level()
+                       
         # 화면 업데이트
         background_image = stage_background_images[level - 1] if level - 1 < len(stage_background_images) else stage_background_images[0]
         draw_objects(player_pos, enemies, background_image, mouse_pos, elapsed_stage_time,
