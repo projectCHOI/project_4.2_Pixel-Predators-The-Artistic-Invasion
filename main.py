@@ -29,3 +29,11 @@ player_bullets = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
 all_sprites.add(player)
+
+# 외부 데이터 임포트
+try:
+    from M_title_stage_images.title_stage_images import title_image, stage_intro_images, stage_background_images
+except ImportError:
+    print("이미지 모듈을 찾을 수 없습니다.")
+    pygame.quit()
+    sys.exit()
