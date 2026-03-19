@@ -22,3 +22,10 @@ res = ResourceManager()
 manager = GameManager(res)
 player = Player(res)
 bgm = BGMController()
+
+# 스프라이트 그룹 설정
+all_sprites = pygame.sprite.Group()
+player_bullets = pygame.sprite.Group()
+enemy_group = pygame.sprite.Group()
+item_group = pygame.sprite.Group()
+all_sprites.add(player)
