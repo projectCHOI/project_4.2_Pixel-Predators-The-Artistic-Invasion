@@ -44,3 +44,9 @@ from M_title_stage_images.bosses import (
 )
 BOSS_MAP = {1: Stage_1_Boss.Stage1Boss, 2: Stage_2_Boss.Stage2Boss, # ... 중략
             9: Stage_9_Boss.Stage9Boss}
+
+def reset_for_new_stage():
+    enemy_group.empty()
+    player_bullets.empty()
+    item_group.empty()
+    player.pos = [WIN_WIDTH // 2, WIN_HEIGHT // 2]
