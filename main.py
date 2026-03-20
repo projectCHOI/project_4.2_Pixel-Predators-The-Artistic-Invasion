@@ -37,3 +37,10 @@ except ImportError:
     print("이미지 모듈을 찾을 수 없습니다.")
     pygame.quit()
     sys.exit()
+
+from M_title_stage_images.bosses import (
+    Stage_1_Boss, Stage_2_Boss, Stage_3_Boss, Stage_4_Boss, Stage_5_Boss,
+    Stage_6_Boss, Stage_7_Boss, Stage_8_Boss, Stage_9_Boss
+)
+BOSS_MAP = {1: Stage_1_Boss.Stage1Boss, 2: Stage_2_Boss.Stage2Boss, # ... 중략
+            9: Stage_9_Boss.Stage9Boss}
