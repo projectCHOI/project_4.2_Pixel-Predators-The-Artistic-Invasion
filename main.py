@@ -50,3 +50,16 @@ def reset_for_new_stage():
     player_bullets.empty()
     item_group.empty()
     player.pos = [WIN_WIDTH // 2, WIN_HEIGHT // 2]
+
+run = True
+while run:
+    # A. 이벤트 처리
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        
+        if not manager.game_active:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                manager.start_game()
+                reset_for_new_stage()
+                bgm.set_game_state(f"stage_{manager.level}")
