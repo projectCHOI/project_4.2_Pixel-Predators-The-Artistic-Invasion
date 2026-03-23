@@ -85,3 +85,9 @@ while run:
             item.apply_effect(player)
 
         manager.update(player.health)
+
+    if not manager.game_active:
+        if not manager.game_over:
+            win.blit(title_image, (0, 0))
+        else:
+            pass
