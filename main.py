@@ -63,3 +63,15 @@ while run:
                 manager.start_game()
                 reset_for_new_stage()
                 bgm.set_game_state(f"stage_{manager.level}")
+
+    # B. 게임 로직 (활성화 상태)
+    if manager.game_active:
+        # 입력 및 업데이트
+        # 보스 패턴에 따른 입력 반전 여부 확인 (boss 객체가 있을 경우)
+        input_reversed = False # boss.is_input_reversed() 로직 연결 필요
+        player.handle_input(input_reversed=input_reversed)
+        
+        all_sprites.update()
+        player_bullets.update()
+        enemy_group.update()
+        item_group.update()
