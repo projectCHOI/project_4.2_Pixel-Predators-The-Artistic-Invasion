@@ -75,3 +75,11 @@ while run:
         player_bullets.update()
         enemy_group.update()
         item_group.update()
+
+        if not player.invincible:
+            if pygame.sprite.spritecollide(player, enemy_group, False):
+                player.take_damage()
+        
+        items_hit = pygame.sprite.spritecollide(player, item_group, True)
+        for item in items_hit:
+            item.apply_effect(player)
