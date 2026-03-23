@@ -83,3 +83,5 @@ while run:
         items_hit = pygame.sprite.spritecollide(player, item_group, True)
         for item in items_hit:
             item.apply_effect(player)
+
+        manager.update(player.health)
