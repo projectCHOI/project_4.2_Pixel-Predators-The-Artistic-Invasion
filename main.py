@@ -96,3 +96,8 @@ while run:
         enemy_group.draw(win)
         player_bullets.draw(win)
         item_group.draw(win)
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+pygame.quit()
