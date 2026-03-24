@@ -66,9 +66,7 @@ while run:
 
     # B. 게임 로직 (활성화 상태)
     if manager.game_active:
-        # 입력 및 업데이트
-        # 보스 패턴에 따른 입력 반전 여부 확인 (boss 객체가 있을 경우)
-        input_reversed = False # boss.is_input_reversed() 로직 연결 필요
+        input_reversed = False
         player.handle_input(input_reversed=input_reversed)
         
         all_sprites.update()
@@ -91,3 +89,10 @@ while run:
             win.blit(title_image, (0, 0))
         else:
             pass
+    else:
+        bg_img = stage_background_images[manager.level-1]
+        win.blit(bg_img, (0, 0))
+        all_sprites.draw(win)
+        enemy_group.draw(win)
+        player_bullets.draw(win)
+        item_group.draw(win)
