@@ -20,3 +20,15 @@ class GameManager:
         self.boss_spawn_delay = 20000  
         # 획득한 아이템/보석 기록
         self.collected_gems = []
+
+    def start_game(self):
+        """게임 전체를 처음부터 시작 (Level 1)"""
+        self.level = 1
+        self.enemies_defeated = 0
+        self.collected_gems = []
+        self.game_active = True
+        self.game_over = False
+        self.game_over_reason = None
+        self.game_end_time = None
+        self.start_ticks = pygame.time.get_ticks()
+        self.start_stage()
