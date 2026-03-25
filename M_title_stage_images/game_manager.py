@@ -22,7 +22,6 @@ class GameManager:
         self.collected_gems = []
 
     def start_game(self):
-        """게임 전체를 처음부터 시작 (Level 1)"""
         self.level = 1
         self.enemies_defeated = 0
         self.collected_gems = []
@@ -32,3 +31,18 @@ class GameManager:
         self.game_end_time = None
         self.start_ticks = pygame.time.get_ticks()
         self.start_stage()
+        
+    def start_stage(self):
+        self.stage_start_ticks = pygame.time.get_ticks()
+        self.boss_active = False
+        self.boss = None
+        print(f"--- Stage {self.level} Initialized ---")
+
+    def spawn_boss(self, boss_class):
+        if boss_class and not self.boss_active:
+            self.boss = boss_class()
+            self.boss_active = True
+            if hasattr(self.boss, 'reset'):
+                self.boss.reset()
+            return self.boss
+        return None
