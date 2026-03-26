@@ -55,3 +55,10 @@ class GameManager:
             self.end_game("game_over")
             return
 
+        elapsed_stage_sec = (now - self.stage_start_ticks) // 1000
+        if elapsed_stage_sec >= self.get_stage_duration():
+            self.end_game("time_over")
+            return
+        if self.boss_active and self.boss:
+            if hasattr(self.boss, 'hp') and self.boss.hp <= 0:
+                self.handle_boss_defeat()
