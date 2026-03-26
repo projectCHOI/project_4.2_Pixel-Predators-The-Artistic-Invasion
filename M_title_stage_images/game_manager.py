@@ -46,3 +46,12 @@ class GameManager:
                 self.boss.reset()
             return self.boss
         return None
+
+    def update(self, player):
+        if not self.game_active:
+            return
+        now = pygame.time.get_ticks()
+        if player.health <= 0:
+            self.end_game("game_over")
+            return
+
