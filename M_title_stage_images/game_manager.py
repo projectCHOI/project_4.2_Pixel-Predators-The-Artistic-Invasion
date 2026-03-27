@@ -62,3 +62,12 @@ class GameManager:
         if self.boss_active and self.boss:
             if hasattr(self.boss, 'hp') and self.boss.hp <= 0:
                 self.handle_boss_defeat()
+
+    def handle_boss_defeat(self):
+        if hasattr(self.boss, 'gem_image'):
+            self.collected_gems.append(self.boss.gem_image) 
+        if self.level < self.max_level:
+            self.level += 1
+            self.start_stage()
+        else:
+            self.end_game("victory")
