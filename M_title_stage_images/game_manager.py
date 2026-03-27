@@ -71,3 +71,8 @@ class GameManager:
             self.start_stage()
         else:
             self.end_game("victory")
+
+    def get_stage_duration(self):
+        base_duration = 600  # 기본 10분
+        reduction = (self.level - 1) * 10  # 레벨당 10초씩 감소
+        return max(300, base_duration - reduction)
