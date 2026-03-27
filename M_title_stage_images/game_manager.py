@@ -76,3 +76,11 @@ class GameManager:
         base_duration = 600  # 기본 10분
         reduction = (self.level - 1) * 10  # 레벨당 10초씩 감소
         return max(300, base_duration - reduction)
+
+    def end_game(self, reason):
+        self.game_active = False
+        self.game_over = True
+        self.game_over_reason = reason
+        self.game_end_time = (pygame.time.get_ticks() - self.start_ticks) // 1000
+        self.boss_active = False
+        self.boss = None
