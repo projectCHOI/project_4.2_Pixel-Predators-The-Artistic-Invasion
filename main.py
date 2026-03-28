@@ -66,6 +66,7 @@ while run:
 
     # B. 게임 로직 (활성화 상태)
     if manager.game_active:
+        now = pygame.time.get_ticks()
         input_reversed = False
         player.handle_input(input_reversed=input_reversed)
         
