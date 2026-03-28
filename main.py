@@ -75,6 +75,10 @@ while run:
         enemy_group.update()
         item_group.update()
 
+        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
+            boss_class = BOSS_MAP.get(manager.level)
+            current_boss = manager.spawn_boss(boss_class)
+    
         if not player.invincible:
             if pygame.sprite.spritecollide(player, enemy_group, False):
                 player.take_damage()
