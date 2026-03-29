@@ -19,9 +19,9 @@ clock = pygame.time.Clock()
 
 # 매니저 및 리소스 로더 초기화
 res = ResourceManager()
-manager = GameManager(res)
 player = Player(res)
 bgm = BGMController()
+manager = GameManager(res)
 
 # 스프라이트 그룹 설정
 all_sprites = pygame.sprite.Group()
