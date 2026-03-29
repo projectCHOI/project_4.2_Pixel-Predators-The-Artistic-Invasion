@@ -42,14 +42,18 @@ from M_title_stage_images.bosses import (
     Stage_1_Boss, Stage_2_Boss, Stage_3_Boss, Stage_4_Boss, Stage_5_Boss,
     Stage_6_Boss, Stage_7_Boss, Stage_8_Boss, Stage_9_Boss
 )
-BOSS_MAP = {1: Stage_1_Boss.Stage1Boss, 2: Stage_2_Boss.Stage2Boss, # ... 중략
-            9: Stage_9_Boss.Stage9Boss}
+BOSS_MAP = {1: Stage_1_Boss.Stage1Boss, 2: Stage_2_Boss.Stage2Boss, 3: Stage_3_Boss.Stage3Boss,
+            4: Stage_4_Boss.Stage4Boss, 5: Stage_5_Boss.Stage5Boss, 6: Stage_6_Boss.Stage6Boss,
+            7: Stage_7_Boss.Stage7Boss, 8: Stage_8_Boss.Stage8Boss, 9: Stage_9_Boss.Stage9Boss}
 
 def reset_for_new_stage():
     enemy_group.empty()
     player_bullets.empty()
     item_group.empty()
     player.pos = [WIN_WIDTH // 2, WIN_HEIGHT // 2]
+
+# 초기 상태 설정
+bgm.set_game_state("title")
 
 run = True
 while run:
@@ -60,49 +64,8 @@ while run:
         
         if not manager.game_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                manager.start_game()
-                reset_for_new_stage()
-                bgm.set_game_state(f"stage_{manager.level}")
+
 
     # B. 게임 로직 (활성화 상태)
     if manager.game_active:
         now = pygame.time.get_ticks()
-        input_reversed = False
-        player.handle_input(input_reversed=input_reversed)
-        
-        all_sprites.update()
-        player_bullets.update()
-        enemy_group.update()
-        item_group.update()
-
-        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
-            boss_class = BOSS_MAP.get(manager.level)
-            current_boss = manager.spawn_boss(boss_class)
-    
-        if not player.invincible:
-            if pygame.sprite.spritecollide(player, enemy_group, False):
-                player.take_damage()
-        
-        items_hit = pygame.sprite.spritecollide(player, item_group, True)
-        for item in items_hit:
-            item.apply_effect(player)
-
-        manager.update(player.health)
-
-    if not manager.game_active:
-        if not manager.game_over:
-            win.blit(title_image, (0, 0))
-        else:
-            pass
-    else:
-        bg_img = stage_background_images[manager.level-1]
-        win.blit(bg_img, (0, 0))
-        all_sprites.draw(win)
-        enemy_group.draw(win)
-        player_bullets.draw(win)
-        item_group.draw(win)
-
-    pygame.display.update()
-    clock.tick(FPS)
-
-pygame.quit()
