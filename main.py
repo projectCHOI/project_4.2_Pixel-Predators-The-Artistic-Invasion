@@ -64,7 +64,16 @@ while run:
         
         if not manager.game_active:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-
+                # 1. BGM을 로딩 상태로 변경
+                bgm.set_game_state("loading")
+                
+                # 2. 스테이지 준비
+                manager.start_game()
+                reset_for_new_stage()
+                
+                # 3. (옵션) 인트로 화면이 있다면 여기서 대기 로직 가능
+                # 4. 실제 스테이지 BGM 시작
+                bgm.set_game_state(f"stage_{manager.level}")
 
     # B. 게임 로직 (활성화 상태)
     if manager.game_active:
