@@ -86,3 +86,44 @@ while run:
                 manager.start_game()
                 reset_stage_elements()
                 bgm.set_game_state(f"stage_{manager.level}")
+
+    # --- B. 게임 로직 (Active) ---
+    if manager.game_active:
+        now = pygame.time.get_ticks()
+        
+        # 1. 플레이어 입력 및 업데이트
+        input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
+        player.handle_input(input_reversed=input_rev)
+        all_sprites.update()
+        
+        # 2. 보스 생성 및 로직
+        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
+            manager.spawn_boss(BOSS_MAP.get(manager.level))
+            
+        if manager.boss_active and manager.boss:
+            manager.boss.move()
+            manager.boss.attack()
+            if hasattr(manager.boss, 'update_attacks'):
+                damage = manager.boss.update_attacks(player.rect.center, player.invincible)
+                if damage > 0: player.take_damage(damage)
+            
+            manager.boss.check_hit(player_bullets)
+
+        # 3. 탄환 및 아이템 업데이트
+        player_bullets.update()
+        enemy_group.update()
+        item_group.update()
+
+        # 4. 충돌 체크
+        if not player.invincible:
+            if pygame.sprite.spritecollide(player, enemy_group, False):
+                player.take_damage()
+        
+        items_hit = pygame.sprite.spritecollide(player, item_group, True)
+        for item in items_hit:
+            item.apply_effect(player)
+
+        manager.update(player)
+        
+        if manager.game_over:
+            bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
