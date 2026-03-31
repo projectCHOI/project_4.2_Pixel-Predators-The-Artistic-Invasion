@@ -127,3 +127,35 @@ while run:
         
         if manager.game_over:
             bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
+    # --- C. 화면 그리기 (Draw) ---
+    if not manager.game_active:
+        if not manager.game_over:
+            win.blit(title_image, (0, 0))
+        else:
+            win.fill(BLACK)
+            msg = "MISSION COMPLETE" if manager.game_over_reason == "victory" else "GAME OVER"
+            result_text = font.render(msg, True, YELLOW)
+            win.blit(result_text, (WIN_WIDTH // 2 - 100, WIN_HEIGHT // 2))
+            retry_text = font.render("Press ENTER to Restart", True, WHITE)
+            win.blit(retry_text, (WIN_WIDTH // 2 - 130, WIN_HEIGHT // 2 + 50))
+    else:
+        bg_img = stage_background_images[manager.level-1]
+        win.blit(bg_img, (0, 0))
+        
+        if manager.boss_active and manager.boss:
+            manager.boss.draw(win)
+            if hasattr(manager.boss, 'draw_attacks'): manager.boss.draw_attacks(win)
+            if hasattr(manager.boss, 'draw_health_bar'): manager.boss.draw_health_bar(win, font)
+        
+        all_sprites.draw(win)
+        player_bullets.draw(win)
+        enemy_group.draw(win)
+        item_group.draw(win)
+        
+        draw_ui()
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+pygame.quit()
+sys.exit()
