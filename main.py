@@ -46,3 +46,26 @@ BOSS_MAP = {
 }
 
 font = pygame.font.Font(res.get_font_path("SLEIGothicOTF.otf"), 30)
+
+def reset_stage_elements():
+    enemy_group.empty()
+    player_bullets.empty()
+    item_group.empty()
+    all_sprites.empty()
+    all_sprites.add(player)
+    player.rect.center = (WIN_WIDTH // 2, WIN_HEIGHT - 100)
+    player.pos = [float(player.rect.x), float(player.rect.y)]
+
+def draw_ui():
+    health_img = res.load_image("player", "mob_Life.png", size=(30, 30))
+    if health_img:
+        for i in range(player.health):
+            win.blit(health_img, (20 + i * 35, 20))
+    
+    elapsed = (pygame.time.get_ticks() - manager.stage_start_ticks) // 1000
+    timer_text = font.render(f"TIME: {elapsed}s", True, WHITE)
+    enemy_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+    win.blit(timer_text, (WIN_WIDTH // 2 - 50, 20))
+    win.blit(enemy_text, (WIN_WIDTH - 150, 20))
+
+bgm.set_game_state("title")
