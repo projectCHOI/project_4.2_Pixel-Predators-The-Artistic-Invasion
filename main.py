@@ -82,3 +82,62 @@ while run:
                 manager.start_game()
                 reset_stage_elements()
                 bgm.set_game_state(f"stage_{manager.level}")
+    # --- B. 게임 로직 (Active) ---
+    if manager.game_active:
+        now = pygame.time.get_ticks()    
+        # 1. 플레이어 입력 및 탄환 생성 핵심 수정
+        input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
+        new_bullets = player.handle_input(input_reversed=input_rev)
+        if new_bullets:
+            if isinstance(new_bullets, list):
+                for b in new_bullets:
+                    player_bullets.add(b)
+                    all_sprites.add(b)
+            else:
+                player_bullets.add(new_bullets)
+                all_sprites.add(new_bullets)
+
+        # 2. 일반 적 생성 로직 추가
+        if not manager.boss_active:
+            new_enemy = manager.spawn_enemy()
+            if new_enemy:
+                enemy_group.add(new_enemy)
+                all_sprites.add(new_enemy)
+
+        # 3. 보스 생성 및 로직
+        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
+            manager.spawn_boss(BOSS_MAP.get(manager.level))
+            enemy_group.empty() 
+            
+        if manager.boss_active and manager.boss:
+            manager.boss.move()
+            manager.boss.attack()
+            if hasattr(manager.boss, 'update_attacks'):
+                damage = manager.boss.update_attacks(player.rect.center, player.invincible)
+                if damage > 0: player.take_damage(damage)
+            manager.boss.check_hit(player_bullets)
+
+        # 4. 업데이트
+        all_sprites.update() 
+        # (참고: all_sprites에 bullets, enemies가 포함되어 있다면 그룹별 update는 생략 가능)
+
+        # 5. 충돌 체크
+        # 플레이어 vs 적 탄환/적 본체
+        if not player.invincible:
+            if pygame.sprite.spritecollide(player, enemy_group, False):
+                player.take_damage()
+        
+        # 플레이어 탄환 vs 일반 적
+        hits = pygame.sprite.groupcollide(enemy_group, player_bullets, True, True)
+        if hits:
+            manager.enemies_defeated += len(hits)
+
+        # 아이템 획득
+        items_hit = pygame.sprite.spritecollide(player, item_group, True)
+        for item in items_hit:
+            item.apply_effect(player)
+
+        manager.update(player)
+        
+        if manager.game_over:
+            bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
