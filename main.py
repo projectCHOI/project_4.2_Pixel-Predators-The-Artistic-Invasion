@@ -69,3 +69,16 @@ def draw_ui():
     win.blit(enemy_text, (WIN_WIDTH - 150, 20))
 
 bgm.set_game_state("title")
+# 4. 메인 게임 루프
+run = True
+while run:
+    # --- A. 이벤트 처리 ---
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        
+        if not manager.game_active:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                manager.start_game()
+                reset_stage_elements()
+                bgm.set_game_state(f"stage_{manager.level}")
