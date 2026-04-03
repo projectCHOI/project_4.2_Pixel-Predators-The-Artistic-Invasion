@@ -163,3 +163,9 @@ while run:
         
         all_sprites.draw(win)
         draw_ui()
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+pygame.quit()
+sys.exit()
