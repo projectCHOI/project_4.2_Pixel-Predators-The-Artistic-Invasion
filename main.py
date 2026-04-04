@@ -27,3 +27,51 @@ player_bullets = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 item_group = pygame.sprite.Group()
 all_sprites.add(player)
+
+# 3. 데이터 로드
+try:
+    from M_title_stage_images.title_stage_images import title_image, stage_background_images
+except ImportError:
+    print("Error: title_stage_images 모듈을 찾을 수 없습니다.")
+    pygame.quit()
+    sys.exit()
+
+from M_title_stage_images.bosses import (
+    Stage_1_Boss, Stage_2_Boss, Stage_3_Boss, Stage_4_Boss, Stage_5_Boss,
+    Stage_6_Boss, Stage_7_Boss, Stage_8_Boss, Stage_9_Boss
+)
+BOSS_MAP = {
+    1: Stage_1_Boss.Stage1Boss, 2: Stage_2_Boss.Stage2Boss, 3: Stage_3_Boss.Stage3Boss,
+    4: Stage_4_Boss.Stage4Boss, 5: Stage_5_Boss.Stage5Boss, 6: Stage_6_Boss.Stage6Boss,
+    7: Stage_7_Boss.Stage7Boss, 8: Stage_8_Boss.Stage8Boss, 9: Stage_9_Boss.Stage9Boss
+}
+
+font = pygame.font.Font(res.get_font_path("SLEIGothicOTF.otf"), 30)
+
+enemy_spawn_timer = 0
+spawn_delay = 1000
+
+def reset_stage_elements():
+    global enemy_spawn_timer
+    enemy_group.empty()
+    player_bullets.empty()
+    item_group.empty()
+    all_sprites.empty()
+    all_sprites.add(player)
+    player.rect.center = (WIN_WIDTH // 2, WIN_HEIGHT - 100)
+    player.pos = [float(player.rect.x), float(player.rect.y)]
+    enemy_spawn_timer = pygame.time.get_ticks()
+
+def draw_ui():
+    health_img = res.load_image("player", "mob_Life.png", size=(30, 30))
+    if health_img:
+        for i in range(max(0, player.health)):
+            win.blit(health_img, (20 + i * 35, 20))
+    
+    elapsed = (pygame.time.get_ticks() - manager.stage_start_ticks) // 1000
+    timer_text = font.render(f"TIME: {elapsed}s", True, WHITE)
+    enemy_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+    win.blit(timer_text, (WIN_WIDTH // 2 - 50, 20))
+    win.blit(enemy_text, (WIN_WIDTH - 150, 20))
+
+bgm.set_game_state("title")
