@@ -89,3 +89,28 @@ while run:
                 manager.start_game()
                 reset_stage_elements()
                 bgm.set_game_state(f"stage_{manager.level}")
+
+    # --- B. 게임 로직 (Active) ---
+    if manager.game_active:
+        now = pygame.time.get_ticks()
+        
+        # 1. 플레이어 업데이트 및 탄환 발사 로직 (보완)
+        input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
+        
+        new_bullets = player.handle_input(input_reversed=input_rev)
+        if new_bullets:
+            if isinstance(new_bullets, list):
+                for b in new_bullets:
+                    player_bullets.add(b)
+                    all_sprites.add(b)
+            else:
+                player_bullets.add(new_bullets)
+                all_sprites.add(new_bullets)
+
+        # 2. 일반 적 생성 로직 (AttributeError 방지)
+        if not manager.boss_active and Enemy is not None:
+            if now - enemy_spawn_timer > spawn_delay:
+                new_enemy = Enemy(res, level=manager.level) 
+                enemy_group.add(new_enemy)
+                all_sprites.add(new_enemy)
+                enemy_spawn_timer = now
