@@ -114,3 +114,17 @@ while run:
                 enemy_group.add(new_enemy)
                 all_sprites.add(new_enemy)
                 enemy_spawn_timer = now
+
+        # 3. 보스 생성 및 로직
+        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
+            boss_class = BOSS_MAP.get(manager.level)
+            if boss_class:
+                manager.spawn_boss(boss_class)
+            
+        if manager.boss_active and manager.boss:
+            manager.boss.move()
+            manager.boss.attack()
+            if hasattr(manager.boss, 'update_attacks'):
+                damage = manager.boss.update_attacks(player.rect.center, player.invincible)
+                if damage > 0: player.take_damage(damage)
+            manager.boss.check_hit(player_bullets)
