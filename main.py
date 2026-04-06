@@ -128,3 +128,24 @@ while run:
                 damage = manager.boss.update_attacks(player.rect.center, player.invincible)
                 if damage > 0: player.take_damage(damage)
             manager.boss.check_hit(player_bullets)
+
+        # 4. 전체 업데이트
+        all_sprites.update() 
+
+        # 5. 충돌 체크
+        if not player.invincible:
+            if pygame.sprite.spritecollide(player, enemy_group, True):
+                player.take_damage()
+        
+        hits = pygame.sprite.groupcollide(enemy_group, player_bullets, True, True)
+        if hits:
+            manager.enemies_defeated += len(hits)
+
+        items_hit = pygame.sprite.spritecollide(player, item_group, True)
+        for item in items_hit:
+            item.apply_effect(player)
+
+        manager.update(player)
+        
+        if manager.game_over:
+            bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
