@@ -71,6 +71,26 @@ def reset_game():
 
 bgm.set_game_state("title")
 
+def draw_ui():
+    """상단 UI 대시보드 (체력, 시간, 적 처치 수) 그리기"""
+    # 1. 체력 아이콘 표시
+    health_img = res.load_image("player", "mob_Life.png", size=(30, 30))
+    if health_img:
+        for i in range(max(0, player.health)):
+            win.blit(health_img, (20 + i * 35, 20))
+    
+    # 2. 시간 계산
+    # manager.stage_start_ticks가 정의되어 있어야 합니다.
+    elapsed = (pygame.time.get_ticks() - manager.stage_start_ticks) // 1000
+    timer_text = font.render(f"TIME: {elapsed}s", True, (255, 255, 255)) # WHITE
+    
+    # 3. 적 처치 수
+    enemy_text = font.render(f"KILLS: {manager.enemies_defeated}", True, (255, 255, 255)) # WHITE
+    
+    # 4. 화면에 출력
+    win.blit(timer_text, (WIN_WIDTH // 2 - 50, 20))
+    win.blit(enemy_text, (WIN_WIDTH - 150, 20))
+    
 # 6. 메인 루프
 run = True
 while run:
@@ -141,23 +161,45 @@ while run:
 
         manager.update(player)
 
-    # --- 그리기 ---
+    # --- C. 그리기 (Drawing) ---
     if not manager.game_active:
-        win.blit(title_image, (0, 0))
+        if not manager.game_over:
+            win.blit(title_image, (0, 0))
+        else:
+            # 엔드 스크린 (이전 코드의 draw_end_screen 로직 적용 가능)
+            win.fill(BLACK)
+            msg_text = "MISSION COMPLETE" if manager.game_over_reason == "victory" else "GAME OVER"
+            msg = font.render(msg_text, True, YELLOW)
+            win.blit(msg, (WIN_WIDTH // 2 - 120, WIN_HEIGHT // 2))
+            retry_text = font.render("Press ENTER to Restart", True, WHITE)
+            win.blit(retry_text, (WIN_WIDTH // 2 - 150, WIN_HEIGHT // 2 + 50))
     else:
+        # 1. 배경 그리기
         bg_idx = max(0, manager.level - 1)
-        win.blit(stage_background_images[bg_idx], (0, 0))
+        if bg_idx < len(stage_background_images):
+            win.blit(stage_background_images[bg_idx], (0, 0))
         
-        # 적 그리기
+        # 2. 적 리스트(enemies) 그리기
         for enemy in enemies:
+            # enemy[7]에 이미지 데이터가 있다고 가정 (이전 코드 구조)
             win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
             
+        # 3. 보스 및 보스 공격 그리기
         if manager.boss_active and manager.boss:
             manager.boss.draw(win)
+            if hasattr(manager.boss, 'draw_attacks'):
+                manager.boss.draw_attacks(win)
+            if hasattr(manager.boss, 'draw_health_bar'):
+                manager.boss.draw_health_bar(win, font)
         
+        # 4. 플레이어 및 탄환 그리기 (스프라이트 그룹)
         all_sprites.draw(win)
+
+        # 5. [핵심] UI 대시보드 그리기 (체력, 시간, 킬 카운트)
+        draw_ui()
 
     pygame.display.update()
     clock.tick(FPS)
 
 pygame.quit()
+sys.exit()
