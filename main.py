@@ -62,3 +62,30 @@ except ImportError:
 
 enemy_last_spawn_time = {"move_and_disappear": 0}
 enemy_spawn_intervals = {"move_and_disappear": 3000}
+
+def reset_game():
+    global enemies, attacks
+    enemies = []
+    attacks = []
+    player_bullets.empty()
+    all_sprites.empty()
+    all_sprites.add(player)
+    player.rect.center = (WIN_WIDTH // 2, WIN_HEIGHT - 100)
+    player.pos = [float(player.rect.x), float(player.rect.y)]
+
+bgm.set_game_state("title")
+
+def draw_ui():
+    health_img = res.load_image("player", "mob_Life.png", size=(30, 30))
+    if health_img:
+        for i in range(max(0, player.health)):
+            win.blit(health_img, (20 + i * 35, 20))
+    
+    elapsed = (pygame.time.get_ticks() - manager.stage_start_ticks) // 1000
+    timer_text = font.render(f"TIME: {elapsed}s", True, (255, 255, 255))
+    enemy_text = font.render(f"KILLS: {manager.enemies_defeated}", True, (255, 255, 255))
+    
+    win.blit(timer_text, (WIN_WIDTH // 2 - 50, 20))
+    win.blit(enemy_text, (WIN_WIDTH - 150, 20))
+    
+run = True
