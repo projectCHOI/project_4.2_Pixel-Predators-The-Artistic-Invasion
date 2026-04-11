@@ -89,3 +89,12 @@ def draw_ui():
     win.blit(enemy_text, (WIN_WIDTH - 150, 20))
     
 run = True
+
+while run:
+    now = pygame.time.get_ticks()
+    mouse_pos = pygame.mouse.get_pos()
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+        
