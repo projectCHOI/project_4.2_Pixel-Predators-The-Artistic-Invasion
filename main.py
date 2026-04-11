@@ -97,4 +97,17 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if not manager.game_active:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                manager.start_game()
+                reset_game()
+                bgm.set_game_state(f"stage_{manager.level}")
         
+        if manager.game_active and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if attack_sound: attack_sound.play(maxtime=400)
+            
+            atk_start = player.rect.center
+            atk_end = mouse_pos
+            # player.power_item_active 등 기존의 파워 변수가 있다면 연동 (없으면 0번 색상)
+            p_level = getattr(player, 'power_item_active', 0)
+            atk_color = attack_colors.get(p_level, (255, 255, 255))
