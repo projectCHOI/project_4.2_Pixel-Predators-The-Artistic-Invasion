@@ -111,3 +111,13 @@ while run:
             # player.power_item_active 등 기존의 파워 변수가 있다면 연동 (없으면 0번 색상)
             p_level = getattr(player, 'power_item_active', 0)
             atk_color = attack_colors.get(p_level, (255, 255, 255))
+            
+            if p_level == 0:
+                attacks.append([atk_start, atk_end, 3, atk_color])
+            elif p_level == 1:
+                for off in [0, 5, -5]:
+                    attacks.append([atk_start, (atk_end[0]+off, atk_end[1]+off), 3, atk_color])
+            else:
+                for off in [0, 10, -10, 5, -5]:
+                    attacks.append([atk_start, (atk_end[0]+off, atk_end[1]+off), 3, atk_color])
+        
