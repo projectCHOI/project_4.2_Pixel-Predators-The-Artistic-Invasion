@@ -120,4 +120,33 @@ while run:
             else:
                 for off in [0, 10, -10, 5, -5]:
                     attacks.append([atk_start, (atk_end[0]+off, atk_end[1]+off), 3, atk_color])
+
+    if manager.game_active:
+        input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
+        
+        new_bullets = player.handle_input(input_reversed=input_rev)
+        if new_bullets:
+            if isinstance(new_bullets, list):
+                for b in new_bullets: player_bullets.add(b); all_sprites.add(b)
+            else:
+                player_bullets.add(new_bullets); all_sprites.add(new_bullets)
+
+        if not manager.boss_active and gen_move_and_disappear:
+            if now - enemy_last_spawn_time["move_and_disappear"] > enemy_spawn_intervals["move_and_disappear"]:
+                try:
+                    new_data = gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT)
+                    enemies.extend(new_data)
+                except Exception as e:
+                    print(f"적 생성 실패: {e}")
+                enemy_last_spawn_time["move_and_disappear"] = now
+
+        if not manager.boss_active and (now - manager.stage_start_ticks > manager.boss_spawn_delay):
+            manager.spawn_boss(BOSS_MAP.get(manager.level))
+            
+        if manager.boss_active and manager.boss:
+            manager.boss.move()
+            manager.boss.attack()
+            manager.boss.check_hit(player_bullets)
+
+        all_sprites.update()
         
