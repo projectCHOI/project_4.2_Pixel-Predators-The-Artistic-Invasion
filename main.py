@@ -163,3 +163,32 @@ while run:
                 new_line_attacks.append([next_end, (next_end[0] + vx, next_end[1] + vy), thick, color])
         attacks = new_line_attacks
         updated_enemies = []
+
+        for enemy in enemies:
+            enemy[0][0] += enemy[3][0] * enemy[4]
+            enemy[0][1] += enemy[3][1] * enemy[4]
+            
+            enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+            hit = False
+            
+            for bullet in player_bullets:
+                if enemy_rect.colliderect(bullet.rect):
+                    bullet.kill()
+                    manager.enemies_defeated += 1
+                    hit = True
+                    break
+            
+            # 2. 마우스 공격선 충돌 검사 추가
+            if not hit:
+                for atk in attacks:
+                    if enemy_rect.clipline(atk[0], atk[1]):
+                        manager.enemies_defeated += 1
+                        hit = True
+                        break
+            
+            if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                updated_enemies.append(enemy)
+        enemies = updated_enemies
+
+        manager.update(player)
+       
