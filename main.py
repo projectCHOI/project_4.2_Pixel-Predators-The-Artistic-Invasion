@@ -149,4 +149,17 @@ while run:
             manager.boss.check_hit(player_bullets)
 
         all_sprites.update()
-        
+        new_line_attacks = []
+        for atk in attacks:
+            start, end, thick, color = atk
+            dx, dy = end[0] - start[0], end[1] - start[1]
+            dist = math.hypot(dx, dy)
+            if dist == 0: continue
+            
+            vx, vy = (dx / dist) * attack_speed, (dy / dist) * attack_speed
+            next_end = (start[0] + vx, start[1] + vy)
+            
+            if 0 <= next_end[0] <= WIN_WIDTH and 0 <= next_end[1] <= WIN_HEIGHT:
+                new_line_attacks.append([next_end, (next_end[0] + vx, next_end[1] + vy), thick, color])
+        attacks = new_line_attacks
+        updated_enemies = []
