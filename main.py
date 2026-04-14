@@ -191,4 +191,43 @@ while run:
         enemies = updated_enemies
 
         manager.update(player)
-       
+    # --- C. 그리기 (Drawing) ---
+    if not manager.game_active:
+        if not manager.game_over:
+            win.blit(title_image, (0, 0))
+        else:
+            win.fill(BLACK)
+            msg_text = "MISSION COMPLETE" if manager.game_over_reason == "victory" else "GAME OVER"
+            msg = font.render(msg_text, True, YELLOW)
+            win.blit(msg, (WIN_WIDTH // 2 - 120, WIN_HEIGHT // 2))
+            retry_text = font.render("Press ENTER to Restart", True, WHITE)
+            win.blit(retry_text, (WIN_WIDTH // 2 - 150, WIN_HEIGHT // 2 + 50))
+    else:
+        bg_idx = max(0, manager.level - 1)
+        if bg_idx < len(stage_background_images):
+            win.blit(stage_background_images[bg_idx], (0, 0))
+        
+        for enemy in enemies:
+            win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+        for atk in attacks:
+            pygame.draw.line(win, atk[3], atk[0], atk[1], atk[2])
+
+        if manager.boss_active and manager.boss:
+            manager.boss.draw(win)
+            if hasattr(manager.boss, 'draw_attacks'):
+                manager.boss.draw_attacks(win)
+            if hasattr(manager.boss, 'draw_health_bar'):
+                manager.boss.draw_health_bar(win, font)
+        
+        all_sprites.draw(win)
+        
+        pygame.draw.circle(win, (255, 0, 0), mouse_pos, 5)
+
+        draw_ui()
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+pygame.quit()
+sys.exit()                
