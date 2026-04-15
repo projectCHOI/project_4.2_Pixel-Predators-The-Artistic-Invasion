@@ -147,6 +147,15 @@ while run:
             manager.boss.move()
             manager.boss.attack()
             manager.boss.check_hit(player_bullets)
+            
+            boss_rect = pygame.Rect(manager.boss.pos[0], manager.boss.pos[1], 
+                                    manager.boss.size, manager.boss.size)
+            for atk in attacks:
+                if boss_rect.clipline(atk[0], atk[1]):
+                    if hasattr(manager.boss, 'take_damage'):
+                        manager.boss.take_damage(1) # 1만큼 데미지
+                    elif hasattr(manager.boss, 'hp'):
+                        manager.boss.hp -= 1
 
         all_sprites.update()
         new_line_attacks = []
