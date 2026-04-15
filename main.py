@@ -134,15 +134,19 @@ while run:
 
     # --- B. 게임 로직 (Active) ---
     if manager.game_active:
-        # 1. 플레이어 업데이트
+    if manager.game_active:
+        # 1. 플레이어 업데이트 및 입력 처리
         input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
         new_bullets = player.handle_input(input_reversed=input_rev)
+        
         if new_bullets:
             if isinstance(new_bullets, list):
-                for b in new_bullets: player_bullets.add(b); all_sprites.add(b)
+                for b in new_bullets: 
+                    player_bullets.add(b)
+                    all_sprites.add(b)
             else:
-                player_bullets.add(new_bullets); all_sprites.add(new_bullets)
-
+                player_bullets.add(new_bullets)
+                all_sprites.add(new_bullets)
         # 2. 일반 적 스폰 (보스가 없을 때만)
         if not manager.boss_active and gen_move_and_disappear:
             if now - enemy_last_spawn_time["move_and_disappear"] > enemy_spawn_intervals["move_and_disappear"]:
