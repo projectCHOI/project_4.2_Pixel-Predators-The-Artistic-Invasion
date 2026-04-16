@@ -154,6 +154,15 @@ while run:
                         manager.spawn_boss(boss_class)
                         print(f"Stage {manager.level} Boss Spawned!")
 
+        # 3. 일반 적 업데이트
+            if not manager.boss_active and gen_move_and_disappear:
+                if now - enemy_last_spawn_time["move_and_disappear"] > enemy_spawn_intervals["move_and_disappear"]:
+                    try:
+                        new_data = gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT)
+                        enemies.extend(new_data)
+                    except Exception as e:
+                        print(f"적 생성 실패: {e}")
+                    enemy_last_spawn_time["move_and_disappear"] = now
         # 4. 보스 행동 업데이트
         if manager.boss_active and manager.boss:
             manager.boss.move()
