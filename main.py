@@ -134,7 +134,6 @@ while run:
 
     # --- B. 게임 로직 (Active) ---
     if manager.game_active:
-    if manager.game_active:
         # 1. 플레이어 업데이트 및 입력 처리
         input_rev = manager.boss.is_input_reversed() if (manager.boss_active and hasattr(manager.boss, 'is_input_reversed')) else False
         new_bullets = player.handle_input(input_reversed=input_rev)
@@ -147,24 +146,13 @@ while run:
             else:
                 player_bullets.add(new_bullets)
                 all_sprites.add(new_bullets)
-        # 2. 일반 적 스폰 (보스가 없을 때만)
-        if not manager.boss_active and gen_move_and_disappear:
-            if now - enemy_last_spawn_time["move_and_disappear"] > enemy_spawn_intervals["move_and_disappear"]:
-                try:
-                    new_data = gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT)
-                    enemies.extend(new_data)
-                except Exception as e:
-                    print(f"적 생성 실패: {e}")
-                enemy_last_spawn_time["move_and_disappear"] = now
-
-        # 3. 보스 활성화 및 소환 로직 [수정됨]
-        if not manager.boss_active:
-            # 설정된 시간이 경과하면 보스 소환
-            if now - manager.stage_start_ticks > manager.boss_spawn_delay:
-                boss_class = BOSS_MAP.get(manager.level)
-                if boss_class:
-                    manager.spawn_boss(boss_class)
-                    print(f"Stage {manager.level} Boss Spawned!")
+        # 2. 보스 소환 로직
+            if not manager.boss_active:
+                if now - manager.stage_start_ticks > manager.boss_spawn_delay:
+                    boss_class = BOSS_MAP.get(manager.level)
+                    if boss_class:
+                        manager.spawn_boss(boss_class)
+                        print(f"Stage {manager.level} Boss Spawned!")
 
         # 4. 보스 행동 업데이트
         if manager.boss_active and manager.boss:
