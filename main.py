@@ -164,21 +164,20 @@ while run:
                         print(f"적 생성 실패: {e}")
                     enemy_last_spawn_time["move_and_disappear"] = now
         # 4. 보스 행동 업데이트
-        if manager.boss_active and manager.boss:
-            manager.boss.move()
-            manager.boss.attack()
-            manager.boss.check_hit(player_bullets) # 키보드 탄환 타격 판정
+            all_sprites.update() 
             
-            # 마우스 공격(레이저) 보스 타격 판정 추가
-            boss_rect = pygame.Rect(manager.boss.pos[0], manager.boss.pos[1], 
-                                   getattr(manager.boss, 'size', 100), getattr(manager.boss, 'size', 100))
-            for atk in attacks:
-                if boss_rect.clipline(atk[0], atk[1]):
-                    if hasattr(manager.boss, 'take_damage'):
-                        manager.boss.take_damage(1)
-                    elif hasattr(manager.boss, 'hp'):
-                        manager.boss.hp -= 0.1 # 레이저는 선이므로 미세 데미지 조절 필요
-
+            if manager.boss_active and manager.boss:
+                manager.boss.move()
+                manager.boss.attack()
+                manager.boss.check_hit(player_bullets)
+                
+                boss_rect = getattr(manager.boss, 'rect', pygame.Rect(manager.boss.pos[0], manager.boss.pos[1], 100, 100))
+                for atk in attacks:
+                    if boss_rect.clipline(atk[0], atk[1]):
+                        if hasattr(manager.boss, 'take_damage'):
+                            manager.boss.take_damage(0.5)
+                        elif hasattr(manager.boss, 'hp'):
+                            manager.boss.hp -= 0.1
         # 5. 마우스 레이저 이동 로직
         all_sprites.update()
         new_line_attacks = []
