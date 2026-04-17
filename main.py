@@ -182,16 +182,17 @@ while run:
         all_sprites.update()
         new_line_attacks = []
         for atk in attacks:
-            start, end, thick, color = atk
-            dx, dy = end[0] - start[0], end[1] - start[1]
-            dist = math.hypot(dx, dy)
-            if dist == 0: continue
-            
-            vx, vy = (dx / dist) * attack_speed, (dy / dist) * attack_speed
-            next_end = (start[0] + vx, start[1] + vy)
-            
-            if 0 <= next_end[0] <= WIN_WIDTH and 0 <= next_end[1] <= WIN_HEIGHT:
-                new_line_attacks.append([next_end, (next_end[0] + vx, next_end[1] + vy), thick, color])
+                start, end, thick, color = atk
+                dx, dy = end[0] - start[0], end[1] - start[1]
+                dist = math.hypot(dx, dy)
+                if dist < 1: continue # 정지 상태 제거
+                
+                vx, vy = (dx / dist) * attack_speed, (dy / dist) * attack_speed
+                next_start = (start[0] + vx, start[1] + vy)
+                next_end = (end[0] + vx, end[1] + vy)
+                
+                if -50 <= next_start[0] <= WIN_WIDTH + 50 and -50 <= next_start[1] <= WIN_HEIGHT + 50:
+                    new_line_attacks.append([next_start, next_end, thick, color])
         attacks = new_line_attacks
 
         # 6. 일반 적 업데이트 및 충돌 체크
