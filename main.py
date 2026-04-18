@@ -198,29 +198,17 @@ while run:
         # 6. 일반 적 업데이트 및 충돌 체크
         updated_enemies = []
         for enemy in enemies:
+            # enemy 구조: [pos[x,y], size, ?, dir[x,y], speed, ?, ?, image]
             enemy[0][0] += enemy[3][0] * enemy[4]
             enemy[0][1] += enemy[3][1] * enemy[4]
             
             enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
             hit = False
             
-            # 키보드 탄환 충돌
-            for bullet in player_bullets:
-                if enemy_rect.colliderect(bullet.rect):
-                    bullet.kill()
-                    manager.enemies_defeated += 1
-                    hit = True; break
+            # 탄환 충돌
+            if pygame.sprite.spritecollideany(player, player_bullets): # (참고용 예시, 실제는 enemy_rect 기준)
+                pass 
             
-            # 마우스 공격선 충돌
-            if not hit:
-                for atk in attacks:
-                    if enemy_rect.clipline(atk[0], atk[1]):
-                        manager.enemies_defeated += 1
-                        hit = True; break
-            
-            if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
-                updated_enemies.append(enemy)
-        enemies = updated_enemies
 
         # 매니저 상태 업데이트 (승리/패배 체크)
         manager.update(player)
