@@ -226,6 +226,10 @@ while run:
                 updated_enemies.append(enemy)
         enemies = updated_enemies
 
+        manager.update(player)
+        if manager.game_over:
+            bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
+
         # 매니저 상태 업데이트 (승리/패배 체크)
         manager.update(player)
         if manager.game_over:
