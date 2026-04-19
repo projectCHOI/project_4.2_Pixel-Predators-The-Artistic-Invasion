@@ -263,6 +263,16 @@ while run:
             
             b_pos = getattr(manager.boss, 'boss_pos', [0, 0])
             boss_rect = pygame.Rect(b_pos[0], b_pos[1], 140, 140)
+
+            for atk in attacks:
+                if boss_rect.clipline(atk[0], atk[1]):
+                    if not getattr(manager.boss, 'boss_hit', False):
+                        manager.boss.boss_hp -= 0.1 # 레이저는 지속 딜이므로 수치 조정
+                        if manager.boss.boss_hp <= 0:
+                            manager.boss.boss_hp = 0
+                            manager.boss.boss_active = False
+                            manager.boss.boss_defeated = True
+
         all_sprites.draw(win)
         pygame.draw.circle(win, (255, 0, 0), mouse_pos, 5) # 에임
         draw_ui()
