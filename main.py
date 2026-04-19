@@ -230,11 +230,6 @@ while run:
         if manager.game_over:
             bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
 
-        # 매니저 상태 업데이트 (승리/패배 체크)
-        manager.update(player)
-        if manager.game_over:
-            bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
-
     # --- C. 화면 그리기 ---
     if not manager.game_active:
         if not manager.game_over:
@@ -262,10 +257,12 @@ while run:
 
         # 보스 그리기
         if manager.boss_active and manager.boss:
-            manager.boss.draw(win)
-            if hasattr(manager.boss, 'draw_attacks'): manager.boss.draw_attacks(win)
-            if hasattr(manager.boss, 'draw_health_bar'): manager.boss.draw_health_bar(win, font)
-        
+            manager.boss.move()
+            manager.boss.attack()
+            manager.boss.check_hit(player_bullets) 
+            
+            b_pos = getattr(manager.boss, 'boss_pos', [0, 0])
+            boss_rect = pygame.Rect(b_pos[0], b_pos[1], 140, 140)
         all_sprites.draw(win)
         pygame.draw.circle(win, (255, 0, 0), mouse_pos, 5) # 에임
         draw_ui()
