@@ -260,7 +260,7 @@ while run:
             manager.boss.move()
             manager.boss.attack()
             manager.boss.check_hit(player_bullets) 
-            
+            manager.boss.check_hit(attacks)
             b_pos = getattr(manager.boss, 'boss_pos', [0, 0])
             boss_rect = pygame.Rect(b_pos[0], b_pos[1], 140, 140)
 
