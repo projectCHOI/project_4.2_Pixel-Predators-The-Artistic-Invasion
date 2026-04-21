@@ -1,26 +1,15 @@
-# 이미지, 사운드, 폰트 로딩 전용
 import pygame
+import sys
 import os
 
-class ResourceManager:
-    def __init__(self):
-        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.image_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "images")
-        self.sound_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "sounds")
-        self.font_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "fonts")
+try:
+    from M_title_stage_images.resource_manager import ResourceManager
+    print("ResourceManager를 성공적으로 불러왔습니다.")
+except ImportError as e:
+    print(f"모듈 로드 오류: {e}")
+    sys.exit()
 
-    def load_image(self, *path_parts, size=None):
-        path = os.path.join(self.image_dir, *path_parts)
-        image = pygame.image.load(path).convert_alpha()
-        if size:
-            image = pygame.transform.scale(image, size)
-        return image
-
-    def load_sound(self, filename, volume=1.0):
-        path = os.path.join(self.sound_dir, filename)
-        sound = pygame.mixer.Sound(path)
-        sound.set_volume(volume)
-        return sound
-
-    def get_font_path(self, filename):
-        return os.path.join(self.font_dir, filename)
+WIN_WIDTH = 800
+WIN_HEIGHT = 600
+FPS = 60
+WHITE = (255, 255, 255)
