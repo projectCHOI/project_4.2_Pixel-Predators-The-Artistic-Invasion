@@ -1,43 +1,27 @@
+# 이미지, 사운드, 폰트 로딩 전용
 import pygame
-import sys
 import os
 
-try:
-    from M_title_stage_images.resource_manager import ResourceManager
-    print("ResourceManager를 성공적으로 불러왔습니다.")
-except ImportError as e:
-    print(f"모듈 로드 오류: {e}")
-    sys.exit()
+class ResourceManager:
+    def __init__(self):
+        self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.image_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "images")
+        self.sound_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "sounds")
+        self.font_dir = os.path.join(self.base_dir, "M_title_stage_images", "assets", "fonts")
 
-WIN_WIDTH = 800
-WIN_HEIGHT = 600
-FPS = 60
-WHITE = (255, 255, 255)
+    def load_image(self, *path_parts, size=None):
+        path = os.path.join(self.image_dir, *path_parts)
+        image = pygame.image.load(path).convert_alpha()
+        if size:
+            image = pygame.transform.scale(image, size)
+        return image
+        return image
 
-def main():
-    # 2. 초기화
-    pygame.init()
-    pygame.mixer.init()
-    
-    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption("The Artistic Invasion - Resource Ready")
-    clock = pygame.time.Clock()
+    def load_sound(self, filename, volume=1.0):
+        path = os.path.join(self.sound_dir, filename)
+        sound = pygame.mixer.Sound(path)
+        sound.set_volume(volume)
+        return sound
 
-    res = ResourceManager()
-
-    # 메인 루프
-    run = True
-    while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-        win.fill(WHITE)
-
-        pygame.display.update()
-        clock.tick(FPS)
-
-    pygame.quit()
-    sys.exit()
-
-if __name__ == "__main__":
-    main()
+    def get_font_path(self, filename):
+        return os.path.join(self.font_dir, filename)
