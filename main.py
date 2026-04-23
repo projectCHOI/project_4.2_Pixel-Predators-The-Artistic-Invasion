@@ -4,39 +4,13 @@ import os
 
 try:
     from M_title_stage_images.resource_manager import ResourceManager
-    print("ResourceManager를 성공적으로 불러왔습니다.")
+    from M_title_stage_images.title_stage_images import title_image, stage_background_images
+    print("모든 모듈이 성공적으로 로드되었습니다.")
 except ImportError as e:
-    print(f"모듈 로드 오류: {e}")
+    print(f"모듈 로드 중 오류 발생: {e}")
     sys.exit()
 
-WIN_WIDTH = 800
-WIN_HEIGHT = 600
+WIN_WIDTH = 1280
+WIN_HEIGHT = 720
 FPS = 60
 WHITE = (255, 255, 255)
-
-def main():
-    pygame.init()
-    pygame.mixer.init()
-    
-    win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
-    pygame.display.set_caption("The Artistic Invasion - Resource Ready")
-    clock = pygame.time.Clock()
-
-    res = ResourceManager()
-
-    run = True
-    while run:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-
-        win.fill(WHITE)
-
-        pygame.display.update()
-        clock.tick(FPS)
-
-    pygame.quit()
-    sys.exit()
-
-if __name__ == "__main__":
-    main()
