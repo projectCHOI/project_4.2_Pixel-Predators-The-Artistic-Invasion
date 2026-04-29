@@ -100,3 +100,38 @@ def main():
             
             enemies = updated_enemies
             manager.update(player)
+        # 그리기 영역
+        if not manager.game_active:
+            if manager.game_over:
+                win.fill(BLACK)
+                font = pygame.font.SysFont("malgungothic", 50)
+                msg = "MISSION COMPLETE" if manager.game_over_reason == "victory" else "GAME OVER"
+                text = font.render(msg, True, YELLOW if msg == "MISSION COMPLETE" else RED)
+                win.blit(text, (WIN_WIDTH // 2 - 200, WIN_HEIGHT // 2 - 50))
+                retry_text = font.render("Press ENTER to Restart", True, WHITE)
+                win.blit(retry_text, (WIN_WIDTH // 2 - 250, WIN_HEIGHT // 2 + 50))
+            else:
+                win.blit(title_image, (0, 0))
+        else:
+            bg_idx = manager.level - 1
+            if bg_idx < len(stage_background_images):
+                win.blit(stage_background_images[bg_idx], (0, 0))
+            
+            for enemy in enemies:
+                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+            player_bullets.draw(win)
+            player.draw(win)
+
+            font = pygame.font.SysFont("arial", 25)
+            ui_text = font.render(f"STAGE {manager.level} | LIFE: {player.health} | KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(ui_text, (20, 20))
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
