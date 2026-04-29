@@ -61,3 +61,42 @@ def main():
                     new_bullet = Bullet(player.rect.center, RED)
                     player_bullets.add(new_bullet)
 
+        if manager.game_active and player:
+            player.handle_input()
+            player.update()
+            player_bullets.update()
+            
+            if not manager.boss_active:
+                if now - enemy_last_spawn_time > enemy_spawn_interval:
+                    try:
+                        new_enemies_data = gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT)
+                        enemies.extend(new_enemies_data)
+                    except Exception as spawn_error:
+                        print(f"적 스폰 오류: {spawn_error}")
+                    enemy_last_spawn_time = now
+
+            updated_enemies = []
+            for enemy in enemies:
+                enemy[0][0] += enemy[3][0] * enemy[4]
+                enemy[0][1] += enemy[3][1] * enemy[4]
+                
+                enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+                hit = False
+                
+                for bullet in player_bullets:
+                    if enemy_rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        manager.enemies_defeated += 1
+                        hit = True
+                        break
+                
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    hit = True
+
+                if not hit:
+                    if -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                        updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
+            manager.update(player)
