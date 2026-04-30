@@ -28,3 +28,17 @@ except Exception as e:
     print(f"모듈 로드 중 오류 발생: {e}")
     pygame.quit()
     sys.exit()
+
+def main():
+    clock = pygame.time.Clock()
+    res = ResourceManager()
+    manager = GameManager(res)
+    player = None
+    
+    # 그룹 관리
+    player_bullets = pygame.sprite.Group()
+    items_group = pygame.sprite.Group() # 아이템 그룹 추가
+    enemies = []
+    
+    enemy_last_spawn_time = 0
+    enemy_spawn_interval = 3000
