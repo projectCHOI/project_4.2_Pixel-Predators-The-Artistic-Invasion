@@ -42,3 +42,24 @@ def main():
     
     enemy_last_spawn_time = 0
     enemy_spawn_interval = 3000
+    
+    run = True
+    while run:
+        now = pygame.time.get_ticks()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+            
+            if not manager.game_active:
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    player = Player(res)
+                    player_bullets.empty()
+                    items_group.empty() # 아이템 초기화
+                    enemies = []
+                    manager.start_game()
+            
+            elif manager.game_active and player:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    new_bullet = Bullet(player.rect.center, RED)
+                    player_bullets.add(new_bullet)
