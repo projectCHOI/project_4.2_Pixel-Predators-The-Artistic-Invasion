@@ -77,3 +77,31 @@ def main():
                         enemies.extend(new_enemies_data)
                     except Exception as e: print(f"Spawn Error: {e}")
                     enemy_last_spawn_time = now
+            updated_enemies = []
+            for enemy in enemies:
+                enemy[0][0] += enemy[3][0] * enemy[4]
+                enemy[0][1] += enemy[3][1] * enemy[4]
+                
+                enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+                hit = False
+                
+                for bullet in player_bullets:
+                    if enemy_rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        manager.enemies_defeated += 1
+                        
+                        new_item = spawn_item_by_chance(enemy_rect.center, res)
+                        if new_item:
+                            items_group.add(new_item)
+                        
+                        hit = True
+                        break
+                
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    hit = True
+
+                if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                    updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
