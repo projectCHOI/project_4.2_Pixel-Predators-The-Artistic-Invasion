@@ -63,3 +63,17 @@ def main():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     new_bullet = Bullet(player.rect.center, RED)
                     player_bullets.add(new_bullet)
+
+        if manager.game_active and player:
+            player.handle_input()
+            player.update()
+            player_bullets.update()
+            items_group.update() # 아이템 이동 업데이트
+            
+            if not manager.boss_active:
+                if now - enemy_last_spawn_time > enemy_spawn_interval:
+                    try:
+                        new_enemies_data = gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT)
+                        enemies.extend(new_enemies_data)
+                    except Exception as e: print(f"Spawn Error: {e}")
+                    enemy_last_spawn_time = now
