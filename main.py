@@ -105,3 +105,12 @@ def main():
                     updated_enemies.append(enemy)
             
             enemies = updated_enemies
+            item_hits = pygame.sprite.spritecollide(player, items_group, True)
+            for item in item_hits:
+                effect_msg = item.apply_effect(player)
+                print(effect_msg) 
+            manager.update(player)
+
+
+if __name__ == "__main__":
+    main()
