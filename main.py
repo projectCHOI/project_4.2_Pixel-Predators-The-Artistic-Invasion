@@ -147,3 +147,30 @@ def main():
             
             enemies = updated_enemies
             manager.update(player)
+        # --- C. 화면 그리기 ---
+        if not manager.game_active:
+            if manager.game_over: win.fill(BLACK)
+            else: win.blit(title_image, (0, 0))
+        else:
+            bg_idx = manager.level - 1
+            if bg_idx < len(stage_background_images): win.blit(stage_background_images[bg_idx], (0, 0))
+            
+            for pb in purple_bullets: win.blit(pb["image"], pb["pos"])
+            for enemy in enemies: win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+            player_bullets.draw(win)
+            items_group.draw(win)
+            player.draw(win)
+            
+            font = pygame.font.SysFont("arial", 25)
+            ui_text = font.render(f"STAGE {manager.level} | KILLS: {manager.enemies_defeated} | LIFE: {player.health}", True, WHITE)
+            win.blit(ui_text, (20, 20))
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
