@@ -94,3 +94,56 @@ def main():
 
             purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
 
+            # 2. 적 업데이트 및 충돌
+            updated_enemies = []
+            for enemy in enemies:
+                # [특수 로직] 매복 사격형 적의 이동 및 정지 처리
+                if enemy[2] == "move_and_shoot":
+                    target = enemy[5]
+                    dist_to_target = math.hypot(target[0] - enemy[0][0], target[1] - enemy[0][1])
+                    
+                    if dist_to_target > 5: # 목표 지점 근처가 아니면 이동
+                        enemy[0][0] += enemy[3][0] * enemy[4]
+                        enemy[0][1] += enemy[3][1] * enemy[4]
+                    else: # 목표 지점 도달 시 정지
+                        enemy[4] = 0
+                
+                # 군집형 적 이동 처리
+                elif enemy[2] == "group_unit":
+                    t = (now - enemy[14]) / 500
+                    enemy[0][0] = enemy[13][0] + 50 * math.sin(t + enemy[12])
+                    enemy[0][1] = enemy[13][1] + enemy[4] * (now - enemy[14]) / 16
+                
+                # 일반/폭탄 적 이동
+                else:
+                    enemy[0][0] += enemy[3][0] * enemy[4]
+                    enemy[0][1] += enemy[3][1] * enemy[4]
+                
+                enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+                hit = False
+                
+                # 충돌 체크 (탄환/플레이어)
+                for bullet in player_bullets:
+                    if enemy_rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        manager.enemies_defeated += 1
+                        if enemy[2] == "bomb":
+                            purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                        new_item = spawn_item_by_chance(enemy_rect.center, res)
+                        if new_item: items_group.add(new_item)
+                        hit = True
+                        break
+                
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    if enemy[2] == "bomb":
+                        purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                    hit = True
+
+                # 화면 유지 조건 (매복형은 멈춰있으므로 시간에 따라 사라지게 하거나 체력 부여 가능)
+                if not hit:
+                    if -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                        updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
+            manager.update(player)
