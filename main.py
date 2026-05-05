@@ -77,3 +77,91 @@ def main():
                     enemies = []
                     purple_bullets = []
                     manager.start_game()
+                    
+                    # 게임 시작 시 현재 스테이지 BGM 재생
+                    bgm.set_game_state(f"stage_{manager.level}")
+                    last_manager_level = manager.level
+                    
+            elif manager.game_active and player:
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    player_bullets.add(Bullet(player.rect.center, RED))
+
+        if manager.game_active and player:
+            # 실시간 스테이지 변화 감지하여 BGM 변경 (레벨업 했을 때)
+            if manager.level != last_manager_level:
+                bgm.set_game_state(f"stage_{manager.level}")
+                last_manager_level = manager.level
+
+            player.handle_input()
+            player.update()
+            player_bullets.update()
+            items_group.update()
+            
+            # 1. 적 스폰
+            if not manager.boss_active:
+                if now - last_spawn_times["normal"] > intervals["normal"]:
+                    enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["normal"] = now
+                if now - last_spawn_times["bomb"] > intervals["bomb"]:
+                    enemies.extend(enemy_bomb.generate(manager.level, WIN_WIDTH, WIN_HEIGHT, player.rect.center))
+                    last_spawn_times["bomb"] = now
+                if now - last_spawn_times["group"] > intervals["group"]:
+                    enemies.extend(enemy_group.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["group"] = now
+                if now - last_spawn_times["ambush"] > intervals["ambush"]:
+                    enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["ambush"] = now
+
+            purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
+
+            # 2. 적 업데이트 및 충돌
+            updated_enemies = []
+            for enemy in enemies:
+                if enemy[2] == "move_and_shoot":
+                    target = enemy[5]
+                    dist_to_target = math.hypot(target[0] - enemy[0][0], target[1] - enemy[0][1])
+                    if dist_to_target > 5:
+                        enemy[0][0] += enemy[3][0] * enemy[4]
+                        enemy[0][1] += enemy[3][1] * enemy[4]
+                    else:
+                        enemy[4] = 0
+                elif enemy[2] == "group_unit":
+                    t = (now - enemy[14]) / 500
+                    enemy[0][0] = enemy[13][0] + 50 * math.sin(t + enemy[12])
+                    enemy[0][1] = enemy[13][1] + enemy[4] * (now - enemy[14]) / 16
+                else:
+                    enemy[0][0] += enemy[3][0] * enemy[4]
+                    enemy[0][1] += enemy[3][1] * enemy[4]
+                
+                enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+                hit = False
+                
+                for bullet in player_bullets:
+                    if enemy_rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        manager.enemies_defeated += 1
+                        if enemy[2] == "bomb":
+                            purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                        new_item = spawn_item_by_chance(enemy_rect.center, res)
+                        if new_item: items_group.add(new_item)
+                        hit = True
+                        break
+                
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    if enemy[2] == "bomb":
+                        purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                    hit = True
+
+                if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                    updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
+            manager.update(player)
+
+            # 게임 오버나 승리 시 오디오 상태 전환
+            if manager.game_over:
+                if manager.game_over_reason == "victory":
+                    bgm.set_game_state("victory")
+                else:
+                    bgm.set_game_state("gameover")
