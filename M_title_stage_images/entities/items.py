@@ -8,27 +8,34 @@ class Item(pygame.sprite.Sprite):
         super().__init__()
         self.res = res_manager
         self.type = item_type
+        size = (30, 30)
 
-        # 실제 존재 파일명으로 매핑 완료
-        # (만약 에러가 난다면 뒤에 .png를 붙여보세요)
-        if self.type == 'heal':
-            self.image = self.res.load_image("items", "mob_item_Life", size=(30, 30))
-        elif self.type == 'power':
-            self.image = self.res.load_image("items", "mob_item_Defense_2", size=(30, 30))
-        elif self.type == 'speed':
-            self.image = self.res.load_image("items", "mob_item_Quickly", size=(30, 30))
-            
+        try:
+            if self.type == 'heal':
+                self.image = self.res.load_image("items", "mob_item_Life.png", size=size)
+            elif self.type == 'power':
+                self.image = self.res.load_image("items", "mob_item_Defense_2.png", size=size)
+            elif self.type == 'speed':
+                self.image = self.res.load_image("items", "mob_item_Quickly.png", size=size)
+        except Exception as e:
+            print(f"[경고] 아이템 이미지 로드 실패 ({self.type}): {e}")
+            self.image = pygame.Surface(size, pygame.SRCALPHA)
+            if self.type == 'heal':
+                pygame.draw.circle(self.image, (0, 255, 0), (15, 15), 15)  # 녹색 원
+            elif self.type == 'power':
+                pygame.draw.circle(self.image, (255, 255, 0), (15, 15), 15) # 노란색 원
+            elif self.type == 'speed':
+                pygame.draw.circle(self.image, (0, 0, 255), (15, 15), 15)  # 파란색 원
+
         self.rect = self.image.get_rect(center=pos)
         self.speed = 3
 
     def update(self):
-        # 클래스 내부로 들여쓰기 통합
         self.rect.y += self.speed
         if self.rect.top > WIN_HEIGHT:
             self.kill()
 
     def apply_effect(self, player):
-        # 클래스 내부로 들여쓰기 통합
         if self.type == 'heal':
             if player.health < player.max_health:
                 player.health += 1
