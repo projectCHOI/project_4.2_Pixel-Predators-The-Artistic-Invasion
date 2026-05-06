@@ -10,11 +10,11 @@ class Item(pygame.sprite.Sprite):
         self.type = item_type
 
         if self.type == 'heal':
-            self.image = self.res.load_image("items", "heal_item.png", size=(30, 30))
+            self.image = self.res.load_image("items", "mob_item_Life", size=(30, 30))
         elif self.type == 'power':
-            self.image = self.res.load_image("items", "power_item.png", size=(30, 30))
+            self.image = self.res.load_image("items", "mob_item_Defense_2", size=(30, 30))
         elif self.type == 'speed':
-            self.image = self.res.load_image("items", "speed_item.png", size=(30, 30))
+            self.image = self.res.load_image("items", "mob_item_Quickly", size=(30, 30))
             
         self.rect = self.image.get_rect(center=pos)
         self.speed = 3
