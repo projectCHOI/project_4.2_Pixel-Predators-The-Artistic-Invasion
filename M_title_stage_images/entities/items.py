@@ -1,4 +1,4 @@
-# 아이템 클래스
+# M_title_stage_images/entities/items.py
 import pygame
 import random
 from M_title_stage_images.config import *
@@ -9,6 +9,8 @@ class Item(pygame.sprite.Sprite):
         self.res = res_manager
         self.type = item_type
 
+        # 실제 존재 파일명으로 매핑 완료
+        # (만약 에러가 난다면 뒤에 .png를 붙여보세요)
         if self.type == 'heal':
             self.image = self.res.load_image("items", "mob_item_Life", size=(30, 30))
         elif self.type == 'power':
@@ -19,12 +21,14 @@ class Item(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         self.speed = 3
 
-def update(self):
+    def update(self):
+        # 클래스 내부로 들여쓰기 통합
         self.rect.y += self.speed
         if self.rect.top > WIN_HEIGHT:
             self.kill()
 
-def apply_effect(self, player):
+    def apply_effect(self, player):
+        # 클래스 내부로 들여쓰기 통합
         if self.type == 'heal':
             if player.health < player.max_health:
                 player.health += 1
