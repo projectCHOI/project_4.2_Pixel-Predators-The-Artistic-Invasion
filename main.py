@@ -87,11 +87,11 @@ def main():
                     player_bullets.add(Bullet(player.rect.center, RED))
 
         if manager.game_active and player:
-            # 실시간 스테이지 변화 감지하여 BGM 변경 (레벨업 했을 때)
             if manager.level != last_manager_level:
                 bgm.set_game_state(f"stage_{manager.level}")
                 last_manager_level = manager.level
-
+            player.draw(win)
+            player.draw_ui(win)
             player.handle_input()
             player.update()
             player_bullets.update()
@@ -169,31 +169,27 @@ def main():
         if not manager.game_active:
             if manager.game_over:
                 win.fill(BLACK)
-                font = pygame.font.SysFont("malgungothic", 50)
-                msg = "MISSION COMPLETE" if manager.game_over_reason == "victory" else "GAME OVER"
-                text = font.render(msg, True, YELLOW if msg == "MISSION COMPLETE" else RED)
-                win.blit(text, (WIN_WIDTH // 2 - 200, WIN_HEIGHT // 2 - 50))
-                retry_text = font.render("Press ENTER to Restart", True, WHITE)
-                win.blit(retry_text, (WIN_WIDTH // 2 - 250, WIN_HEIGHT // 2 + 50))
             else:
                 win.blit(title_image, (0, 0))
         else:
             bg_idx = manager.level - 1
-            if bg_idx < len(stage_background_images): win.blit(stage_background_images[bg_idx], (0, 0))
+            if bg_idx < len(stage_background_images):
+                win.blit(stage_background_images[bg_idx], (0, 0))
             
-            for pb in purple_bullets: win.blit(pb["image"], pb["pos"])
-            for enemy in enemies: win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            for pb in purple_bullets:
+                win.blit(pb["image"], pb["pos"])
+            for enemy in enemies:
+                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
             
             player_bullets.draw(win)
             items_group.draw(win)
-            player.draw(win)
-            
-            font = pygame.font.SysFont("arial", 25)
-            ui_text = font.render(f"STAGE {manager.level} | KILLS: {manager.enemies_defeated} | LIFE: {player.health}", True, WHITE)
-            win.blit(ui_text, (20, 20))
 
-        pygame.display.update()
-        clock.tick(FPS)
+            player.draw(win)     # 플레이어 캐릭터 그리기
+            player.draw_ui(win)  # [수정] 플레이어가 스스로 라이프 아이콘(왼쪽 하단)을 그림
+
+            font = pygame.font.SysFont("arial", 30, bold=True)
+            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
 
     pygame.quit()
     sys.exit()
