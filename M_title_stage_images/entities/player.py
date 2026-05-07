@@ -1,4 +1,4 @@
-# 플레이어 클래스
+# M_title_stage_images/entities/player.py
 import pygame
 from M_title_stage_images.config import *
 
@@ -7,12 +7,15 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.res = res_manager
         
-        # 이미지 로드 및 초기 설정
+        # 1. 이미지 로드 및 초기 설정
         self.size = (50, 50)
         self.img_right = self.res.load_image("player", "mob_me1_png.png", size=self.size)
         self.img_left = self.res.load_image("player", "mob_me2_png.png", size=self.size)
         
-        # 충돌 시 이미지 (딕셔너리 형태로 관리 가능)
+        # [추가] UI용 라이프 이미지 로드
+        self.life_icon = self.res.load_image("player", "mob_Life.png", size=(30, 30))
+        
+        # 충돌 시 이미지
         self.collision_imgs = {
             3: self.res.load_image("player", "mob_death_1.png", size=self.size),
             2: self.res.load_image("player", "mob_death_2.png", size=self.size),
@@ -23,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=(WIN_WIDTH // 2, WIN_HEIGHT // 2))
         
         # 상태 변수
-        self.pos = list(self.rect.center)
+        self.pos = [float(self.rect.x), float(self.rect.y)]
         self.speed = 10
         self.health = PLAYER_START_HEALTH
         self.max_health = PLAYER_MAX_HEALTH
@@ -49,7 +52,7 @@ class Player(pygame.sprite.Sprite):
         # 위치 업데이트 및 화면 밖 탈출 방지
         self.pos[0] = max(0, min(self.pos[0] + dx, WIN_WIDTH - self.size[0]))
         self.pos[1] = max(0, min(self.pos[1] + dy, WIN_HEIGHT - self.size[1]))
-        self.rect.topleft = self.pos
+        self.rect.topleft = (int(self.pos[0]), int(self.pos[1]))
 
         # 이미지 방향 전환
         if dx < 0: self.image = self.img_left
@@ -61,33 +64,31 @@ class Player(pygame.sprite.Sprite):
             self.invincible = True
             self.invincible_start_time = pygame.time.get_ticks()
             
-            # 충돌 효과 설정
             if self.health in self.collision_imgs:
                 self.current_collision_img = self.collision_imgs[self.health]
                 self.collision_effect_start_time = pygame.time.get_ticks()
-                self.collision_effect_duration = 5000 # 5초 유지
+                self.collision_effect_duration = 5000 
             
-            return True # 데미지 입음 성공
+            return True 
         return False
     
     def update(self):
         now = pygame.time.get_ticks()
-        
-        # 무적 시간 해제 체크
         if self.invincible and now - self.invincible_start_time > self.invincible_duration:
             self.invincible = False
-
-        # 충돌 이미지 표시 시간 체크
         if self.current_collision_img and now - self.collision_effect_start_time >= self.collision_effect_duration:
             self.current_collision_img = None
 
     def draw(self, screen):
-        # 무적 상태일 때 깜빡임 효과 (선택 사항)
         if self.invincible and (pygame.time.get_ticks() // 200) % 2 == 0:
-            pass # 그리지 않음으로 깜빡임 구현 가능
+            pass 
         else:
             screen.blit(self.image, self.rect)
         
-        # 충돌 시 데미지 입은 이미지 겹쳐 그리기
         if self.current_collision_img:
             screen.blit(self.current_collision_img, self.rect)
+
+    def draw_ui(self, screen):
+        for i in range(max(0, self.health)):
+            # x: 20px부터 50px 간격, y: 하단에서 50px 위
+            screen.blit(self.life_icon, (20 + (i * 50), WIN_HEIGHT - 50))
