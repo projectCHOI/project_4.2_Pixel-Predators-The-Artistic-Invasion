@@ -87,15 +87,18 @@ def main():
                     player_bullets.add(Bullet(player.rect.center, RED))
 
         if manager.game_active and player:
-            if manager.level != last_manager_level:
-                bgm.set_game_state(f"stage_{manager.level}")
-                last_manager_level = manager.level
-            player.draw(win)
-            player.draw_ui(win)
-            player.handle_input()
-            player.update()
-            player_bullets.update()
-            items_group.update()
+                    if manager.level != last_manager_level:
+                        bgm.set_game_state(f"stage_{manager.level}")
+                        last_manager_level = manager.level
+
+                    player.handle_input()
+                    player.update()
+                    player_bullets.update()
+                    items_group.update()
+                    
+                    item_hits = pygame.sprite.spritecollide(player, items_group, True)
+                    for item in item_hits:
+                        item.apply_effect(player)
             
             # 1. 적 스폰
             if not manager.boss_active:
