@@ -86,7 +86,7 @@ def main():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     player_bullets.add(Bullet(player.rect.center, RED))
 
-        if manager.game_active and player:
+            if manager.game_active and player:
                     if manager.level != last_manager_level:
                         bgm.set_game_state(f"stage_{manager.level}")
                         last_manager_level = manager.level
@@ -171,31 +171,33 @@ def main():
         # --- C. 화면 그리기 ---
         if not manager.game_active:
             if manager.game_over:
-                win.fill(BLACK)
-            else:
-                win.blit(title_image, (0, 0))
-        else:
-            bg_idx = manager.level - 1
-            if bg_idx < len(stage_background_images):
-                win.blit(stage_background_images[bg_idx], (0, 0))
-            
-            for pb in purple_bullets:
-                win.blit(pb["image"], pb["pos"])
-            for enemy in enemies:
-                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
-            
-            player_bullets.draw(win)
-            items_group.draw(win)
+                            win.fill(BLACK)
+                        else:
+                            win.blit(title_image, (0, 0))
+                    else:
+                        bg_idx = manager.level - 1
+                        if bg_idx < len(stage_background_images):
+                            win.blit(stage_background_images[bg_idx], (0, 0))
+                        else:
+                            win.fill(BLACK) # 배경 이미지가 없을 때를 대비
+                        
+                        # 2. 오브젝트들을 그립니다
+                        for pb in purple_bullets:
+                            win.blit(pb["image"], pb["pos"])
+                        for enemy in enemies:
+                            win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+                        
+                        player_bullets.draw(win)
+                        items_group.draw(win)
 
-            player.draw(win)     # 플레이어 캐릭터 그리기
-            player.draw_ui(win)  # [수정] 플레이어가 스스로 라이프 아이콘(왼쪽 하단)을 그림
+                        # 3. 플레이어와 UI를 가장 나중에(가장 위에) 그립니다
+                        player.draw(win)
+                        player.draw_ui(win)
 
-            font = pygame.font.SysFont("arial", 30, bold=True)
-            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
-            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
-
-    pygame.quit()
-    sys.exit()
+                        # 4. 텍스트 UI
+                        font = pygame.font.SysFont("arial", 30, bold=True)
+                        kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+                        win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
 
 if __name__ == "__main__":
     main()
