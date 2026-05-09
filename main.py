@@ -158,7 +158,42 @@ def main():
                     bgm.set_game_state("victory")
                 else:
                     bgm.set_game_state("gameover")
+        # [3] 화면 그리기
+        if not manager.game_active:
+            if manager.game_over:
+                win.fill(BLACK)
+            else:
+                win.blit(title_image, (0, 0))
+        else:
+            bg_idx = manager.level - 1
+            if bg_idx < len(stage_background_images):
+                win.blit(stage_background_images[bg_idx], (0, 0))
+            else:
+                win.fill(BLACK)
+            
+            # 2. 적 및 탄환 그리기
+            for pb in purple_bullets:
+                win.blit(pb["image"], pb["pos"])
+            for enemy in enemies:
+                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+            player_bullets.draw(win)
+            items_group.draw(win)
 
+            # 3. 플레이어 및 라이프 UI 그리기
+            player.draw(win)
+            player.draw_ui(win)
+
+            # 4. KILLS UI (우측 상단)
+            font = pygame.font.SysFont("arial", 30, bold=True)
+            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
 
 if __name__ == "__main__":
     main()
