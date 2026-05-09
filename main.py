@@ -25,13 +25,10 @@ try:
     from M_title_stage_images.entities.items import spawn_item_by_chance
     from M_title_stage_images.title_stage_images import title_image, stage_background_images
     
-    # 적 행동 패턴 모듈들
     from M_title_stage_images.enemy_behaviors.move_and_disappear import generate as gen_move_and_disappear
     import M_title_stage_images.enemy_behaviors.bomb as enemy_bomb
     import M_title_stage_images.enemy_behaviors.group_unit as enemy_group
     import M_title_stage_images.enemy_behaviors.move_and_shoot as enemy_ambush
-    
-    # 새로운 연결: BGM 컨트롤러
     from M_title_stage_images.assets.sounds.bgm_controller import BGMController
 
     print("오디오 시스템(BGM)을 포함한 모든 모듈 연결 완료.")
@@ -46,28 +43,26 @@ def main():
     manager = GameManager(res)
     player = None
     
-    # 사운드 시스템 초기화
     bgm = BGMController()
-    bgm.set_game_state("title") # 최초 실행 시 타이틀 오디오 재생
+    bgm.set_game_state("title") 
     
     player_bullets = pygame.sprite.Group()
     items_group = pygame.sprite.Group()
     enemies = []
     purple_bullets = []
     
-    # 스폰 타이머 관리
     last_spawn_times = {"normal": 0, "bomb": 0, "group": 0, "ambush": 0}
     intervals = {"normal": 3000, "bomb": 5000, "group": 8000, "ambush": 6000}
-
-    # 이전 프레임의 레벨을 기억하여 BGM 전환 체크용으로 사용
     last_manager_level = 1
 
     run = True
     while run:
         now = pygame.time.get_ticks()
 
+        # [1] 이벤트 처리
         for event in pygame.event.get():
-            if event.type == pygame.QUIT: run = False
+            if event.type == pygame.QUIT: 
+                run = False
             
             if not manager.game_active:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
@@ -77,30 +72,27 @@ def main():
                     enemies = []
                     purple_bullets = []
                     manager.start_game()
-                    
-                    # 게임 시작 시 현재 스테이지 BGM 재생
                     bgm.set_game_state(f"stage_{manager.level}")
                     last_manager_level = manager.level
-                    
             elif manager.game_active and player:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     player_bullets.add(Bullet(player.rect.center, RED))
 
-            if manager.game_active and player:
-                    if manager.level != last_manager_level:
-                        bgm.set_game_state(f"stage_{manager.level}")
-                        last_manager_level = manager.level
+        if manager.game_active and player:
+            if manager.level != last_manager_level:
+                bgm.set_game_state(f"stage_{manager.level}")
+                last_manager_level = manager.level
 
-                    player.handle_input()
-                    player.update()
-                    player_bullets.update()
-                    items_group.update()
-                    
-                    item_hits = pygame.sprite.spritecollide(player, items_group, True)
-                    for item in item_hits:
-                        item.apply_effect(player)
+            player.handle_input()
+            player.update()
+            player_bullets.update()
+            items_group.update()
             
-            # 1. 적 스폰
+            item_hits = pygame.sprite.spritecollide(player, items_group, True)
+            for item in item_hits:
+                item.apply_effect(player)
+            
+            # 적 스폰
             if not manager.boss_active:
                 if now - last_spawn_times["normal"] > intervals["normal"]:
                     enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
@@ -117,7 +109,6 @@ def main():
 
             purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
 
-            # 2. 적 업데이트 및 충돌
             updated_enemies = []
             for enemy in enemies:
                 if enemy[2] == "move_and_shoot":
@@ -162,42 +153,12 @@ def main():
             enemies = updated_enemies
             manager.update(player)
 
-            # 게임 오버나 승리 시 오디오 상태 전환
             if manager.game_over:
                 if manager.game_over_reason == "victory":
                     bgm.set_game_state("victory")
                 else:
                     bgm.set_game_state("gameover")
-        # --- C. 화면 그리기 ---
-        if not manager.game_active:
-            if manager.game_over:
-                            win.fill(BLACK)
-                            # 게임오버 텍스트 등
-                        else:
-                            win.blit(title_image, (0, 0))
-                    else:
-                        # 1. 배경 그리기 (가장 먼저)
-                        bg_idx = manager.level - 1
-                        if bg_idx < len(stage_background_images):
-                            win.blit(stage_background_images[bg_idx], (0, 0))
-                        
-                        # 2. 적, 탄환 등 그리기
-                        for pb in purple_bullets:
-                            win.blit(pb["image"], pb["pos"])
-                        for enemy in enemies:
-                            win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
-                        
-                        player_bullets.draw(win)
-                        items_group.draw(win)
 
-                        # 3. 플레이어와 라이프 UI 그리기
-                        player.draw(win)
-                        player.draw_ui(win)
-
-                        # 4. KILLS UI (우측 상단)
-                        font = pygame.font.SysFont("arial", 30, bold=True)
-                        kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
-                        win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
 
 if __name__ == "__main__":
     main()
