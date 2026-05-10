@@ -4,17 +4,15 @@ import math
 from M_title_stage_images.config import *
 
 class Bullet(pygame.sprite.Sprite):
-    def __init__(self, pos, color, speed=15):
+    def __init__(self, pos, color, target_pos):
         super().__init__()
-        self.image = pygame.Surface((10, 10))
-        self.image.fill(color)
+        # 1. 외관 설정
+        self.image = pygame.Surface((10, 10), pygame.SRCALPHA)
+        pygame.draw.circle(self.image, color, (5, 5), 5)
         self.rect = self.image.get_rect(center=pos)
-        self.speed = speed
-
-    def update(self):
-        self.rect.y -= self.speed
-        if self.rect.bottom < 0:
-            self.kill()
+        
+        # 2. 방향 계산 (중요!)
+        self.speed = 15
 
 class EnergyBall(pygame.sprite.Sprite):
     def __init__(self, pos, target_pos, speed=5):
