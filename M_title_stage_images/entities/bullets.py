@@ -11,9 +11,22 @@ class Bullet(pygame.sprite.Sprite):
         pygame.draw.circle(self.image, color, (5, 5), 5)
         self.rect = self.image.get_rect(center=pos)
         
-        # 2. 방향 계산 (중요!)
         self.speed = 15
 
+        dx = target_pos[0] - pos[0]
+        dy = target_pos[1] - pos[1]
+        distance = math.hypot(dx, dy)
+        
+        if distance == 0: # 마우스를 플레이어 위에 올리고 클릭했을 때 대비
+            self.vx = 0
+            self.vy = -self.speed
+        else:
+            self.vx = (dx / distance) * self.speed
+            self.vy = (dy / distance) * self.speed
+        
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
+####-####
 class EnergyBall(pygame.sprite.Sprite):
     def __init__(self, pos, target_pos, speed=5):
         super().__init__()
