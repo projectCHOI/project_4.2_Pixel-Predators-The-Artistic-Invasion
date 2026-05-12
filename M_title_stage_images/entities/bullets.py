@@ -48,5 +48,6 @@ def update(self):
         self.rect.y = int(self.y)
         
         # 화면 경계 체크
-        if not (0 <= self.rect.centerx <= WIN_WIDTH and 0 <= self.rect.centery <= WIN_HEIGHT):
-            self.kill()
+        if (self.rect.bottom < 0 or self.rect.top > WIN_HEIGHT or 
+                    self.rect.right < 0 or self.rect.left > WIN_WIDTH):
+                    self.kill()
