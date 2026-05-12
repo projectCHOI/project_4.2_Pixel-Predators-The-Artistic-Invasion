@@ -6,7 +6,6 @@ from M_title_stage_images.config import *
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, color, target_pos):
         super().__init__()
-        # 1. 외관 설정
         self.image = pygame.Surface((10, 10), pygame.SRCALPHA)
         pygame.draw.circle(self.image, color, (5, 5), 5)
         self.rect = self.image.get_rect(center=pos)
@@ -17,7 +16,7 @@ class Bullet(pygame.sprite.Sprite):
         dy = target_pos[1] - pos[1]
         distance = math.hypot(dx, dy)
         
-        if distance == 0: # 마우스를 플레이어 위에 올리고 클릭했을 때 대비
+        if distance == 0:
             self.vx = 0
             self.vy = -self.speed
         else:
@@ -26,7 +25,6 @@ class Bullet(pygame.sprite.Sprite):
         
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
-####-####
 class EnergyBall(pygame.sprite.Sprite):
     def __init__(self, pos, target_pos, speed=5):
         super().__init__()
@@ -43,8 +41,11 @@ class EnergyBall(pygame.sprite.Sprite):
             self.velocity = pygame.math.Vector2(0, speed)
 
 def update(self):
-        self.rect.centerx += self.velocity.x
-        self.rect.centery += self.velocity.y
+        # 계산된 방향 벡터만큼 이동
+        self.x += self.vx
+        self.y += self.vy
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
         
         # 화면 경계 체크
         if not (0 <= self.rect.centerx <= WIN_WIDTH and 0 <= self.rect.centery <= WIN_HEIGHT):

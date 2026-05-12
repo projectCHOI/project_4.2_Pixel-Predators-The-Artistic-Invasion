@@ -7,12 +7,10 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.res = res_manager
         
-        # 1. 이미지 로드 및 초기 설정
         self.size = (50, 50)
         self.img_right = self.res.load_image("player", "mob_me1_png.png", size=self.size)
         self.img_left = self.res.load_image("player", "mob_me2_png.png", size=self.size)
         
-        # [추가] UI용 라이프 이미지 로드
         self.life_icon = self.res.load_image("player", "mob_Life.png", size=(30, 30))
         
         # 충돌 시 이미지
