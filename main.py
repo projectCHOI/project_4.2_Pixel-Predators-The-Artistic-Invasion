@@ -76,7 +76,7 @@ def main():
                     last_manager_level = manager.level
             elif manager.game_active and player:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                    player_bullets.add(Bullet(player.rect.center, RED))
+                    mouse_pos = pygame.mouse.get_pos()
 
         if manager.game_active and player:
             if manager.level != last_manager_level:
