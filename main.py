@@ -77,7 +77,8 @@ def main():
             elif manager.game_active and player:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = pygame.mouse.get_pos()
-
+                    new_bullet = Bullet(player.rect.center, RED, mouse_pos)
+                    player_bullets.add(new_bullet)
         if manager.game_active and player:
             if manager.level != last_manager_level:
                 bgm.set_game_state(f"stage_{manager.level}")
