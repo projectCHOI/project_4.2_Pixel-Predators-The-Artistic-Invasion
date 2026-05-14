@@ -11,4 +11,23 @@ class Bullet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=pos)
         
         self.speed = 15
+        # 방향 계산 로직
+        mx, my = target_pos
+        px, py = pos
+        angle = math.atan2(my - py, mx - px) # 각도 계산
         
+        self.vx = math.cos(angle) * self.speed
+        self.vy = math.sin(angle) * self.speed
+        
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
+
+    def update(self):
+        self.x += self.vx
+        self.y += self.vy
+        self.rect.x = int(self.x)
+        self.rect.y = int(self.y)
+
+        if not (0 <= self.rect.x <= WIN_WIDTH and 0 <= self.rect.y <= WIN_HEIGHT):
+            self.kill()
+       
