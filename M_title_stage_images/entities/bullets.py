@@ -7,12 +7,12 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, color, target_pos):
         super().__init__()
         # 반지름 5인 빨간색/지정색 작은 원 생성
-        self.radius = 5
+        self.radius = 2
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(self.image, color, (self.radius, self.radius), self.radius)
         self.rect = self.image.get_rect(center=pos)
         
-        self.speed = 15
+        self.speed = 40
         
         mx, my = target_pos
         px, py = pos
