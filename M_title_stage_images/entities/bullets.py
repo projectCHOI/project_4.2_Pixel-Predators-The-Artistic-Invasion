@@ -6,7 +6,7 @@ from M_title_stage_images.config import *
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, color, target_pos):
         super().__init__()
-        # 반지름 5인 빨간색/지정색 작은 원 생성
+        # 반지름 2인 빨간색/지정색 작은 원 생성
         self.radius = 2
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
         pygame.draw.circle(self.image, color, (self.radius, self.radius), self.radius)
@@ -33,3 +33,11 @@ class Bullet(pygame.sprite.Sprite):
             if (self.rect.bottom < 0 or self.rect.top > WIN_HEIGHT or 
                 self.rect.right < 0 or self.rect.left > WIN_WIDTH):
                 self.kill()
+
+class EnergyBall(pygame.sprite.Sprite):
+    def __init__(self, pos, res_manager, target_pos):
+        super().__init__()
+        self.res = res_manager
+        
+        self.radius = 10
+        self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
