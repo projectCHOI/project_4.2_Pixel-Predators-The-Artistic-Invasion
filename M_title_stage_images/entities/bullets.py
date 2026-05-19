@@ -41,3 +41,13 @@ class EnergyBall(pygame.sprite.Sprite):
         
         self.radius = 10
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
+
+        mx, my = target_pos
+        px, py = pos
+        angle = math.atan2(my - py, mx - px)
+        
+        self.vx = math.cos(angle) * self.speed
+        self.vy = math.sin(angle) * self.speed
+        
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
