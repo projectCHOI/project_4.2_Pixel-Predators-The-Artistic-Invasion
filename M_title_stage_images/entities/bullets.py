@@ -25,11 +25,11 @@ class Bullet(pygame.sprite.Sprite):
         self.y = float(self.rect.y)
 
     def update(self):
-        self.x += self.vx
-        self.y += self.vy
-        self.rect.x = int(self.x)
-        self.rect.y = int(self.y)
-
-        if (self.rect.bottom < 0 or self.rect.top > WIN_HEIGHT or 
-            self.rect.right < 0 or self.rect.left > WIN_WIDTH):
-            self.kill()
+            self.x += self.vx
+            self.y += self.vy
+            self.rect.x = int(self.x)
+            self.rect.y = int(self.y)
+    
+            if (self.rect.bottom < 0 or self.rect.top > WIN_HEIGHT or 
+                self.rect.right < 0 or self.rect.left > WIN_WIDTH):
+                self.kill()
