@@ -37,6 +37,10 @@ class Player(pygame.sprite.Sprite):
         self.collision_effect_start_time = 0
         self.collision_effect_duration = 0
 
+        # 공격력 강화 아이템 획득 개수 (0개부터 시작, 최대 4개)
+        self.power_level = 0
+        self.max_power_level = 4
+        
     def handle_input(self, input_reversed=False):
         keys = pygame.key.get_pressed()
         move_mult = -1 if input_reversed else 1
