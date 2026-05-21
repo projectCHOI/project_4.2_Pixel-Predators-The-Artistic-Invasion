@@ -41,7 +41,11 @@ class Item(pygame.sprite.Sprite):
                 player.health += 1
                 return "체력 회복!"
         elif self.type == 'power':
-            return "공격력 강화!"
+            # [수정] 최대 4단계까지 공격력 레벨 상승
+            if player.power_level < player.max_power_level:
+                player.power_level += 1
+                return f"공격력 강화! (Level {player.power_level})"
+            return "공격력 최대 치 도달!"
         elif self.type == 'speed':
             player.speed += 2
             return "이동 속도 증가!"
