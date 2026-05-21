@@ -35,19 +35,26 @@ class Bullet(pygame.sprite.Sprite):
                 self.kill()
 
 class EnergyBall(pygame.sprite.Sprite):
-    def __init__(self, pos, res_manager, target_pos):
+    def __init__(self, pos, res_manager, target_pos, angle_offset=0):
         super().__init__()
         self.res = res_manager
         
-        self.radius = 10
+        self.radius = 15
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
-
+        pygame.draw.circle(self.image, (0, 191, 255, 150), (self.radius, self.radius), self.radius)
+        pygame.draw.circle(self.image, (255, 255, 255, 255), (self.radius, self.radius), self.radius - 5)
+        
+        self.rect = self.image.get_rect(center=pos)
+        self.speed = 12 
+        
         mx, my = target_pos
         px, py = pos
-        angle = math.atan2(my - py, mx - px)
+        base_angle = math.atan2(my - py, mx - px)
         
-        self.vx = math.cos(angle) * self.speed
-        self.vy = math.sin(angle) * self.speed
+        final_angle = base_angle + math.radians(angle_offset)
+        
+        self.vx = math.cos(final_angle) * self.speed
+        self.vy = math.sin(final_angle) * self.speed
         
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
