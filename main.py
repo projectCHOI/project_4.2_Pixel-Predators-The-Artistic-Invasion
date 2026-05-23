@@ -74,10 +74,13 @@ def main():
                     manager.start_game()
                     bgm.set_game_state(f"stage_{manager.level}")
                     last_manager_level = manager.level
-            
+            ###
             elif manager.game_active and player:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = pygame.mouse.get_pos()
+                    from M_title_stage_images.entities.bullets import EnergyBall
+                    
+                    # 플레이어의 파워 레벨###
                     
                     try:
                         from M_title_stage_images.entities.bullets import EnergyBall
