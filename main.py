@@ -80,8 +80,19 @@ def main():
                     mouse_pos = pygame.mouse.get_pos()
                     from M_title_stage_images.entities.bullets import EnergyBall
                     
-                    # 플레이어의 파워 레벨###
-                    
+                    # 플레이어의 파워 레벨
+                    power_configs = {
+                            0: {"count": 1, "spread": 0},
+                            1: {"count": 3, "spread": 15},
+                            2: {"count": 5, "spread": 12},
+                            3: {"count": 7, "spread": 10},
+                            4: {"count": 9, "spread": 8}
+                        }
+                        
+                        config = power_configs.get(player.power_level, {"count": 1, "spread": 0})
+                        count = config["count"]
+                        spread_interval = config["spread"]
+                    ###
                     try:
                         from M_title_stage_images.entities.bullets import EnergyBall
                         new_ball = EnergyBall(player.rect.center, res, mouse_pos)
