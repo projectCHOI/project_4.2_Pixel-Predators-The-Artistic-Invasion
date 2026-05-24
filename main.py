@@ -74,7 +74,6 @@ def main():
                     manager.start_game()
                     bgm.set_game_state(f"stage_{manager.level}")
                     last_manager_level = manager.level
-            ###
             elif manager.game_active and player:
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = pygame.mouse.get_pos()
@@ -92,7 +91,16 @@ def main():
                         config = power_configs.get(player.power_level, {"count": 1, "spread": 0})
                         count = config["count"]
                         spread_interval = config["spread"]
-                    ###
+                        # 부채꼴 중앙 정렬 각도 계산 루프
+                        for i in range(count):
+                            if count == 1:
+                                offset = 0
+                            else:
+                                offset = (i - (count - 1) / 2) * spread_interval
+                            
+                            # 각 발마다 고유의 오프셋 각도를 들려보내 발사!
+                            new_ball = EnergyBall(player.rect.center, res, mouse_pos, angle_offset=offset)
+                            player_bullets.add(new_ball)
                     try:
                         from M_title_stage_images.entities.bullets import EnergyBall
                         new_ball = EnergyBall(player.rect.center, res, mouse_pos)
