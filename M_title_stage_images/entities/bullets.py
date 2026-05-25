@@ -7,9 +7,13 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, pos, color, target_pos):
         super().__init__()
         # 반지름 2인 빨간색/지정색 작은 원 생성
-        self.radius = 2
+        self.radius = 12 
+        # 반지름이 바뀌면 그림을 그릴 도화지(Surface) 크기도 자동으로 맞춰집니다.
         self.image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
-        pygame.draw.circle(self.image, color, (self.radius, self.radius), self.radius)
+        # 원을 그릴 때 반지름 변수를 사용하므로 자동으로 크기가 조절됩니다.
+        pygame.draw.circle(self.image, (0, 191, 255, 150), (self.radius, self.radius), self.radius)
+        pygame.draw.circle(self.image, (255, 255, 255, 255), (self.radius, self.radius), self.radius - 5)
+        # 충돌 영역(rect)도 바뀐 크기에 맞게 생성됩니다.
         self.rect = self.image.get_rect(center=pos)
         
         self.speed = 40
