@@ -7,7 +7,7 @@ class Player(pygame.sprite.Sprite):
         super().__init__()
         self.res = res_manager
         
-        self.size = (50, 50)
+        self.size = (40, 40)
         self.img_right = self.res.load_image("player", "mob_me1_png.png", size=self.size)
         self.img_left = self.res.load_image("player", "mob_me2_png.png", size=self.size)
         
