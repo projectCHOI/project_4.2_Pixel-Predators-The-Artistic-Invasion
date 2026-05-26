@@ -42,7 +42,8 @@ def main():
     res = ResourceManager()
     manager = GameManager(res)
     player = None
-    
+    # time
+    stage_start_time = 0
     bgm = BGMController()
     bgm.set_game_state("title") 
     
@@ -72,6 +73,8 @@ def main():
                     enemies = []
                     purple_bullets = []
                     manager.start_game()
+                    # time
+                    stage_start_time = pygame.time.get_ticks()
                     bgm.set_game_state(f"stage_{manager.level}")
                     last_manager_level = manager.level
             elif manager.game_active and player:
