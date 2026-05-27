@@ -233,6 +233,23 @@ def main():
             mins = elapsed_time // 60
             secs = elapsed_time % 60
             time_string = f"{mins:02d}:{secs:02d}"
+
+            # 텍스트 렌더링
+            timer_font = pygame.font.SysFont("arial", 35, bold=True)
+            timer_text = timer_font.render(time_string, True, YELLOW) # 눈에 잘 띄는 노란색 추천
+            
+            # [정중앙 좌표 계산] 전체 화면 너비의 절반에서 글자 너비의 절반을 빼줍니다.
+            text_x = (WIN_WIDTH // 2) - (timer_text.get_width() // 2)
+            text_y = 20 # 상단에서 20픽셀 아래
+            win.blit(timer_text, (text_x, text_y))
+
+            # 3. 기존 KILLS 및 플레이어 라이프 UI 그리기
+            player.draw(win)
+            player.draw_ui(win)
+            
+            font = pygame.font.SysFont("arial", 30, bold=True)
+            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
             
         pygame.display.update()
         clock.tick(FPS)
