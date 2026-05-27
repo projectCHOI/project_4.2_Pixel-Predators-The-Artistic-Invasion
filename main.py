@@ -81,7 +81,11 @@ def main():
                 if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                     mouse_pos = pygame.mouse.get_pos()
                     from M_title_stage_images.entities.bullets import EnergyBall
-                    
+             # time
+               if manager.level != last_manager_level:
+                    bgm.set_game_state(f"stage_{manager.level}")
+                    last_manager_level = manager.level
+                    stage_start_time = now
                     # 플레이어의 파워 레벨
                     power_configs = {
                             0: {"count": 1, "spread": 0},
