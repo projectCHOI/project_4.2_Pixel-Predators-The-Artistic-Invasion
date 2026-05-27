@@ -225,6 +225,15 @@ def main():
             kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
             win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
 
+            # 2. [추가] 플레이 시간 계산 및 출력 (상단 정중앙)
+            # 현재 시간에서 스테이지 시작 시간을 뺀 후 초(Second) 단위로 변환 (1000ms = 1초)
+            elapsed_time = (now - stage_start_time) // 1000 
+            
+            # 분:초 형태로 예쁘게 포매팅 (예: 65초 -> 01:05)
+            mins = elapsed_time // 60
+            secs = elapsed_time % 60
+            time_string = f"{mins:02d}:{secs:02d}"
+            
         pygame.display.update()
         clock.tick(FPS)
 
