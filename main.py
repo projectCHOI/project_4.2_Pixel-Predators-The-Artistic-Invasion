@@ -82,7 +82,7 @@ def main():
                     mouse_pos = pygame.mouse.get_pos()
                     from M_title_stage_images.entities.bullets import EnergyBall
              # time
-               if manager.level != last_manager_level:
+                if manager.level != last_manager_level:
                     bgm.set_game_state(f"stage_{manager.level}")
                     last_manager_level = manager.level
                     stage_start_time = now
@@ -95,11 +95,11 @@ def main():
                             4: {"count": 9, "spread": 8}
                         }
                         
-                        config = power_configs.get(player.power_level, {"count": 1, "spread": 0})
-                        count = config["count"]
-                        spread_interval = config["spread"]
-                        # 부채꼴 중앙 정렬 각도 계산 루프
-                        for i in range(count):
+                    config = power_configs.get(player.power_level, {"count": 1, "spread": 0})
+                    count = config["count"]
+                    spread_interval = config["spread"]
+                    # 부채꼴 중앙 정렬 각도 계산 루프
+                    for i in range(count):
                             if count == 1:
                                 offset = 0
                             else:
