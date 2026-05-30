@@ -247,9 +247,6 @@ def main():
             player.draw(win)
             player.draw_ui(win)
             
-            font = pygame.font.SysFont("arial", 30, bold=True)
-            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
-            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
             
         pygame.display.update()
         clock.tick(FPS)
