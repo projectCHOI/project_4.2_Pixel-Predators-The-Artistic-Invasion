@@ -107,3 +107,38 @@ def main():
                             
                             new_ball = EnergyBall(player.rect.center, res, mouse_pos, angle_offset=offset)
                             player_bullets.add(new_ball)
+
+# --- [2] 게임 로직 업데이트 ---
+        if manager.game_active and player:
+            # 실시간 스테이지 변경 체크 및 타이머 초기화 리셋
+            if manager.level != last_manager_level:
+                bgm.set_game_state(f"stage_{manager.level}")
+                last_manager_level = manager.level
+                stage_start_time = now  # 스테이지 전환 시 타이머 0초 초기화
+
+            player.handle_input()
+            player.update()
+            player_bullets.update()
+            items_group.update()
+            
+            # 아이템 획득 메커니즘
+            item_hits = pygame.sprite.spritecollide(player, items_group, True)
+            for item in item_hits:
+                item.apply_effect(player)
+            
+            # 적 스폰 매니징
+            if not manager.boss_active:
+                if now - last_spawn_times["normal"] > intervals["normal"]:
+                    enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["normal"] = now
+                if now - last_spawn_times["bomb"] > intervals["bomb"]:
+                    enemies.extend(enemy_bomb.generate(manager.level, WIN_WIDTH, WIN_HEIGHT, player.rect.center))
+                    last_spawn_times["bomb"] = now
+                if now - last_spawn_times["group"] > intervals["group"]:
+                    enemies.extend(enemy_group.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["group"] = now
+                if now - last_spawn_times["ambush"] > intervals["ambush"]:
+                    enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["ambush"] = now
+
+            purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
