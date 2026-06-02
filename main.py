@@ -175,3 +175,15 @@ def main():
                         if new_item: items_group.add(new_item)
                         hit = True
                         break
+
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    if enemy[2] == "bomb":
+                        purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                    hit = True
+
+                if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                    updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
+            manager.update(player)
