@@ -187,3 +187,9 @@ def main():
             
             enemies = updated_enemies
             manager.update(player)
+
+            if manager.game_over:
+                if manager.game_over_reason == "victory":
+                    bgm.set_game_state("victory")
+                else:
+                    bgm.set_game_state("gameover")
