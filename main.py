@@ -193,3 +193,17 @@ def main():
                     bgm.set_game_state("victory")
                 else:
                     bgm.set_game_state("gameover")
+
+        # --- [3] 화면 그리기 ---
+        if not manager.game_active:
+            if manager.game_over:
+                win.fill(BLACK)
+            else:
+                win.blit(title_image, (0, 0))
+        else:
+            # 1. 배경 출력
+            bg_idx = manager.level - 1
+            if bg_idx < len(stage_background_images):
+                win.blit(stage_background_images[bg_idx], (0, 0))
+            else:
+                win.fill(BLACK)
