@@ -207,3 +207,12 @@ def main():
                 win.blit(stage_background_images[bg_idx], (0, 0))
             else:
                 win.fill(BLACK)
+
+            # 2. 엔티티 및 스플래시 탄환 그리기
+            for pb in purple_bullets:
+                win.blit(pb["image"], pb["pos"])
+            for enemy in enemies:
+                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+            player_bullets.draw(win)
+            items_group.draw(win)
