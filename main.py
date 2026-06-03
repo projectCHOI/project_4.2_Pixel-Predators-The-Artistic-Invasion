@@ -216,3 +216,7 @@ def main():
             
             player_bullets.draw(win)
             items_group.draw(win)
+
+            # 3. 플레이어 기체 및 하트 라이프 UI 출력
+            player.draw(win)
+            player.draw_ui(win)
