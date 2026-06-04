@@ -220,3 +220,8 @@ def main():
             # 3. 플레이어 기체 및 하트 라이프 UI 출력
             player.draw(win)
             player.draw_ui(win)
+
+            # 4. KILLS UI (우측 상단)
+            font = pygame.font.SysFont("arial", 30, bold=True)
+            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
