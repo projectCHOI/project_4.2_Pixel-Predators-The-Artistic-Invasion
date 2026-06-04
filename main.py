@@ -238,3 +238,13 @@ def main():
             text_x = (WIN_WIDTH // 2) - (timer_text.get_width() // 2)
             text_y = 20
             win.blit(timer_text, (text_x, text_y))
+        
+        # --- [4] 프레임 고정 및 화면 반전 ---
+        pygame.display.update()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
