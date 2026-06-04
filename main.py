@@ -225,3 +225,16 @@ def main():
             font = pygame.font.SysFont("arial", 30, bold=True)
             kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
             win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
+            
+            # 5. 스테이지별 실시간 타이머 UI (상단 정중앙)
+            elapsed_time = (now - stage_start_time) // 1000 
+            mins = elapsed_time // 60
+            secs = elapsed_time % 60
+            time_string = f"{mins:02d}:{secs:02d}"
+
+            timer_font = pygame.font.SysFont("arial", 35, bold=True)
+            timer_text = timer_font.render(time_string, True, YELLOW)
+            
+            text_x = (WIN_WIDTH // 2) - (timer_text.get_width() // 2)
+            text_y = 20
+            win.blit(timer_text, (text_x, text_y))
