@@ -251,7 +251,9 @@ def main():
             if manager.boss_active:
                 boss1.draw(win)
                 boss1.draw_attacks(win)
-                boss1.draw_health_bar(win)
+                # boss1.draw_health_bar(win)
+                boss_ui_font = pygame.font.SysFont("arial", 20, bold=True)
+                boss1.draw_health_bar(win, boss_ui_font)         
             
             if boss1.boss_defeated:
                 boss1.draw_gem(win)
