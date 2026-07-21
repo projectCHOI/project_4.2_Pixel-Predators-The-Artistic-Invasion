@@ -31,10 +31,11 @@ try:
     import M_title_stage_images.enemy_behaviors.move_and_shoot as enemy_ambush
     from M_title_stage_images.assets.sounds.bgm_controller import BGMController
     
-    # 🔍 보스 1 모듈 연동 성공!
+    # 🔍 보스 1 & 보스 2 모듈 동시 연동
     from M_title_stage_images.bosses.Stage_1_Boss import Stage1Boss
+    from M_title_stage_images.bosses.Stage_2_Boss import Stage2Boss
 
-    print("보스 시스템을 포함한 모든 모듈 정상 연결 작동 중.")
+    print("보스 1 & 보스 2 시스템을 포함한 모든 모듈 정상 연결 작동 중.")
 except Exception as e:
     print(f"모듈 로드 중 오류 발생: {e}")
     pygame.quit()
@@ -46,13 +47,15 @@ def main():
     manager = GameManager(res)
     player = None
     
-    # 타이머, 오디오, 보스 객체 바인딩 선언
     stage_start_time = 0
     bgm = BGMController()
     bgm.set_game_state("title") 
     
-    # 보스 인스턴스화
-    boss1 = Stage1Boss(res)
+    # 보스 객체들 인스턴스화
+    bosses = {
+        1: Stage1Boss(res),
+        2: Stage2Boss(res)
+    }
     
     player_bullets = pygame.sprite.Group()
     items_group = pygame.sprite.Group()
@@ -67,7 +70,7 @@ def main():
     while run:
         now = pygame.time.get_ticks()
 
-        # --- [1] 이벤트 처리 구역 ---
+        # --- [1] 이벤트 처리 ---
         for event in pygame.event.get():
             if event.type == pygame.QUIT: 
                 run = False
@@ -81,8 +84,9 @@ def main():
                     purple_bullets = []
                     manager.start_game()
                     
-                    # 상태 파라미터 완전 리셋
-                    boss1.reset()
+                    # 보스 상태 전체 초기화
+                    for b in bosses.values():
+                        b.reset()
                     manager.boss_active = False
                     
                     stage_start_time = pygame.time.get_ticks()
@@ -110,13 +114,16 @@ def main():
                         new_ball = EnergyBall(player.rect.center, res, mouse_pos, angle_offset=offset)
                         player_bullets.add(new_ball)
 
-        # --- [2] 실시간 게임 메인 로직 업데이트 구역 ---
+        # --- [2] 게임 메인 로직 업데이트 ---
         if manager.game_active and player:
+            current_boss = bosses.get(manager.level) # 현재 레벨에 맞는 보스 가져오기
+
             if manager.level != last_manager_level:
                 bgm.set_game_state(f"stage_{manager.level}")
                 last_manager_level = manager.level
                 stage_start_time = now
-                boss1.reset()
+                if current_boss:
+                    current_boss.reset()
                 manager.boss_active = False
 
             player.handle_input()
@@ -124,35 +131,31 @@ def main():
             player_bullets.update()
             items_group.update()
             
-            # 아이템 파싱 충돌 처리
             item_hits = pygame.sprite.spritecollide(player, items_group, True)
             for item in item_hits:
                 item.apply_effect(player)
             
-            # ⏰ 경과 시간 연산 처리 (초 단위)
             elapsed_seconds = (now - stage_start_time) // 1000
 
-            # 🔍 보스 출격 타이밍 체크 센서 가동
-            if manager.level == 1 and not manager.boss_active:
-                boss1.check_appear(elapsed_seconds, manager.level)
-                if boss1.boss_active:
+            # 🔍 보스 출격 체크
+            if current_boss and not manager.boss_active:
+                current_boss.check_appear(elapsed_seconds, manager.level)
+                if current_boss.boss_active:
                     manager.boss_active = True
-                    enemies = [] # 필드의 잔여 몹들 완전 소거식 전환
+                    enemies = [] # 잡몹 소거
 
-            # [분기점 A] 보스전 활성화 시 로직 연산부
-            if manager.boss_active and boss1.boss_active:
-                boss1.move()
-                boss1.attack()
+            # [분기 A] 현재 보스전 업데이트
+            if manager.boss_active and current_boss and current_boss.boss_active:
+                current_boss.move()
+                current_boss.attack()
                 
-                # 보스 공격 탄막이 플레이어에게 입힌 데미지 연산 받아오기
-                dmg = boss1.update_attacks(player.rect, player.invincible)
+                dmg = current_boss.update_attacks(player.rect, player.invincible)
                 if dmg > 0:
                     player.take_damage(dmg)
                 
-                # 플레이어 에너지볼 탄환과 보스 본체의 피격 조건 검사 호출
-                boss1.check_hit(player_bullets)
+                current_boss.check_hit(player_bullets)
                 
-            # [분기점 B] 일반 필드 잡몹 스폰 파트
+            # [분기 B] 일반 필드 잡몹 스폰
             elif not manager.boss_active:
                 if now - last_spawn_times["normal"] > intervals["normal"]:
                     enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
@@ -167,15 +170,14 @@ def main():
                     enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
                     last_spawn_times["ambush"] = now
 
-            # 보스 사후 드롭된 보석 아이템 핸들링 및 스테이지 클리어 처리 구역
-            if boss1.boss_defeated:
-                boss1.update_attacks(player.rect, player.invincible) # 남은 잔여탄막 마저 이동처리
-                if boss1.check_gem_collision(player.rect):
-                    # 보석 획득 성공 -> 다음 스테이지 패스권 발급!
+            # 보스 격침 후 보석 획득 체크
+            if current_boss and current_boss.boss_defeated:
+                current_boss.update_attacks(player.rect, player.invincible)
+                if current_boss.check_gem_collision(player.rect):
                     manager.level += 1
                     manager.boss_active = False
 
-            # 일반 잡몹 객체 충돌 루프 연산
+            # 일반 적 업데이트
             purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
             updated_enemies = []
             for enemy in enemies:
@@ -224,21 +226,21 @@ def main():
             if manager.game_over:
                 bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
 
-        # --- [3] 화면 그래픽 자산 렌더링 그리기 구역 ---
+        # --- [3] 화면 그리기 ---
         if not manager.game_active:
             if manager.game_over:
                 win.fill(BLACK)
             else:
                 win.blit(title_image, (0, 0))
         else:
-            # 1. 고유 배경 출력
+            current_boss = bosses.get(manager.level)
+            
             bg_idx = manager.level - 1
             if bg_idx < len(stage_background_images):
                 win.blit(stage_background_images[bg_idx], (0, 0))
             else:
                 win.fill(BLACK)
             
-            # 2. 오브젝트 리스트 드로잉
             for pb in purple_bullets:
                 win.blit(pb["image"], pb["pos"])
             for enemy in enemies:
@@ -247,28 +249,25 @@ def main():
             player_bullets.draw(win)
             items_group.draw(win)
 
-            # 3. 보스전 그래픽 렌더링 파이프라인 연동
-            if manager.boss_active:
-                boss1.draw(win)
-                boss1.draw_attacks(win)
-                # boss1.draw_health_bar(win)
+            # 현재 스테이지 보스 그려주기
+            if manager.boss_active and current_boss:
+                current_boss.draw(win)
+                current_boss.draw_attacks(win)
+                
                 boss_ui_font = pygame.font.SysFont("arial", 20, bold=True)
-                boss1.draw_health_bar(win, boss_ui_font)         
+                current_boss.draw_health_bar(win, boss_ui_font)
             
-            if boss1.boss_defeated:
-                boss1.draw_gem(win)
-                boss1.draw_attacks(win) # 보스 사후에도 남아 전진하는 유도탄 표시
+            if current_boss and current_boss.boss_defeated:
+                current_boss.draw_gem(win)
+                current_boss.draw_attacks(win)
 
-            # 4. 플레이어 기체 및 하트 라이프 UI
             player.draw(win)
             player.draw_ui(win)
 
-            # 5. KILLS 스코어 보드 (우측 상단)
             font = pygame.font.SysFont("arial", 30, bold=True)
             kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
             win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
 
-            # 6. 타임 타임 트래커 (상단 정중앙)
             elapsed_time = (now - stage_start_time) // 1000 
             mins, secs = elapsed_time // 60, elapsed_time % 60
             time_string = f"{mins:02d}:{secs:02d}"
@@ -277,7 +276,6 @@ def main():
             timer_text = timer_font.render(time_string, True, YELLOW)
             win.blit(timer_text, ((WIN_WIDTH // 2) - (timer_text.get_width() // 2), 20))
 
-        # --- [4] 그래픽 플립 반전 고정 조율 ---
         pygame.display.update()
         clock.tick(FPS)
 
