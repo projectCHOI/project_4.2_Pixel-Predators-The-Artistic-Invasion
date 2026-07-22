@@ -114,3 +114,58 @@ def check_appear(self, seconds, current_level):
 
         self.boss_attacks = new_attacks
         return self.boss_damage if player_hit else 0
+
+def check_hit(self, player_bullets_group):
+        """main.py의 EnergyBall 탄환 그룹과의 충돌 검사"""
+        if not self.boss_active or self.boss_hp <= 0:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
+            return
+
+        self.boss_hit = False
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 120, 120)
+
+        for bullet in player_bullets_group:
+            if boss_rect.colliderect(bullet.rect):
+                bullet.kill()
+                self.boss_hp -= 1
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
+
+                if self.boss_hp <= 0:
+                    self.boss_hp = 0
+                    self.boss_active = False
+                    self.gem_pos = [self.boss_pos[0] + 40, self.boss_pos[1] + 40]
+                    self.gem_active = True
+                    self.boss_defeated = True
+                break
+
+    def draw(self, win):
+        """보스 렌더링 및 피격 시 깜빡임"""
+        if self.boss_active and self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
+            if self.boss_hit:
+                if current_time - self.boss_hit_start_time >= self.invincible_duration:
+                    self.boss_hit = False
+                    win.blit(self.boss_image, self.boss_pos)
+                else:
+                    if (current_time // 80) % 2 == 0:
+                        win.blit(self.boss_image, self.boss_pos)
+            else:
+                win.blit(self.boss_image, self.boss_pos)
+
+    def draw_attacks(self, win):
+        """보스 탄환 드로잉 (각도 회전 적용)"""
+        for attack in self.boss_attacks:
+            angle = -attack[2] + 90
+            attack_type = attack[3]
+            img = self.boss_attack_images.get(attack_type, self.boss_attack_images["low"])
+            rotated_image = pygame.transform.rotate(img, angle)
+            rect = rotated_image.get_rect(center=attack[0])
+            win.blit(rotated_image, rect)
+
+    def draw_gem(self, win):
+        if self.gem_active:
+            win.blit(self.gem_image, self.gem_pos)
