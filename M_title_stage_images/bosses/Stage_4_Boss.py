@@ -1,4 +1,3 @@
-# M_title_stage_images/bosses/Stage_4_Boss.py
 import pygame
 import os
 import random
@@ -46,3 +45,30 @@ class Stage4Boss:
         self.acceleration = 0.05
         self.max_speed = 7
         self.direction = [random.choice([-1, 1]), random.choice([-1, 1])]
+
+    def check_appear(self, seconds, current_level):
+        """매 초 타이머와 레벨을 체크하여 보스 활성화"""
+        if current_level == 4 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_pos = [640 - 75, 150]
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
+            self.boss_speed = 2
+
+    def move(self):
+        """보스 가속 바운스 이동 알고리즘"""
+        if not self.boss_active or self.boss_hp <= 0:
+            return
+
+        self.boss_speed = min(self.boss_speed + self.acceleration, self.max_speed)
+        self.boss_pos[0] += self.direction[0] * self.boss_speed
+        self.boss_pos[1] += self.direction[1] * self.boss_speed
+
+        # 벽 충돌 시 반사
+        if self.boss_pos[0] <= 10 or self.boss_pos[0] >= WIN_WIDTH - 160:
+            self.direction[0] = -self.direction[0]
+        if self.boss_pos[1] <= 10 or self.boss_pos[1] >= WIN_HEIGHT - 320:
+            self.direction[1] = -self.direction[1]
+
+        self.boss_pos[0] = max(10, min(self.boss_pos[0], WIN_WIDTH - 160))
+        self.boss_pos[1] = max(10, min(self.boss_pos[1], WIN_HEIGHT - 320))
