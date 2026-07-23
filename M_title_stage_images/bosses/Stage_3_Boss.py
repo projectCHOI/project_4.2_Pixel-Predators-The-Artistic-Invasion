@@ -41,7 +41,7 @@ class Stage3Boss:
         self.boss_hit_start_time = 0
         self.boss_hit_duration = 100
 
-def check_appear(self, seconds, current_level):
+    def check_appear(self, seconds, current_level):
         """매 초 타이머와 레벨을 체크하여 보스 활성화"""
         if current_level == 3 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
             self.boss_active = True
@@ -115,7 +115,7 @@ def check_appear(self, seconds, current_level):
         self.boss_attacks = new_attacks
         return self.boss_damage if player_hit else 0
 
-def check_hit(self, player_bullets_group):
+    def check_hit(self, player_bullets_group):
         """main.py의 EnergyBall 탄환 그룹과의 충돌 검사"""
         if not self.boss_active or self.boss_hp <= 0:
             return
@@ -169,3 +169,43 @@ def check_hit(self, player_bullets_group):
     def draw_gem(self, win):
         if self.gem_active:
             win.blit(self.gem_image, self.gem_pos)
+            
+    def draw_health_bar(self, win, font):
+        """보스 체력바 UI (하단 고정)"""
+        if self.boss_active and self.boss_hp > 0:
+            boss_text = font.render("BOSS LV.3", True, (255, 255, 255))
+            
+            bar_width = 600
+            bar_height = 20
+            bar_x = (WIN_WIDTH // 2) - (bar_width // 2)
+            bar_y = WIN_HEIGHT - 80
+            
+            win.blit(boss_text, (bar_x, bar_y - 25))
+
+            health_ratio = self.boss_hp / self.max_boss_hp
+            current_health_width = int(bar_width * health_ratio)
+
+            pygame.draw.rect(win, (40, 40, 40), (bar_x, bar_y, bar_width, bar_height))
+            pygame.draw.rect(win, (210, 20, 4), (bar_x, bar_y, current_health_width, bar_height))
+            pygame.draw.rect(win, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
+
+    def check_gem_collision(self, player_rect):
+        if self.gem_active:
+            gem_rect = pygame.Rect(self.gem_pos[0], self.gem_pos[1], 40, 40)
+            if gem_rect.colliderect(player_rect):
+                self.gem_active = False
+                self.stage_cleared = True
+                return True
+        return False
+
+    def reset(self):
+        self.boss_active = False
+        self.boss_hp = self.max_boss_hp
+        self.boss_pos = [640 - 60, 200]
+        self.boss_defeated = False
+        self.boss_appeared = False
+        self.boss_attacks = []
+        self.gem_active = False
+        self.gem_pos = None
+        self.boss_hit = False
+        self.stage_cleared = False
