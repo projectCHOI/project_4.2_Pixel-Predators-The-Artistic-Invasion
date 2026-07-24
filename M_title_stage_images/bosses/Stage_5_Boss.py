@@ -57,3 +57,70 @@ class Stage5Boss:
         self.vertical_moves_done = 0
         self.going_forward = True
         self.stage_cleared = False
+
+    def check_appear(self, seconds, current_level):
+        """매 초 타이머와 레벨을 체크하여 보스 활성화"""
+        if current_level == 5 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_appeared = True
+            self.boss_hp = self.max_boss_hp
+            self.state = "appear"
+            self.state_start_time = pygame.time.get_ticks()
+
+    def move(self):
+        if not self.boss_active or self.boss_defeated:
+            return
+
+        current_time = pygame.time.get_ticks()
+        time_in_state = current_time - self.state_start_time
+
+        if self.state == "appear":
+            speed = 4
+            if self.side == "left":
+                self.boss_pos[0] += speed
+                if self.boss_pos[0] >= 100:
+                    self.boss_pos[0] = 100
+                    self._change_state("wait1")
+            else:
+                self.boss_pos[0] -= speed
+                if self.boss_pos[0] <= WIN_WIDTH - 400:
+                    self.boss_pos[0] = WIN_WIDTH - 400
+                    self._change_state("wait1")
+
+        elif self.state == "wait1":
+            if time_in_state >= 1500:
+                self._change_state("act")
+
+        elif self.state == "act":
+            if self.side == "left":
+                self._move_left_side()
+            else:
+                self._move_right_side()
+
+        elif self.state == "wait2":
+            if time_in_state >= 1500:
+                self._change_state("leave")
+
+        elif self.state == "leave":
+            speed = 6
+            if self.side == "left":
+                self.boss_pos[0] -= speed
+                if self.boss_pos[0] <= -350:
+                    self.boss_pos[0] = -350
+                    self._change_state("wait3")
+            else:
+                self.boss_pos[0] += speed
+                if self.boss_pos[0] >= WIN_WIDTH + 100:
+                    self.boss_pos[0] = WIN_WIDTH + 100
+                    self._change_state("wait3")
+
+        elif self.state == "wait3":
+            if time_in_state >= 1500:
+                self.reset(reinit_side=True)
+                self.boss_active = True
+                self.boss_appeared = True
+                self._change_state("appear")
+
+    def _change_state(self, new_state):
+        self.state = new_state
+        self.state_start_time = pygame.time.get_ticks()
