@@ -72,3 +72,33 @@ class Stage4Boss:
 
         self.boss_pos[0] = max(10, min(self.boss_pos[0], WIN_WIDTH - 160))
         self.boss_pos[1] = max(10, min(self.boss_pos[1], WIN_HEIGHT - 320))
+    
+    def attack(self):
+        """체력 잔량에 따른 난사 공격"""
+        if not self.boss_active or self.boss_hp <= 0:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.boss_last_attack_time > self.attack_interval:
+            self.boss_last_attack_time = current_time
+            num_shots = 4 + (self.max_boss_hp - self.boss_hp) // 4
+            
+            for _ in range(num_shots):
+                angle = random.uniform(0, 360)
+                radian = math.radians(angle)
+                dx = math.cos(radian) * 6
+                dy = math.sin(radian) * 6
+                attack_type = self.get_attack_type()
+                
+                start_x = self.boss_pos[0] + 75
+                start_y = self.boss_pos[1] + 75
+                self.boss_attacks.append([[start_x, start_y], [dx, dy], angle, attack_type])
+    
+    def get_attack_type(self):
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "low"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "high"
