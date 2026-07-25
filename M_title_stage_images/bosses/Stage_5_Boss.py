@@ -124,3 +124,37 @@ class Stage5Boss:
     def _change_state(self, new_state):
         self.state = new_state
         self.state_start_time = pygame.time.get_ticks()
+
+    def _move_left_side(self):
+        self.attack()
+        if self.going_forward:
+            self.boss_pos[0] += 3
+            if self.boss_pos[0] >= 400:
+                self.boss_pos[0] = 400
+                self.going_forward = False
+        else:
+            self.boss_pos[0] -= 4
+            if self.boss_pos[0] <= 100:
+                self.boss_pos[0] = 100
+                self._change_state("wait2")
+
+    def _move_right_side(self):
+        self.attack()
+        speed = 5
+        target_up = 80
+        target_down = 250
+
+        moving_up = (self.vertical_moves_done % 2 == 0)
+        if moving_up:
+            self.boss_pos[1] -= speed
+            if self.boss_pos[1] <= target_up:
+                self.boss_pos[1] = target_up
+                self.vertical_moves_done += 1
+        else:
+            self.boss_pos[1] += speed
+            if self.boss_pos[1] >= target_down:
+                self.boss_pos[1] = target_down
+                self.vertical_moves_done += 1
+
+        if self.vertical_moves_done >= 6:
+            self._change_state("wait2")
