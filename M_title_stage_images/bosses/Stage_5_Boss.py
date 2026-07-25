@@ -198,3 +198,29 @@ class Stage5Boss:
                     'angle': angle_deg,
                     'image': random_attack_image
                 })
+
+    def update_attacks(self, player_rect, is_invincible=False):
+        new_boss_attacks = []
+        player_hit = False
+
+        # 보스 본체 및 이펙트 몸통 충돌
+        if self.boss_active and not is_invincible and self.state == "act":
+            boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
+            if player_rect.colliderect(boss_rect):
+                player_hit = True
+
+        # 탄환 충돌
+        for attack in self.boss_attacks:
+            attack['pos'][0] += attack['dir'][0]
+            attack['pos'][1] += attack['dir'][1]
+            bx, by = attack['pos']
+
+            if -50 <= bx <= WIN_WIDTH + 50 and -50 <= by <= WIN_HEIGHT + 50:
+                bullet_rect = pygame.Rect(bx - 15, by - 15, 30, 30)
+                if not is_invincible and bullet_rect.colliderect(player_rect):
+                    player_hit = True
+                else:
+                    new_boss_attacks.append(attack)
+
+        self.boss_attacks = new_boss_attacks
+        return self.boss_damage if player_hit else 0
