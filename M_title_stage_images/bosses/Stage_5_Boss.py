@@ -158,3 +158,43 @@ class Stage5Boss:
 
         if self.vertical_moves_done >= 6:
             self._change_state("wait2")
+
+    def attack(self):
+        if self.state != "act" or not self.boss_active or self.boss_defeated:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_attack_time >= self.attack_cooldown:
+            self.last_attack_time = current_time
+
+            if self.boss_hp > self.max_boss_hp * 0.75:
+                directions = [0]
+                self.attack_cooldown = 800
+            elif self.boss_hp > self.max_boss_hp * 0.5:
+                directions = [-15, 0, 15]
+                self.attack_cooldown = 600
+            elif self.boss_hp > self.max_boss_hp * 0.25:
+                directions = [-30, -15, 0, 15, 30]
+                self.attack_cooldown = 500
+            else:
+                directions = [-45, -30, -15, 0, 15, 30, 45]
+                self.attack_cooldown = 350
+
+            for angle_offset in directions:
+                angle_deg = 0 if self.side == "left" else 180
+                angle_deg += angle_offset
+                rad = math.radians(angle_deg)
+                dx = math.cos(rad) * 8
+                dy = math.sin(rad) * 8
+
+                start_x = self.boss_pos[0] + 150
+                start_y = self.boss_pos[1] + 150
+
+                random_attack_image = random.choice(self.boss_attack_images)
+
+                self.boss_attacks.append({
+                    'pos': [start_x, start_y],
+                    'dir': [dx, dy],
+                    'angle': angle_deg,
+                    'image': random_attack_image
+                })
