@@ -276,3 +276,21 @@ class Stage5Boss:
                 effect_x = self.boss_pos[0] + 60 + offset_x
                 effect_y = self.boss_pos[1] + 60 + offset_y
                 win.blit(self.boss_effect_image, (effect_x, effect_y))
+
+    def draw_attacks(self, win):
+        if not self.boss_active:
+            return
+
+        for attack in self.boss_attacks:
+            angle = -attack['angle'] + 90
+            rotated_image = pygame.transform.rotate(attack['image'], angle)
+            rect = rotated_image.get_rect(center=attack['pos'])
+            win.blit(rotated_image, rect)
+
+    def draw_gem(self, win):
+        if self.gem_active and self.gem_pos:
+            win.blit(self.gem_image, self.gem_pos)
+
+    def draw_health_bar(self, win, font):
+        if not self.boss_active and not self.boss_defeated:
+            return
