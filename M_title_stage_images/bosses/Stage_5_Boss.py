@@ -253,3 +253,26 @@ class Stage5Boss:
                     self.gem_pos = [self.boss_pos[0] + 130, self.boss_pos[1] + 130]
                     self.gem_active = True
                 break
+                
+    def draw(self, win):
+        if not self.boss_active:
+            return
+
+        if not self.boss_defeated and self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
+            if self.boss_hit:
+                if current_time - self.boss_hit_start_time < self.boss_invincible_duration:
+                    if (current_time // self.boss_hit_duration) % 2 == 0:
+                        win.blit(self.boss_image, self.boss_pos)
+                else:
+                    self.boss_hit = False
+                    win.blit(self.boss_image, self.boss_pos)
+            else:
+                win.blit(self.boss_image, self.boss_pos)
+
+        # 등장 및 퇴장 상태 잔상 이펙트 드로잉
+        if self.state in ("appear", "wait1", "wait2", "wait3", "leave"):
+            for (offset_x, offset_y) in self.effect_offsets:
+                effect_x = self.boss_pos[0] + 60 + offset_x
+                effect_y = self.boss_pos[1] + 60 + offset_y
+                win.blit(self.boss_effect_image, (effect_x, effect_y))
