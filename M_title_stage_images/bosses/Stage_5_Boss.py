@@ -224,3 +224,32 @@ class Stage5Boss:
 
         self.boss_attacks = new_boss_attacks
         return self.boss_damage if player_hit else 0
+
+    def check_hit(self, player_bullets_group):
+        if not self.boss_active or self.boss_defeated:
+            return
+        if self.state != "act":
+            return
+
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.boss_invincible_duration:
+            return
+
+        self.boss_hit = False
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 300, 300)
+
+        for bullet in player_bullets_group:
+            if boss_rect.colliderect(bullet.rect):
+                bullet.kill()
+                self.boss_hp -= 1
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
+
+                if self.boss_hp <= 0:
+                    self.boss_hp = 0
+                    self.boss_defeated = True
+                    self.boss_active = False
+                    self.boss_attacks.clear()
+                    self.gem_pos = [self.boss_pos[0] + 130, self.boss_pos[1] + 130]
+                    self.gem_active = True
+                break
