@@ -31,11 +31,15 @@ try:
     import M_title_stage_images.enemy_behaviors.move_and_shoot as enemy_ambush
     from M_title_stage_images.assets.sounds.bgm_controller import BGMController
     
-    # 🔍 보스 1 & 보스 2 모듈 동시 연동
+    # 🔍 전체 6개 스테이지 보스 모듈 완벽 연결!
     from M_title_stage_images.bosses.Stage_1_Boss import Stage1Boss
     from M_title_stage_images.bosses.Stage_2_Boss import Stage2Boss
+    from M_title_stage_images.bosses.Stage_3_Boss import Stage3Boss
+    from M_title_stage_images.bosses.Stage_4_Boss import Stage4Boss
+    from M_title_stage_images.bosses.Stage_5_Boss import Stage5Boss
+    from M_title_stage_images.bosses.Stage_6_Boss import Stage6Boss
 
-    print("보스 1 & 보스 2 시스템을 포함한 모든 모듈 정상 연결 작동 중.")
+    print("전체 보스 1~6 시스템을 포함한 모든 모듈 완전 연결 성공!")
 except Exception as e:
     print(f"모듈 로드 중 오류 발생: {e}")
     pygame.quit()
@@ -51,10 +55,14 @@ def main():
     bgm = BGMController()
     bgm.set_game_state("title") 
     
-    # 보스 객체들 인스턴스화
+    # 전체 보스 인스턴스 테이블 (스테이지 1~6)
     bosses = {
         1: Stage1Boss(res),
-        2: Stage2Boss(res)
+        2: Stage2Boss(res),
+        3: Stage3Boss(res),
+        4: Stage4Boss(res),
+        5: Stage5Boss(res),
+        6: Stage6Boss(res)
     }
     
     player_bullets = pygame.sprite.Group()
@@ -84,7 +92,6 @@ def main():
                     purple_bullets = []
                     manager.start_game()
                     
-                    # 보스 상태 전체 초기화
                     for b in bosses.values():
                         b.reset()
                     manager.boss_active = False
@@ -116,7 +123,7 @@ def main():
 
         # --- [2] 게임 메인 로직 업데이트 ---
         if manager.game_active and player:
-            current_boss = bosses.get(manager.level) # 현재 레벨에 맞는 보스 가져오기
+            current_boss = bosses.get(manager.level)
 
             if manager.level != last_manager_level:
                 bgm.set_game_state(f"stage_{manager.level}")
@@ -137,14 +144,14 @@ def main():
             
             elapsed_seconds = (now - stage_start_time) // 1000
 
-            # 🔍 보스 출격 체크
+            # 🔍 보스 출격 센서 체크
             if current_boss and not manager.boss_active:
                 current_boss.check_appear(elapsed_seconds, manager.level)
                 if current_boss.boss_active:
                     manager.boss_active = True
-                    enemies = [] # 잡몹 소거
+                    enemies = []
 
-            # [분기 A] 현재 보스전 업데이트
+            # [분기 A] 보스전 업데이트
             if manager.boss_active and current_boss and current_boss.boss_active:
                 current_boss.move()
                 current_boss.attack()
@@ -155,7 +162,7 @@ def main():
                 
                 current_boss.check_hit(player_bullets)
                 
-            # [분기 B] 일반 필드 잡몹 스폰
+            # [분기 B] 일반 잡몹 스폰
             elif not manager.boss_active:
                 if now - last_spawn_times["normal"] > intervals["normal"]:
                     enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
@@ -170,12 +177,17 @@ def main():
                     enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
                     last_spawn_times["ambush"] = now
 
-            # 보스 격침 후 보석 획득 체크
+            # 보스 격침 후 보석 획득 및 다음 스테이지/최종 승리 처리
             if current_boss and current_boss.boss_defeated:
                 current_boss.update_attacks(player.rect, player.invincible)
                 if current_boss.check_gem_collision(player.rect):
-                    manager.level += 1
-                    manager.boss_active = False
+                    if manager.level >= 6: # 마지막 6보스 격파 시 최종 승리!
+                        manager.game_active = False
+                        manager.game_over = True
+                        manager.game_over_reason = "victory"
+                    else:
+                        manager.level += 1
+                        manager.boss_active = False
 
             # 일반 적 업데이트
             purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
@@ -230,6 +242,18 @@ def main():
         if not manager.game_active:
             if manager.game_over:
                 win.fill(BLACK)
+                end_font = pygame.font.SysFont("malgungothic", 50, bold=True)
+                
+                if manager.game_over_reason == "victory":
+                    title_txt = end_font.render("MISSION COMPLETE", True, YELLOW)
+                else:
+                    title_txt = end_font.render("GAME OVER", True, RED)
+                
+                sub_font = pygame.font.SysFont("arial", 30)
+                sub_txt = sub_font.render("Press ENTER to Restart", True, WHITE)
+                
+                win.blit(title_txt, ((WIN_WIDTH // 2) - (title_txt.get_width() // 2), 280))
+                win.blit(sub_txt, ((WIN_WIDTH // 2) - (sub_txt.get_width() // 2), 380))
             else:
                 win.blit(title_image, (0, 0))
         else:
@@ -249,7 +273,6 @@ def main():
             player_bullets.draw(win)
             items_group.draw(win)
 
-            # 현재 스테이지 보스 그려주기
             if manager.boss_active and current_boss:
                 current_boss.draw(win)
                 current_boss.draw_attacks(win)
