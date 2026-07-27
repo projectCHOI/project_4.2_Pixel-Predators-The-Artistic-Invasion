@@ -320,3 +320,30 @@ class Stage5Boss:
                 self.stage_cleared = True
                 return True
         return False
+
+    def reset(self, reinit_side=False):
+        if self.boss_defeated:
+            return
+
+        self.boss_hit = False
+        self.boss_hit_start_time = 0
+        self.boss_attacks.clear()
+        
+        if reinit_side:
+            self.side = random.choice(["left", "right"])
+
+        if self.side == "left":
+            self.boss_pos = [-300, 150]
+            self.boss_image = self.boss_image_left
+        else:
+            self.boss_pos = [WIN_WIDTH + 100, 150]
+            self.boss_image = self.boss_image_right
+
+        self.vertical_moves_done = 0
+        self.going_forward = True
+        self.gem_active = False
+        self.gem_pos = None
+        self.boss_active = False
+        self.boss_appeared = False
+        self.state = "appear"
+        self.state_start_time = pygame.time.get_ticks()
