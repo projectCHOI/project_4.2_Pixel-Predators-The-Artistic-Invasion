@@ -294,3 +294,22 @@ class Stage5Boss:
     def draw_health_bar(self, win, font):
         if not self.boss_active and not self.boss_defeated:
             return
+
+        if not self.boss_defeated and self.boss_hp > 0:
+            boss_text = font.render("BOSS LV.5", True, (255, 255, 255))
+            
+            bar_width = 600
+            bar_height = 20
+            bar_x = (WIN_WIDTH // 2) - (bar_width // 2)
+            bar_y = WIN_HEIGHT - 80
+            
+            win.blit(boss_text, (bar_x, bar_y - 25))
+
+            health_ratio = self.boss_hp / self.max_boss_hp
+            current_health_width = int(bar_width * health_ratio)
+
+            pygame.draw.rect(win, (40, 40, 40), (bar_x, bar_y, bar_width, bar_height))
+            pygame.draw.rect(win, (210, 20, 4), (bar_x, bar_y, current_health_width, bar_height))
+            pygame.draw.rect(win, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
+
+    def check_gem_collision(self, player_rect):
