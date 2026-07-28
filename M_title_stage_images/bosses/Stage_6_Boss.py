@@ -1,4 +1,3 @@
-# M_title_stage_images/bosses/Stage_6_Boss.py
 import pygame
 import os
 import random
@@ -46,3 +45,20 @@ class Stage6Boss:
         self.boss_hit_duration = 100
         self.boss_hit = False
         self.boss_hit_start_time = 0
+        
+    def get_attack_type(self):
+        health_ratio = self.boss_hp / self.max_boss_hp
+        if health_ratio > 0.6:
+            return "low"
+        elif health_ratio > 0.3:
+            return "medium"
+        else:
+            return "high"
+
+    def check_appear(self, seconds, current_level):
+        """매 초 타이머와 레벨을 체크하여 보스 활성화"""
+        if current_level == 6 and not self.boss_active and seconds >= 10 and not self.boss_appeared:
+            self.boss_active = True
+            self.boss_appearing = True
+            self.boss_hp = self.max_boss_hp
+            self.boss_appeared = True
