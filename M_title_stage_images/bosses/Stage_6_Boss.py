@@ -100,3 +100,30 @@ class Stage6Boss:
             if self.boss_pos[1] >= 600:
                 self.boss_disappearing = False
                 self.boss_appearing = True
+
+    def attack(self):
+        """이동 상태 중 360도 방사형 일제 사격"""
+        if not self.boss_active or self.boss_defeated:
+            return
+        if not self.boss_moving and not self.boss_returning:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if current_time - self.boss_last_attack_time > self.attack_interval:
+            self.boss_last_attack_time = current_time
+            attack_type = self.get_attack_type()
+            
+            num_shots = {"low": 12, "medium": 24, "high": 36}[attack_type]
+            speed = {"low": 5, "medium": 6, "high": 7}[attack_type]
+            image = self.boss_attack_images[attack_type]
+            
+            angle_step = 360 / num_shots
+            start_x = self.boss_pos[0] + 125
+            start_y = self.boss_pos[1] + 125
+
+            for i in range(num_shots):
+                angle = angle_step * i
+                radian = math.radians(angle)
+                dx = math.cos(radian) * speed
+                dy = math.sin(radian) * speed
+                self.boss_attacks.append([[start_x, start_y], [dx, dy], angle, image])
