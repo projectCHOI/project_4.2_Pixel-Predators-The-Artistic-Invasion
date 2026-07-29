@@ -62,3 +62,41 @@ class Stage6Boss:
             self.boss_appearing = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
+            
+    def move(self):
+        """순환형 잠복 및 기습 이동 패턴"""
+        if not self.boss_active or self.boss_defeated:
+            return
+
+        if self.boss_appearing:
+            self.boss_pos[1] -= self.boss_speed
+            if self.boss_pos[1] <= 200:
+                self.boss_appearing = False
+                self.boss_waiting = True
+                self.wait_time = pygame.time.get_ticks()
+                
+        elif self.boss_waiting:
+            if pygame.time.get_ticks() - self.wait_time >= 2000:
+                self.boss_waiting = False
+                self.boss_moving = True
+                self.move_target = self.boss_pos[0] - 400
+
+        elif self.boss_moving:
+            if self.boss_pos[0] > self.move_target:
+                self.boss_pos[0] -= self.boss_speed
+            else:
+                self.boss_moving = False
+                self.boss_returning = True
+
+        elif self.boss_returning:
+            if self.boss_pos[0] < 950:
+                self.boss_pos[0] += self.boss_speed
+            else:
+                self.boss_returning = False
+                self.boss_disappearing = True
+
+        elif self.boss_disappearing:
+            self.boss_pos[1] += self.boss_speed
+            if self.boss_pos[1] >= 600:
+                self.boss_disappearing = False
+                self.boss_appearing = True
