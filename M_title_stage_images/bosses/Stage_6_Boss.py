@@ -1,3 +1,4 @@
+# M_title_stage_images/bosses/Stage_6_Boss.py
 import pygame
 import os
 import random
@@ -45,7 +46,7 @@ class Stage6Boss:
         self.boss_hit_duration = 100
         self.boss_hit = False
         self.boss_hit_start_time = 0
-        
+
     def get_attack_type(self):
         health_ratio = self.boss_hp / self.max_boss_hp
         if health_ratio > 0.6:
@@ -62,7 +63,7 @@ class Stage6Boss:
             self.boss_appearing = True
             self.boss_hp = self.max_boss_hp
             self.boss_appeared = True
-            
+
     def move(self):
         """순환형 잠복 및 기습 이동 패턴"""
         if not self.boss_active or self.boss_defeated:
@@ -127,3 +128,50 @@ class Stage6Boss:
                 dx = math.cos(radian) * speed
                 dy = math.sin(radian) * speed
                 self.boss_attacks.append([[start_x, start_y], [dx, dy], angle, image])
+
+    def update_attacks(self, player_rect, is_invincible=False):
+        """보스 탄환 이동 및 플레이어 충돌 검사"""
+        new_attacks = []
+        player_hit = False
+
+        for attack in self.boss_attacks:
+            attack[0][0] += attack[1][0]
+            attack[0][1] += attack[1][1]
+            bx, by = attack[0]
+
+            if -50 <= bx <= WIN_WIDTH + 50 and -50 <= by <= WIN_HEIGHT + 50:
+                bullet_rect = pygame.Rect(bx - 15, by - 15, 30, 30)
+                if not is_invincible and bullet_rect.colliderect(player_rect):
+                    player_hit = True
+                else:
+                    new_attacks.append(attack)
+
+        self.boss_attacks = new_attacks
+        return self.boss_damage if player_hit else 0
+
+    def check_hit(self, player_bullets_group):
+        """EnergyBall 플레이어 탄환 그룹과의 충돌 검사"""
+        if not self.boss_active or self.boss_defeated or self.boss_disappearing:
+            return
+
+        current_time = pygame.time.get_ticks()
+        if self.boss_hit and (current_time - self.boss_hit_start_time) < self.invincible_duration:
+            return
+
+        self.boss_hit = False
+        boss_rect = pygame.Rect(self.boss_pos[0], self.boss_pos[1], 250, 250)
+
+        for bullet in player_bullets_group:
+            if boss_rect.colliderect(bullet.rect):
+                bullet.kill()
+                self.boss_hp -= 1
+                self.boss_hit = True
+                self.boss_hit_start_time = current_time
+
+                if self.boss_hp <= 0:
+                    self.boss_hp = 0
+                    self.boss_active = False
+                    self.boss_defeated = True
+                    self.gem_pos = [self.boss_pos[0] + 105, self.boss_pos[1] + 105]
+                    self.gem_active = True
+                break
