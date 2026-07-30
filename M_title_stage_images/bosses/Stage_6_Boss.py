@@ -202,3 +202,22 @@ class Stage6Boss:
     def draw_gem(self, win):
         if self.gem_active and self.gem_pos:
             win.blit(self.gem_image, self.gem_pos)
+
+    def draw_health_bar(self, win, font):
+        """하단 최종 보스 HP 게이지 UI"""
+        if self.boss_active and self.boss_hp > 0:
+            boss_text = font.render("FINAL BOSS", True, (255, 215, 0)) # 최종 보스는 황금색 텍스트
+            
+            bar_width = 600
+            bar_height = 20
+            bar_x = (WIN_WIDTH // 2) - (bar_width // 2)
+            bar_y = WIN_HEIGHT - 80
+            
+            win.blit(boss_text, (bar_x, bar_y - 25))
+
+            health_ratio = self.boss_hp / self.max_boss_hp
+            current_health_width = int(bar_width * health_ratio)
+
+            pygame.draw.rect(win, (40, 40, 40), (bar_x, bar_y, bar_width, bar_height))
+            pygame.draw.rect(win, (210, 20, 4), (bar_x, bar_y, current_health_width, bar_height))
+            pygame.draw.rect(win, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
