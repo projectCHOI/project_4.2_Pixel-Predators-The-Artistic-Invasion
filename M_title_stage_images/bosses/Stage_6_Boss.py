@@ -188,3 +188,17 @@ class Stage6Boss:
                     win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
+                
+    def draw_attacks(self, win):
+        if not self.boss_active:
+            return
+
+        for attack in self.boss_attacks:
+            angle = -attack[2] + 90
+            rotated_image = pygame.transform.rotate(attack[3], angle)
+            rect = rotated_image.get_rect(center=attack[0])
+            win.blit(rotated_image, rect)
+
+    def draw_gem(self, win):
+        if self.gem_active and self.gem_pos:
+            win.blit(self.gem_image, self.gem_pos)
