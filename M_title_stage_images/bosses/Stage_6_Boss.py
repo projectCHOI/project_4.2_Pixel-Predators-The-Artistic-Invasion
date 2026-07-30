@@ -1,4 +1,3 @@
-# M_title_stage_images/bosses/Stage_6_Boss.py
 import pygame
 import os
 import random
@@ -175,3 +174,17 @@ class Stage6Boss:
                     self.gem_pos = [self.boss_pos[0] + 105, self.boss_pos[1] + 105]
                     self.gem_active = True
                 break
+                
+    def draw(self, win):
+        """보스 피격 출력"""
+        if self.boss_active and self.boss_hp > 0:
+            current_time = pygame.time.get_ticks()
+            if self.boss_hit:
+                if current_time - self.boss_hit_start_time < self.invincible_duration:
+                    if (current_time // self.boss_hit_duration) % 2 == 0:
+                        win.blit(self.boss_image, self.boss_pos)
+                else:
+                    self.boss_hit = False
+                    win.blit(self.boss_image, self.boss_pos)
+            else:
+                win.blit(self.boss_image, self.boss_pos)
