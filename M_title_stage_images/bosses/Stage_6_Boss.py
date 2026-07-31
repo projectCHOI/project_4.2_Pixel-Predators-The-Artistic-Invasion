@@ -230,3 +230,16 @@ class Stage6Boss:
                 self.stage_cleared = True
                 return True
         return False
+
+    def reset(self):
+        self.boss_active = False
+        self.boss_hp = self.max_boss_hp
+        self.boss_pos = [950, 600]
+        self.boss_appearing = True
+        self.boss_defeated = False
+        self.boss_appeared = False
+        self.boss_attacks.clear()
+        self.boss_hit = False
+        self.stage_cleared = False
+        self.gem_active = False
+        self.gem_pos = None
