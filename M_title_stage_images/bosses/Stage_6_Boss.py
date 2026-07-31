@@ -221,3 +221,12 @@ class Stage6Boss:
             pygame.draw.rect(win, (40, 40, 40), (bar_x, bar_y, bar_width, bar_height))
             pygame.draw.rect(win, (210, 20, 4), (bar_x, bar_y, current_health_width, bar_height))
             pygame.draw.rect(win, (255, 255, 255), (bar_x, bar_y, bar_width, bar_height), 2)
+
+    def check_gem_collision(self, player_rect):
+        if self.gem_active and self.gem_pos:
+            gem_rect = pygame.Rect(self.gem_pos[0], self.gem_pos[1], 40, 40)
+            if gem_rect.colliderect(player_rect):
+                self.gem_active = False
+                self.stage_cleared = True
+                return True
+        return False
