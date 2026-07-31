@@ -174,7 +174,7 @@ class Stage6Boss:
                     self.gem_pos = [self.boss_pos[0] + 105, self.boss_pos[1] + 105]
                     self.gem_active = True
                 break
-                
+
     def draw(self, win):
         """보스 피격 출력"""
         if self.boss_active and self.boss_hp > 0:
@@ -188,7 +188,7 @@ class Stage6Boss:
                     win.blit(self.boss_image, self.boss_pos)
             else:
                 win.blit(self.boss_image, self.boss_pos)
-                
+
     def draw_attacks(self, win):
         if not self.boss_active:
             return
