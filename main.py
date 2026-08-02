@@ -141,3 +141,36 @@ def main():
                 item.apply_effect(player)
             
             elapsed_seconds = (now - stage_start_time) // 1000
+
+            # 🔍 보스 출격 센서 체크
+            if current_boss and not manager.boss_active:
+                current_boss.check_appear(elapsed_seconds, manager.level)
+                if current_boss.boss_active:
+                    manager.boss_active = True
+                    enemies = []
+
+            # [분기 A] 보스전 업데이트
+            if manager.boss_active and current_boss and current_boss.boss_active:
+                current_boss.move()
+                current_boss.attack()
+                
+                dmg = current_boss.update_attacks(player.rect, player.invincible)
+                if dmg > 0:
+                    player.take_damage(dmg)
+                
+                current_boss.check_hit(player_bullets)
+                
+            # [분기 B] 일반 잡몹 스폰
+            elif not manager.boss_active:
+                if now - last_spawn_times["normal"] > intervals["normal"]:
+                    enemies.extend(gen_move_and_disappear(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["normal"] = now
+                if now - last_spawn_times["bomb"] > intervals["bomb"]:
+                    enemies.extend(enemy_bomb.generate(manager.level, WIN_WIDTH, WIN_HEIGHT, player.rect.center))
+                    last_spawn_times["bomb"] = now
+                if now - last_spawn_times["group"] > intervals["group"]:
+                    enemies.extend(enemy_group.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["group"] = now
+                if now - last_spawn_times["ambush"] > intervals["ambush"]:
+                    enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
+                    last_spawn_times["ambush"] = now
