@@ -267,3 +267,17 @@ def main():
             
             player_bullets.draw(win)
             items_group.draw(win)
+            
+            if manager.boss_active and current_boss:
+                current_boss.draw(win)
+                current_boss.draw_attacks(win)
+                
+                boss_ui_font = pygame.font.SysFont("arial", 20, bold=True)
+                current_boss.draw_health_bar(win, boss_ui_font)
+            
+            if current_boss and current_boss.boss_defeated:
+                current_boss.draw_gem(win)
+                current_boss.draw_attacks(win)
+
+            player.draw(win)
+            player.draw_ui(win)
