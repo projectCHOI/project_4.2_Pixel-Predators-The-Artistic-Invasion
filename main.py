@@ -185,3 +185,25 @@ def main():
                     else:
                         manager.level += 1
                         manager.boss_active = False
+
+            purple_bullets = enemy_bomb.update_purple_bullets(purple_bullets, now, WIN_WIDTH, WIN_HEIGHT)
+            updated_enemies = []
+            for enemy in enemies:
+                if enemy[2] == "move_and_shoot":
+                    target = enemy[5]
+                    dist = math.hypot(target[0] - enemy[0][0], target[1] - enemy[0][1])
+                    if dist > 5:
+                        enemy[0][0] += enemy[3][0] * enemy[4]
+                        enemy[0][1] += enemy[3][1] * enemy[4]
+                    else:
+                        enemy[4] = 0
+                elif enemy[2] == "group_unit":
+                    t = (now - enemy[14]) / 500
+                    enemy[0][0] = enemy[13][0] + 50 * math.sin(t + enemy[12])
+                    enemy[0][1] = enemy[13][1] + enemy[4] * (now - enemy[14]) / 16
+                else:
+                    enemy[0][0] += enemy[3][0] * enemy[4]
+                    enemy[0][1] += enemy[3][1] * enemy[4]
+                
+                enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
+                hit = False
