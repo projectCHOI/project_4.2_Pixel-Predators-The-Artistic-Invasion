@@ -207,3 +207,29 @@ def main():
                 
                 enemy_rect = pygame.Rect(enemy[0][0], enemy[0][1], enemy[1], enemy[1])
                 hit = False
+                
+                for bullet in player_bullets:
+                    if enemy_rect.colliderect(bullet.rect):
+                        bullet.kill()
+                        manager.enemies_defeated += 1
+                        if enemy[2] == "bomb":
+                            purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                        new_item = spawn_item_by_chance(enemy_rect.center, res)
+                        if new_item: items_group.add(new_item)
+                        hit = True
+                        break
+                
+                if not hit and enemy_rect.colliderect(player.rect):
+                    player.take_damage(1)
+                    if enemy[2] == "bomb":
+                        purple_bullets.extend(enemy_bomb.generate_purple_bullets(enemy_rect.center))
+                    hit = True
+
+                if not hit and -100 < enemy[0][0] < WIN_WIDTH + 100 and -100 < enemy[0][1] < WIN_HEIGHT + 100:
+                    updated_enemies.append(enemy)
+            
+            enemies = updated_enemies
+            manager.update(player)
+
+            if manager.game_over:
+                bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
