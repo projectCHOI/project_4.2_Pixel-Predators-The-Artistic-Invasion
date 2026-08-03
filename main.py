@@ -233,3 +233,37 @@ def main():
 
             if manager.game_over:
                 bgm.set_game_state("victory" if manager.game_over_reason == "victory" else "gameover")
+
+        if not manager.game_active:
+            if manager.game_over:
+                win.fill(BLACK)
+                end_font = pygame.font.SysFont("malgungothic", 50, bold=True)
+                
+                if manager.game_over_reason == "victory":
+                    title_txt = end_font.render("MISSION COMPLETE", True, YELLOW)
+                else:
+                    title_txt = end_font.render("GAME OVER", True, RED)
+                
+                sub_font = pygame.font.SysFont("arial", 30)
+                sub_txt = sub_font.render("Press ENTER to Restart", True, WHITE)
+                
+                win.blit(title_txt, ((WIN_WIDTH // 2) - (title_txt.get_width() // 2), 280))
+                win.blit(sub_txt, ((WIN_WIDTH // 2) - (sub_txt.get_width() // 2), 380))
+            else:
+                win.blit(title_image, (0, 0))
+        else:
+            current_boss = bosses.get(manager.level)
+            
+            bg_idx = manager.level - 1
+            if bg_idx < len(stage_background_images):
+                win.blit(stage_background_images[bg_idx], (0, 0))
+            else:
+                win.fill(BLACK)
+            
+            for pb in purple_bullets:
+                win.blit(pb["image"], pb["pos"])
+            for enemy in enemies:
+                win.blit(enemy[7], (enemy[0][0], enemy[0][1]))
+            
+            player_bullets.draw(win)
+            items_group.draw(win)
