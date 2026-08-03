@@ -174,3 +174,14 @@ def main():
                 if now - last_spawn_times["ambush"] > intervals["ambush"]:
                     enemies.extend(enemy_ambush.generate(manager.level, WIN_WIDTH, WIN_HEIGHT))
                     last_spawn_times["ambush"] = now
+
+            if current_boss and current_boss.boss_defeated:
+                current_boss.update_attacks(player.rect, player.invincible)
+                if current_boss.check_gem_collision(player.rect):
+                    if manager.level >= 6: # 마지막 6보스 격파 시 최종 승리!
+                        manager.game_active = False
+                        manager.game_over = True
+                        manager.game_over_reason = "victory"
+                    else:
+                        manager.level += 1
+                        manager.boss_active = False
