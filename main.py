@@ -293,3 +293,12 @@ def main():
             timer_font = pygame.font.SysFont("arial", 35, bold=True)
             timer_text = timer_font.render(time_string, True, YELLOW)
             win.blit(timer_text, ((WIN_WIDTH // 2) - (timer_text.get_width() // 2), 20))
+
+        pygame.display.update()
+        clock.tick(FPS)
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()
