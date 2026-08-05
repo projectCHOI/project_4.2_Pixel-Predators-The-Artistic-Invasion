@@ -281,3 +281,15 @@ def main():
 
             player.draw(win)
             player.draw_ui(win)
+            
+            font = pygame.font.SysFont("arial", 30, bold=True)
+            kill_text = font.render(f"KILLS: {manager.enemies_defeated}", True, WHITE)
+            win.blit(kill_text, (WIN_WIDTH - kill_text.get_width() - 20, 20))
+
+            elapsed_time = (now - stage_start_time) // 1000 
+            mins, secs = elapsed_time // 60, elapsed_time % 60
+            time_string = f"{mins:02d}:{secs:02d}"
+
+            timer_font = pygame.font.SysFont("arial", 35, bold=True)
+            timer_text = timer_font.render(time_string, True, YELLOW)
+            win.blit(timer_text, ((WIN_WIDTH // 2) - (timer_text.get_width() // 2), 20))
