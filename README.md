@@ -5,6 +5,9 @@
 - 파이썬과 파이게임을 이용해 속도감 있는 2D 슈팅 게임을 제작했습니다.
 - 빠른 반응과 전략적인 아이템 수집을 통해 10분 내외의 긴장감 넘치는 게임 경험을 제공 하는 것이 목표입니다.
 
+## 플레이 영상 
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_a.gif" width="900" alt="Pixel Predators: The Artistic Invasion" />
+
 ## Tech Stack
 - **Language**: Python
 - **Game Library**: Pygame
@@ -42,7 +45,7 @@
 ### 1. Main Loop Architecture (`main.py`)
 - 게임 상태 관리
   - `title / loading / stage / gameover / victory`
-- 스테이지 진행 및 레벨 관리 (Stage 1 ~ 9)
+- 스테이지 진행 및 레벨 관리 (Stage 1 ~ 6)
 - 적 생성 및 제거
 - 충돌 판정 (플레이어 ↔ 적 / 탄환)
 - 아이템 처리
