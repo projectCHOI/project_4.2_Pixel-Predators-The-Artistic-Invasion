@@ -6,7 +6,9 @@
 - 빠른 반응과 전략적인 아이템 수집을 통해 10분 내외의 긴장감 넘치는 게임 경험을 제공 하는 것이 목표입니다.
 
 ## 플레이 영상 
-<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_a.gif" width="900" alt="Pixel Predators: The Artistic Invasion" />
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_a.gif" width="100" alt="Pixel Predators: The Artistic Invasion" />
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_b.gif" width="100" alt="Pixel Predators: The Artistic Invasion" />
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_c.gif" width="100" alt="Pixel Predators: The Artistic Invasion" />
 
 ## Tech Stack
 - **Language**: Python
