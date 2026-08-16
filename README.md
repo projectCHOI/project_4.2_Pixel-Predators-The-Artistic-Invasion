@@ -7,8 +7,8 @@
 
 ## 플레이 영상
 <div align="center">
-<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_a.gif" width="200" alt="Pixel Predators: The Artistic Invasion" />
-<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_b.gif" width="200" alt="Pixel Predators: The Artistic Invasion" />
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_a.gif" width="300" alt="Pixel Predators: The Artistic Invasion" />
+<img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_b.gif" width="300" alt="Pixel Predators: The Artistic Invasion" />
 <img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_c.gif" width="300" alt="Pixel Predators: The Artistic Invasion" />
 <img src="./M_title_stage_images/assets/images/GIF/project_4.2_Pixel%20Predators-The%20Artistic%20Invasion_d.gif" width="300" alt="Pixel Predators: The Artistic Invasion" />
 </div>
